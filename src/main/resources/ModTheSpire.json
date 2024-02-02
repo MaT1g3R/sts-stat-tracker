@@ -1,0 +1,10 @@
+{
+  "modid": "StatsTracker",
+  "name": "StatsTracker",
+  "author_list": ["vmService"],
+  "description": "Advanced stats tracking",
+  "version": "0.0.1",
+  "sts_version": "07-30-2020",
+  "mts_version": "3.15.0",
+  "dependencies": ["basemod"]
+}
