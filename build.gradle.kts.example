@@ -17,6 +17,7 @@ var workshopLocation: String = "$steamappsLocation/workshop/content/646570"
 
 var modTheSpireLocation: String = "$workshopLocation/1605060445/ModTheSpire.jar"
 var baseModLocation: String = "$workshopLocation/1605833019/BaseMod.jar"
+var runHistoryPlusLocation: String = "$workshopLocation/2802958032/RunHistoryPlus.jar"
 var stsJar: String = "$stsInstallLocation/desktop-1.0.jar"
 
 
@@ -28,7 +29,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly(files(modTheSpireLocation, baseModLocation, stsJar))
+    compileOnly(files(modTheSpireLocation, baseModLocation, runHistoryPlusLocation, stsJar))
 }
 
 

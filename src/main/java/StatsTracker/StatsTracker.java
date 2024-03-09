@@ -10,6 +10,8 @@ import org.apache.logging.log4j.Logger;
 public class StatsTracker implements PostInitializeSubscriber {
     public static final Logger logger = LogManager.getLogger(StatsTracker.class.getName());
 
+    public static RunHistoryManager runHistoryManager = new RunHistoryManager();
+
     public StatsTracker() {
         BaseMod.subscribe(this);
     }
