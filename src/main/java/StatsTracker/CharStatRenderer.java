@@ -29,7 +29,11 @@ public class CharStatRenderer {
             }
         }
 
-        double winRate = (100D * cs.numVictory) / (cs.numVictory + cs.numDeath);
+        int runs = cs.numVictory + cs.numDeath;
+        double winRate = 0;
+        if (runs > 0) {
+            winRate = (100D * cs.numVictory) / runs;
+        }
         BigDecimal bd = new BigDecimal(winRate);
         bd = bd.round(new MathContext(3));
 

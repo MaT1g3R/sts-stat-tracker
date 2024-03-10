@@ -3,7 +3,7 @@
   "title": "StatsTracker",
   "description": "Additional stats tracking",
   "visibility": "private",
-  "changeNote": "v0.0.1 - Initial release",
+  "changeNote": "v0.0.2 - Fix win rate calculation when there are 0 runs",
   "tags": [
     "Utility",
     "Qol"
