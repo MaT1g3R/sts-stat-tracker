@@ -36,14 +36,15 @@ public class StatsScreenPatch {
         float screenX = Utils.getField(s, StatsScreen.class, "screenX");
         float scrollY = Utils.getField(s, StatsScreen.class, "scrollY");
 
+        ClassStat[] allClassStats = getClassStats();
+
         renderHeader(sb, NAMES[0], screenX, renderY);
-        StatsScreen.all.render(sb, screenX, renderY);
+        new CharStatRenderer(allClassStats[allClassStats.length - 1]).render(sb, screenX, renderY);
         renderY -= 400.0F * Settings.scale;
         renderHeader(sb, NAMES[1], screenX, renderY);
         StatsScreen.achievements.render(sb, renderY);
         renderY -= 2200.0F * Settings.scale;
 
-        ClassStat[] allClassStats = getClassStats();
 
         for (int i = 0; i < 4; i++) {
             String name = NAMES[i + 2];
@@ -70,11 +71,11 @@ public class StatsScreenPatch {
     }
 
     private static ClassStat[] getClassStats() {
-        ClassStat ironcladCS = new ClassStat(StatsTracker.runHistoryManager.ironcladRuns);
-        ClassStat silentCS = new ClassStat(StatsTracker.runHistoryManager.silentRuns);
-        ClassStat defectCS = new ClassStat(StatsTracker.runHistoryManager.defectRuns);
-        ClassStat watcherCS = new ClassStat(StatsTracker.runHistoryManager.watcherRuns);
-        ClassStat rotatingCS = new ClassStat(StatsTracker.runHistoryManager.allRuns);
+        ClassStat ironcladCS = new ClassStat(StatsTracker.runHistoryManager.ironcladRuns, false);
+        ClassStat silentCS = new ClassStat(StatsTracker.runHistoryManager.silentRuns, false);
+        ClassStat defectCS = new ClassStat(StatsTracker.runHistoryManager.defectRuns, false);
+        ClassStat watcherCS = new ClassStat(StatsTracker.runHistoryManager.watcherRuns, false);
+        ClassStat rotatingCS = new ClassStat(StatsTracker.runHistoryManager.allRuns, true);
 
         return new ClassStat[]{ironcladCS, silentCS, defectCS, watcherCS, rotatingCS};
     }

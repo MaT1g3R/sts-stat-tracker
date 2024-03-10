@@ -5,6 +5,9 @@ import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.helpers.FontHelper;
 import com.megacrit.cardcrawl.screens.stats.CharStat;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+
 public class CharStatRenderer {
     private String info;
     private String info2;
@@ -18,8 +21,19 @@ public class CharStatRenderer {
 
         this.info = this.info + CharStat.TEXT[23] + cs.highestScore + " NL ";
         if (cs.bestWinStreak > 0) {
-            this.info = this.info + CharStat.TEXT[22] + cs.bestWinStreak + " NL ";
+            if (cs.rotate) {
+                this.info = this.info + "Best Win Streak (rotate): #y" + cs.bestWinStreak + " NL ";
+
+            } else {
+                this.info = this.info + CharStat.TEXT[22] + cs.bestWinStreak + " NL ";
+            }
         }
+
+        double winRate = (100D * cs.numVictory) / (cs.numVictory + cs.numDeath);
+        BigDecimal bd = new BigDecimal(winRate);
+        bd = bd.round(new MathContext(3));
+
+        this.info = this.info + "Win Rate: #y" + bd + "%" + " NL ";
 
         this.info2 = CharStat.TEXT[17] + cs.numVictory + " NL ";
         this.info2 = this.info2 + CharStat.TEXT[18] + cs.numDeath + " NL ";

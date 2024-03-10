@@ -60,7 +60,11 @@ public class Run implements Comparable<Run> {
             return new ArrayList<>();
         }
         try {
-            return (List<String>) scoreBreakdownField.get(runData);
+            List<String> f = (List<String>) scoreBreakdownField.get(runData);
+            if (f == null) {
+                return new ArrayList<>();
+            }
+            return f;
         } catch (IllegalAccessException e) {
             return new ArrayList<>();
         }
