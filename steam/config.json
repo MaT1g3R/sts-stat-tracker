@@ -1,0 +1,11 @@
+{
+  "steamPublishedID": "3177081814",
+  "title": "StatsTracker",
+  "description": "Additional stats tracking",
+  "visibility": "private",
+  "changeNote": "v0.0.1 - Initial release",
+  "tags": [
+    "Utility",
+    "Qol"
+  ]
+}

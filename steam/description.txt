@@ -1,0 +1,7 @@
+Track additional stats about your runs.
+
+This is the very initial release, which fixes the character statistics screen (Main Menu -> Statistics -> Character Stats)
+and adds some additional info such as win rate and rotating streaks.
+
+More stats coming soon!
+
