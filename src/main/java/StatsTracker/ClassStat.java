@@ -1,7 +1,5 @@
 package StatsTracker;
 
-import com.megacrit.cardcrawl.screens.stats.RunData;
-
 import java.util.List;
 
 public class ClassStat {
@@ -12,34 +10,33 @@ public class ClassStat {
     public int totalFloorsClimbed = 0;
     public int bossKilled = 0;
     public int enemyKilled = 0;
-    public int bestWinStreak = 0;
+    public int bestWinStreak;
     public int highestScore = 0;
 
-    public ClassStat(List<RunData> runs) {
+    public ClassStat(List<Run> runs) {
         bestWinStreak = getHighestWinStreak(runs);
-
-        for (RunData rd : runs) {
-            boolean isHeartKill = RunHistoryManager.IsHeartKill(rd);
-            playTime += rd.playtime;
-            if (isHeartKill) {
-                fastestTime = Math.min(fastestTime, rd.playtime);
+        for (Run run : runs) {
+            playTime += run.runData.playtime;
+            if (run.isHeartKill) {
+                fastestTime = Math.min(fastestTime, run.runData.playtime);
             }
-            if (isHeartKill) {
+            if (run.isHeartKill) {
                 ++numVictory;
             } else {
                 ++numDeath;
             }
-            totalFloorsClimbed += rd.floor_reached;
-            highestScore = Math.max(highestScore, rd.score);
+            totalFloorsClimbed += run.runData.floor_reached;
+            bossKilled += run.bossesKilled;
+            enemyKilled += run.enemiesKilled;
+            highestScore = Math.max(highestScore, run.runData.score);
         }
     }
 
-    private static int getHighestWinStreak(List<RunData> runs) {
+    private static int getHighestWinStreak(List<Run> runs) {
         int max = 0;
         int current = 0;
-        for (RunData rd : runs) {
-            boolean isHeartKill = RunHistoryManager.IsHeartKill(rd);
-            if (isHeartKill) {
+        for (Run run : runs) {
+            if (run.isHeartKill) {
                 ++current;
             } else {
                 max = Math.max(max, current);

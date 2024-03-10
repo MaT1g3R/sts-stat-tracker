@@ -24,8 +24,8 @@ public class CharStatRenderer {
         this.info2 = CharStat.TEXT[17] + cs.numVictory + " NL ";
         this.info2 = this.info2 + CharStat.TEXT[18] + cs.numDeath + " NL ";
         this.info2 = this.info2 + CharStat.TEXT[19] + cs.totalFloorsClimbed + " NL ";
-//        this.info2 = this.info2 + CharStat.TEXT[20] + cs.bossKilled + " NL ";
-//        this.info2 = this.info2 + CharStat.TEXT[21] + cs.enemyKilled + " NL ";
+        this.info2 = this.info2 + CharStat.TEXT[20] + cs.bossKilled + " NL ";
+        this.info2 = this.info2 + CharStat.TEXT[21] + cs.enemyKilled + " NL ";
     }
 
     public void render(SpriteBatch sb, float screenX, float renderY) {
