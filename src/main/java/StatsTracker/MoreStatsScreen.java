@@ -6,6 +6,7 @@ import com.megacrit.cardcrawl.helpers.FontHelper;
 import com.megacrit.cardcrawl.screens.options.DropdownMenu;
 import com.megacrit.cardcrawl.screens.options.DropdownMenuListener;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -46,7 +47,12 @@ public class MoreStatsScreen implements DropdownMenuListener {
     public void refreshData() {
         StatsTracker.runHistoryManager.refreshData();
         startDates = StatsTracker.runHistoryManager.getDates().collect(Collectors.toCollection(ArrayList::new));
+        if (startDates.isEmpty()) {
+            LocalDate today = LocalDate.now();
+            startDates.add(new YearMonth(today.getYear(), today.getMonthValue()));
+        }
         endDates = new ArrayList<>(startDates);
+
         endDates.add(0, startDates.get(startDates.size() - 1));
 
         startDateDropdown =
