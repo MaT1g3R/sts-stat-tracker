@@ -3,7 +3,7 @@
   "title": "StatsTracker",
   "description": "Additional stats tracking",
   "visibility": "private",
-  "changeNote": "v0.1.1 - Fix achievement grid crash",
+  "changeNote": "v0.1.2 - Fix card name normalization",
   "tags": [
     "Utility",
     "Qol"

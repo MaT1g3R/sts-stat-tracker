@@ -79,13 +79,18 @@ public class Utils {
         replacements.put("Gash", "Claw");
         replacements.put("Venomology", "Alchemize");
         replacements.put("Night Terror", "Nightmare");
+        replacements.put("NightTerror", "Nightmare");
         replacements.put("Crippling Poison", "Crippling Cloud");
+        replacements.put("CripplingPoison", "Crippling Cloud");
         replacements.put("Underhanded Strike", "Sneaky Strike");
+        replacements.put("UnderhandedStrike", "Sneaky Strike");
         replacements.put("Clear The Mind", "Tranquility");
+        replacements.put("ClearTheMind", "Tranquility");
         replacements.put("Wireheading", "Foresight");
         replacements.put("Vengeance", "Simmering Fury");
         replacements.put("Adaptation", "Rushdown");
         replacements.put("Path to Victory", "Pressure Points");
+        replacements.put("PathToVictory", "Pressure Points");
         replacements.put("Ghostly", "Apparition");
         replacements.put("Yang", "Duality");
         replacements.put("Snake Skull", "Snecko Skull");
