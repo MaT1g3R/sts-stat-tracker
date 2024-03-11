@@ -3,6 +3,8 @@ package StatsTracker.patches;
 import StatsTracker.CharStatRenderer;
 import StatsTracker.MoreStatsScreen;
 import StatsTracker.Utils;
+import StatsTracker.stats.CardPickSkip;
+import StatsTracker.stats.ClassStat;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.evacipated.cardcrawl.modthespire.lib.SpirePatch;
 import com.evacipated.cardcrawl.modthespire.lib.SpireReturn;
@@ -10,6 +12,8 @@ import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.helpers.FontHelper;
 import com.megacrit.cardcrawl.screens.mainMenu.ScrollBar;
 import com.megacrit.cardcrawl.screens.stats.StatsScreen;
+
+import java.util.List;
 
 import static com.megacrit.cardcrawl.screens.stats.StatsScreen.NAMES;
 import static com.megacrit.cardcrawl.screens.stats.StatsScreen.renderHeader;
@@ -23,6 +27,21 @@ public class StatsScreenPatch {
 
     private static float screenPosY(float val) {
         return val * Settings.yScale;
+    }
+
+    public static String getCharColor() {
+        switch (moreStatsScreen.currentClass()) {
+            case "Ironclad":
+                return "#r";
+            case "Silent":
+                return "#g";
+            case "Defect":
+                return "#b";
+            case "Watcher":
+                return "#p";
+            default:
+                return "#y";
+        }
     }
 
     @SpirePatch(clz = StatsScreen.class, method = SpirePatch.CONSTRUCTOR)
@@ -62,7 +81,7 @@ public class StatsScreenPatch {
 
     @SpirePatch(clz = StatsScreen.class, method = "refreshData")
     public static class RefreshDataPatch {
-        public static void Postfix(StatsScreen __instance) {
+        public static void Replace(StatsScreen __instance) {
             moreStatsScreen.refreshData();
         }
     }
@@ -75,9 +94,6 @@ public class StatsScreenPatch {
                 screenX,
                 renderY);
         renderY -= 400.0F * Settings.scale;
-        renderHeader(sb, NAMES[1], screenX, renderY);
-        StatsScreen.achievements.render(sb, renderY);
-        renderY -= 2200.0F * Settings.scale;
 
         for (int i = 0; i < 4; i++) {
             String name = NAMES[i + 2];
@@ -87,11 +103,69 @@ public class StatsScreenPatch {
         }
     }
 
+    private static void renderCardPickRate(StatsScreen s, SpriteBatch sb, boolean act1, float screenX) {
+        float renderY = Utils.getField(s, StatsScreen.class, "scrollY");
+
+        String name = act1 ? "Card pick rate act 1" : "Card pick rate after act 1";
+        name += " (top 200)";
+        String color = getCharColor();
+        StringBuilder nameBuilder = new StringBuilder();
+        for (String part : name.split(" ")) {
+            nameBuilder.append(color).append(part).append(" ");
+        }
+
+        renderHeader(sb, nameBuilder.toString(), screenX, renderY);
+
+        StringBuilder builder = new StringBuilder();
+        StringBuilder builder2 = new StringBuilder();
+
+        ClassStat cs = moreStatsScreen.classStats[moreStatsScreen.classStats.length - 1];
+        List<CardPickSkip> picks = act1 ? cs.cardPicksAct1 : cs.cardPicksAfterAct1;
+
+        int len = Math.min(picks.size(), 200);
+        for (int i = 0; i < len; i++) {
+            CardPickSkip c = picks.get(i);
+            if (i <= len / 2) {
+                builder.append(c.name).append(" ").append(c.pickRatePercent()).append("% NL ");
+            } else {
+                builder2.append(c.name).append(" ").append(c.pickRatePercent()).append("% NL ");
+            }
+        }
+
+        FontHelper.renderSmartText(sb,
+                FontHelper.panelNameFont,
+                builder.toString(),
+                screenX + 75.0F * Settings.scale,
+                renderY + 766.0F * Settings.yScale,
+                9999.0F,
+                38.0F * Settings.scale,
+                Settings.CREAM_COLOR);
+
+        FontHelper.renderSmartText(sb,
+                FontHelper.panelNameFont,
+                builder2.toString(),
+                screenX + 675.0F * Settings.scale,
+                renderY + 766.0F * Settings.yScale,
+                9999.0F,
+                38.0F * Settings.scale,
+                Settings.CREAM_COLOR);
+    }
+
     public static void renderStatScreen(StatsScreen s, SpriteBatch sb) {
         float screenX = Utils.getField(s, StatsScreen.class, "screenX");
         float scrollY = Utils.getField(s, StatsScreen.class, "scrollY");
 
-        renderCharacterStats(s, sb, screenX);
+        switch (moreStatsScreen.STAT_TYPES[moreStatsScreen.statTypeDropdown.getSelectedIndex()]) {
+            case "Overall":
+                renderCharacterStats(s, sb, screenX);
+                break;
+            case "Card pick rate act 1":
+                renderCardPickRate(s, sb, true, screenX);
+                break;
+            case "Card pick rate after act 1":
+                renderCardPickRate(s, sb, false, screenX);
+                break;
+        }
 
         float labelY = scrollY + screenPosY(950);
         float dropdownY = labelY - screenPosY(40);
@@ -100,15 +174,17 @@ public class StatsScreenPatch {
         float startDateX = screenX + screenPosX(-270);
         float endDateX = startDateX + screenPosX(xDiff);
         float characterX = endDateX + screenPosX(xDiff);
+        float statTypeX = characterX + screenPosX(xDiff);
 
         FontHelper.renderSmartText(sb, FontHelper.tipBodyFont, "Start date", startDateX, labelY, Settings.CREAM_COLOR);
         FontHelper.renderSmartText(sb, FontHelper.tipBodyFont, "End date", endDateX, labelY, Settings.CREAM_COLOR);
         FontHelper.renderSmartText(sb, FontHelper.tipBodyFont, "Character", characterX, labelY, Settings.CREAM_COLOR);
+        FontHelper.renderSmartText(sb, FontHelper.tipBodyFont, "Stat type", statTypeX, labelY, Settings.CREAM_COLOR);
 
         moreStatsScreen.startDateDropdown.render(sb, startDateX, dropdownY);
         moreStatsScreen.endDateDropDown.render(sb, endDateX, dropdownY);
         moreStatsScreen.classDropdown.render(sb, characterX, dropdownY);
-
+        moreStatsScreen.statTypeDropdown.render(sb, statTypeX, dropdownY);
 
         if (Settings.isControllerMode) {
             s.allCharsHb.move(300.0F * Settings.scale, scrollY + 600.0F * Settings.scale);

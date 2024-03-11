@@ -5,6 +5,10 @@ import com.megacrit.cardcrawl.cards.AbstractCard;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Utils {
 
@@ -53,6 +57,41 @@ public class Utils {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static double calculatePercent(int value, int total) {
+        if (total == 0) {
+            return 0;
+        }
+        double rate = (100D * value) / total;
+        BigDecimal bd = new BigDecimal(rate);
+        bd = bd.round(new MathContext(3));
+        return bd.doubleValue();
+    }
+
+    public static String normalizeCardName(String s) {
+        Map<String, String> replacements = new HashMap<>();
+        replacements.put("Lockon", "Bullseye");
+        replacements.put("Steam", "Steam Barrier");
+        replacements.put("Steam Power", "Overclock");
+        replacements.put("Redo", "Recursion");
+        replacements.put("Undo", "Equilibrium");
+        replacements.put("Gash", "Claw");
+        replacements.put("Venomology", "Alchemize");
+        replacements.put("Night Terror", "Nightmare");
+        replacements.put("Crippling Poison", "Crippling Cloud");
+        replacements.put("Underhanded Strike", "Sneaky Strike");
+        replacements.put("Clear The Mind", "Tranquility");
+        replacements.put("Wireheading", "Foresight");
+        replacements.put("Vengeance", "Simmering Fury");
+        replacements.put("Adaptation", "Rushdown");
+        replacements.put("Path to Victory", "Pressure Points");
+        replacements.put("Ghostly", "Apparition");
+        replacements.put("Yang", "Duality");
+        replacements.put("Snake Skull", "Snecko Skull");
+
+        String normal = s.split("\\+")[0];
+        return replacements.getOrDefault(normal, normal);
     }
 
     public static void cardUpgradeName(AbstractCard card) {
