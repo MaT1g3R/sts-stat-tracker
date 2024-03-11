@@ -1,11 +1,11 @@
 package StatsTracker.patches;
 
-import StatsTracker.CharStatRenderer;
-import StatsTracker.MoreStatsScreen;
 import StatsTracker.Utils;
 import StatsTracker.stats.Card;
 import StatsTracker.stats.ClassStat;
 import StatsTracker.stats.Rate;
+import StatsTracker.ui.CharStatRenderer;
+import StatsTracker.ui.MoreStatsScreen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.evacipated.cardcrawl.modthespire.lib.SpirePatch;
 import com.evacipated.cardcrawl.modthespire.lib.SpireReturn;
@@ -94,8 +94,12 @@ public class StatsScreenPatch {
         }
     }
 
+    private static float getScrollY(StatsScreen s) {
+        return Utils.getField(s, StatsScreen.class, "scrollY");
+    }
+
     private static void renderCharacterStats(StatsScreen s, SpriteBatch sb, float screenX) {
-        float renderY = Utils.getField(s, StatsScreen.class, "scrollY");
+        float renderY = getScrollY(s);
         renderHeader(sb, NAMES[0], screenX, renderY);
         new CharStatRenderer(moreStatsScreen.getClassStat()).render(sb, screenX, renderY);
         renderY -= 400.0F * Settings.scale;
@@ -108,9 +112,28 @@ public class StatsScreenPatch {
         }
     }
 
-    private static void renderCardPickRate(StatsScreen s, SpriteBatch sb, boolean act1, float screenX) {
-        float renderY = Utils.getField(s, StatsScreen.class, "scrollY");
+    private static void render2Columns(SpriteBatch sb, float screenX, float renderY, String s1, String s2) {
+        FontHelper.renderSmartText(sb,
+                FontHelper.panelNameFont,
+                s1,
+                screenX + 75.0F * Settings.scale,
+                renderY + 766.0F * Settings.yScale,
+                9999.0F,
+                38.0F * Settings.scale,
+                Settings.CREAM_COLOR);
 
+        FontHelper.renderSmartText(sb,
+                FontHelper.panelNameFont,
+                s2,
+                screenX + 675.0F * Settings.scale,
+                renderY + 766.0F * Settings.yScale,
+                9999.0F,
+                38.0F * Settings.scale,
+                Settings.CREAM_COLOR);
+    }
+
+    private static void renderCardPickRate(StatsScreen s, SpriteBatch sb, boolean act1, float screenX) {
+        float renderY = getScrollY(s);
         String name = act1 ? "Card pick rate act 1" : "Card pick rate after act 1";
         name += " (top 200)";
         renderHeader(sb, colorForClass(name), screenX, renderY);
@@ -130,24 +153,36 @@ public class StatsScreenPatch {
                 builder2.append(c.what.toString()).append(" ").append(c.pickRatePercent()).append("% NL ");
             }
         }
+        render2Columns(sb, screenX, renderY, builder.toString(), builder2.toString());
+    }
 
-        FontHelper.renderSmartText(sb,
-                FontHelper.panelNameFont,
-                builder.toString(),
-                screenX + 75.0F * Settings.scale,
-                renderY + 766.0F * Settings.yScale,
-                9999.0F,
-                38.0F * Settings.scale,
-                Settings.CREAM_COLOR);
+    private static void renderCardWinRate(StatsScreen s, SpriteBatch sb, float screenX) {
+        float renderY = getScrollY(s);
+        String name = "Card win rate (top 200)";
+        renderHeader(sb, colorForClass(name), screenX, renderY);
 
-        FontHelper.renderSmartText(sb,
-                FontHelper.panelNameFont,
-                builder2.toString(),
-                screenX + 675.0F * Settings.scale,
-                renderY + 766.0F * Settings.yScale,
-                9999.0F,
-                38.0F * Settings.scale,
-                Settings.CREAM_COLOR);
+        StringBuilder builder = new StringBuilder();
+        StringBuilder builder2 = new StringBuilder();
+
+        ClassStat cs = moreStatsScreen.getClassStat();
+        int len = Math.min(cs.cardWinRate.size(), 200);
+        for (int i = 0; i < len; i++) {
+            Rate<Card> c = cs.cardWinRate.get(i);
+            if (i <= len / 2) {
+                builder.append(c.what.toString())
+                        .append(" #y")
+                        .append(c.pickRatePercent())
+                        .append("% ").append(c.winLoss())
+                        .append(" NL ");
+            } else {
+                builder2.append(c.what.toString())
+                        .append(" #y")
+                        .append(c.pickRatePercent())
+                        .append("% ").append(c.winLoss())
+                        .append(" NL ");
+            }
+        }
+        render2Columns(sb, screenX, renderY, builder.toString(), builder2.toString());
     }
 
     public static void renderStatScreen(StatsScreen s, SpriteBatch sb) {
@@ -163,6 +198,9 @@ public class StatsScreenPatch {
                 break;
             case "Card pick rate after act 1":
                 renderCardPickRate(s, sb, false, screenX);
+                break;
+            case "Card win rate":
+                renderCardWinRate(s, sb, screenX);
                 break;
         }
 

@@ -9,7 +9,6 @@ public class Card implements Comparable<Card> {
     public final String name;
     public final int upgrades;
 
-
     public Card(String name, int upgrades) {
         this.name = name;
         this.upgrades = upgrades;

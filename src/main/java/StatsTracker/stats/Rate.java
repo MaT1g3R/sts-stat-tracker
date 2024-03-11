@@ -11,8 +11,16 @@ public class Rate<T> implements Comparable<Rate<T>> {
         this.what = what;
     }
 
+    public int total() {
+        return win + loss;
+    }
+
     public double pickRatePercent() {
-        return Utils.calculatePercent(win, win + loss);
+        return Utils.calculatePercent(win, total());
+    }
+
+    public String winLoss() {
+        return "(" + win + "/" + total() + ")";
     }
 
     @Override

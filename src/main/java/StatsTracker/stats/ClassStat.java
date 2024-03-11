@@ -1,6 +1,5 @@
 package StatsTracker.stats;
 
-import StatsTracker.Run;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.screens.stats.CardChoiceStats;
 
@@ -22,6 +21,7 @@ public class ClassStat {
 
     public final List<Rate<Card>> cardPicksAct1;
     public final List<Rate<Card>> cardPicksAfterAct1;
+    public final List<Rate<Card>> cardWinRate;
 
 
     public ClassStat(List<Run> runs, boolean rotate) {
@@ -34,6 +34,7 @@ public class ClassStat {
 
         Map<Card, Rate<Card>> cardPicksAct1 = new java.util.HashMap<>();
         Map<Card, Rate<Card>> cardPicksAfterAct1 = new java.util.HashMap<>();
+        Map<Card, Rate<Card>> cardWinRate = new java.util.HashMap<>();
 
         for (Run run : runs) {
             for (CardChoiceStats c : run.runData.card_choices) {
@@ -66,6 +67,15 @@ public class ClassStat {
                 });
             }
 
+            run.runData.master_deck.stream().map(Card::fromStringIgnoreUpgrades).distinct().forEach(card -> {
+                cardWinRate.putIfAbsent(card, new Rate<>(card));
+                if (run.isHeartKill) {
+                    cardWinRate.get(card).win++;
+                } else {
+                    cardWinRate.get(card).loss++;
+                }
+            });
+
             playTime += run.runData.playtime;
             if (run.isHeartKill) {
                 fastestTime = Math.min(fastestTime, run.runData.playtime);
@@ -83,6 +93,7 @@ public class ClassStat {
 
         this.cardPicksAct1 = cardPicksAct1.values().stream().sorted().collect(Collectors.toList());
         this.cardPicksAfterAct1 = cardPicksAfterAct1.values().stream().sorted().collect(Collectors.toList());
+        this.cardWinRate = cardWinRate.values().stream().sorted().collect(Collectors.toList());
     }
 
     private static int getHighestWinStreak(List<Run> runs) {

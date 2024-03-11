@@ -1,5 +1,6 @@
-package StatsTracker;
+package StatsTracker.ui;
 
+import StatsTracker.Utils;
 import StatsTracker.stats.ClassStat;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.megacrit.cardcrawl.core.Settings;

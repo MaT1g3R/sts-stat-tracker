@@ -1,5 +1,6 @@
 package StatsTracker;
 
+import StatsTracker.stats.Run;
 import com.badlogic.gdx.Gdx;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 

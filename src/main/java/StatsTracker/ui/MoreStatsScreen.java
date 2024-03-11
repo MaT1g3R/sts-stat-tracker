@@ -1,5 +1,7 @@
-package StatsTracker;
+package StatsTracker.ui;
 
+import StatsTracker.StatsTracker;
+import StatsTracker.YearMonth;
 import StatsTracker.stats.ClassStat;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.helpers.FontHelper;
@@ -19,7 +21,12 @@ public class MoreStatsScreen implements DropdownMenuListener {
     public ArrayList<YearMonth> endDates;
     public ClassStat[] classStats;
     public final String[] CLASSES = new String[]{"All", "Ironclad", "Silent", "Defect", "Watcher"};
-    public final String[] STAT_TYPES = new String[]{"Overall", "Card pick rate act 1", "Card pick rate after act 1"};
+    public final String[] STAT_TYPES = new String[]{
+            "Overall",
+            "Card pick rate act 1",
+            "Card pick rate after act 1",
+            "Card win rate"
+    };
 
     public String currentClass() {
         return CLASSES[classDropdown.getSelectedIndex()];
