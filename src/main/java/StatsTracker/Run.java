@@ -1,17 +1,14 @@
 package StatsTracker;
 
+import StatsTracker.stats.RunData;
 import com.badlogic.gdx.files.FileHandle;
 import com.google.gson.JsonSyntaxException;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.screens.stats.BattleStats;
 import com.megacrit.cardcrawl.screens.stats.ObtainStats;
-import com.megacrit.cardcrawl.screens.stats.RunData;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,10 +22,8 @@ public class Run implements Comparable<Run> {
     public final boolean isHeartKill;
     public final boolean isA20;
 
-    public final List<String> scoreBreakdown;
     public final int enemiesKilled;
     public final int bossesKilled;
-
     public int singingBowlFloor = -1;
 
     private Run(RunData runData, AbstractPlayer.PlayerClass playerClass) {
@@ -36,7 +31,6 @@ public class Run implements Comparable<Run> {
         this.playerClass = playerClass;
         this.isHeartKill = isHeartKill();
         this.isA20 = runData.is_ascension_mode && runData.ascension_level == 20;
-        this.scoreBreakdown = getScoreBreakdown(runData);
 
         Pair<Integer, Integer> enemiesKilled = enemiesKilled();
         this.enemiesKilled = enemiesKilled.getLeft();
@@ -64,23 +58,6 @@ public class Run implements Comparable<Run> {
         return false;
     }
 
-    private static List<String> getScoreBreakdown(RunData runData) {
-        Field scoreBreakdownField;
-        try {
-            scoreBreakdownField = runData.getClass().getField("score_breakdown");
-        } catch (NoSuchFieldException e) {
-            return new ArrayList<>();
-        }
-        try {
-            List<String> f = (List<String>) scoreBreakdownField.get(runData);
-            if (f == null) {
-                return new ArrayList<>();
-            }
-            return f;
-        } catch (IllegalAccessException e) {
-            return new ArrayList<>();
-        }
-    }
 
     private Pair<Integer, Integer> enemiesKilled() {
         int enemiesKilled = 0;
@@ -89,7 +66,7 @@ public class Run implements Comparable<Run> {
         Pattern enemies = Pattern.compile("Enemies Slain \\((\\d+)\\):.*");
         Pattern bosses = Pattern.compile("Bosses Slain \\((\\d+)\\):.*");
 
-        for (String s : scoreBreakdown) {
+        for (String s : runData.score_breakdown) {
             Matcher e = enemies.matcher(s);
             Matcher b = bosses.matcher(s);
             if (e.matches()) {

@@ -88,7 +88,6 @@ public class StatsScreenPatch {
         }
     }
 
-
     private static void renderCharacterStats(StatsScreen s, SpriteBatch sb, float screenX) {
         float renderY = Utils.getField(s, StatsScreen.class, "scrollY");
         renderHeader(sb, NAMES[0], screenX, renderY);
