@@ -24,6 +24,10 @@ public class MoreStatsScreen implements DropdownMenuListener {
         return CLASSES[classDropdown.getSelectedIndex()];
     }
 
+    public ClassStat getClassStat() {
+        return classStats[classStats.length - 1];
+    }
+
     @Override
     public void changedSelectionTo(DropdownMenu dropdownMenu, int i, String s) {
         int startDateIndex = startDateDropdown.getSelectedIndex();

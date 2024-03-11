@@ -3,8 +3,9 @@ package StatsTracker.patches;
 import StatsTracker.CharStatRenderer;
 import StatsTracker.MoreStatsScreen;
 import StatsTracker.Utils;
-import StatsTracker.stats.CardPickSkip;
+import StatsTracker.stats.Card;
 import StatsTracker.stats.ClassStat;
+import StatsTracker.stats.PickSkip;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.evacipated.cardcrawl.modthespire.lib.SpirePatch;
 import com.evacipated.cardcrawl.modthespire.lib.SpireReturn;
@@ -120,16 +121,16 @@ public class StatsScreenPatch {
         StringBuilder builder = new StringBuilder();
         StringBuilder builder2 = new StringBuilder();
 
-        ClassStat cs = moreStatsScreen.classStats[moreStatsScreen.classStats.length - 1];
-        List<CardPickSkip> picks = act1 ? cs.cardPicksAct1 : cs.cardPicksAfterAct1;
+        ClassStat cs = moreStatsScreen.getClassStat();
+        List<PickSkip<Card>> picks = act1 ? cs.cardPicksAct1 : cs.cardPicksAfterAct1;
 
         int len = Math.min(picks.size(), 200);
         for (int i = 0; i < len; i++) {
-            CardPickSkip c = picks.get(i);
+            PickSkip<Card> c = picks.get(i);
             if (i <= len / 2) {
-                builder.append(c.name).append(" ").append(c.pickRatePercent()).append("% NL ");
+                builder.append(c.what.toString()).append(" ").append(c.pickRatePercent()).append("% NL ");
             } else {
-                builder2.append(c.name).append(" ").append(c.pickRatePercent()).append("% NL ");
+                builder2.append(c.what.toString()).append(" ").append(c.pickRatePercent()).append("% NL ");
             }
         }
 

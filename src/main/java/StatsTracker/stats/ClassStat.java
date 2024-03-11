@@ -1,11 +1,9 @@
 package StatsTracker.stats;
 
 import StatsTracker.Run;
-import StatsTracker.Utils;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.screens.stats.CardChoiceStats;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -22,8 +20,8 @@ public class ClassStat {
     public final int bestWinStreak;
     public int highestScore = 0;
 
-    public final List<CardPickSkip> cardPicksAct1;
-    public final List<CardPickSkip> cardPicksAfterAct1;
+    public final List<PickSkip<Card>> cardPicksAct1;
+    public final List<PickSkip<Card>> cardPicksAfterAct1;
 
 
     public ClassStat(List<Run> runs, boolean rotate) {
@@ -34,36 +32,38 @@ public class ClassStat {
             bestWinStreak = getHighestWinStreak(runs);
         }
 
-        Map<String, CardPickSkip> cardPicksAct1 = new java.util.HashMap<>();
-        Map<String, CardPickSkip> cardPicksAfterAct1 = new java.util.HashMap<>();
+        Map<Card, PickSkip<Card>> cardPicksAct1 = new java.util.HashMap<>();
+        Map<Card, PickSkip<Card>> cardPicksAfterAct1 = new java.util.HashMap<>();
 
         for (Run run : runs) {
             for (CardChoiceStats c : run.runData.card_choices) {
-                Map<String, CardPickSkip> map;
+                Map<Card, PickSkip<Card>> map;
                 if (c.floor >= 17) {
                     map = cardPicksAfterAct1;
                 } else {
                     map = cardPicksAct1;
                 }
 
-                String picked = Utils.normalizeCardName(c.picked);
-                map.putIfAbsent(picked, new CardPickSkip(picked));
+                Card picked = Card.fromStringIgnoreUpgrades(c.picked);
+                map.putIfAbsent(picked, new PickSkip<>(picked));
                 map.get(picked).picks++;
 
-                List<String> notPicked = new ArrayList<>(c.not_picked);
-                if (!picked.equals("SKIP") && !picked.equals("Singing Bowl")) {
+                List<Card>
+                        notPicked =
+                        c.not_picked.stream().map(Card::fromStringIgnoreUpgrades).collect(Collectors.toList());
+
+                if (!picked.name.equals("SKIP") && !picked.name.equals("Singing Bowl")) {
                     if (-1 < run.singingBowlFloor && run.singingBowlFloor <= c.floor) {
-                        notPicked.add("Singing Bowl");
+                        notPicked.add(Card.SingingBowl());
                     } else {
-                        notPicked.add("SKIP");
+                        notPicked.add(Card.SKIP());
                     }
                 }
 
-                for (String s : notPicked) {
-                    String nn = Utils.normalizeCardName(s);
-                    map.putIfAbsent(nn, new CardPickSkip(nn));
-                    map.get(nn).skips++;
-                }
+                notPicked.forEach(c1 -> {
+                    map.putIfAbsent(c1, new PickSkip<>(c1));
+                    map.get(c1).skips++;
+                });
             }
 
             playTime += run.runData.playtime;
