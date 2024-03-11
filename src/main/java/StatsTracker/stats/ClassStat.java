@@ -22,6 +22,8 @@ public class ClassStat {
     public final List<Rate<Card>> cardPicksAct1;
     public final List<Rate<Card>> cardPicksAfterAct1;
     public final List<Rate<Card>> cardWinRate;
+    public final List<Rate<Neow>> neowWinRate;
+    public final List<Rate<Neow>> neowPickRate;
 
 
     public ClassStat(List<Run> runs, boolean rotate) {
@@ -35,8 +37,24 @@ public class ClassStat {
         Map<Card, Rate<Card>> cardPicksAct1 = new java.util.HashMap<>();
         Map<Card, Rate<Card>> cardPicksAfterAct1 = new java.util.HashMap<>();
         Map<Card, Rate<Card>> cardWinRate = new java.util.HashMap<>();
+        Map<Neow, Rate<Neow>> neowWinRate = new java.util.HashMap<>();
+        Map<Neow, Rate<Neow>> neowPickRate = new java.util.HashMap<>();
 
         for (Run run : runs) {
+            playTime += run.runData.playtime;
+            if (run.isHeartKill) {
+                fastestTime = Math.min(fastestTime, run.runData.playtime);
+            }
+            if (run.isHeartKill) {
+                ++numVictory;
+            } else {
+                ++numDeath;
+            }
+            totalFloorsClimbed += run.runData.floor_reached;
+            bossKilled += run.bossesKilled;
+            enemyKilled += run.enemiesKilled;
+            highestScore = Math.max(highestScore, run.runData.score);
+
             for (CardChoiceStats c : run.runData.card_choices) {
                 Map<Card, Rate<Card>> map;
                 if (c.floor >= 17) {
@@ -48,6 +66,7 @@ public class ClassStat {
                 Card picked = Card.fromStringIgnoreUpgrades(c.picked);
                 map.putIfAbsent(picked, new Rate<>(picked));
                 map.get(picked).win++;
+
 
                 List<Card>
                         notPicked =
@@ -76,24 +95,30 @@ public class ClassStat {
                 }
             });
 
-            playTime += run.runData.playtime;
-            if (run.isHeartKill) {
-                fastestTime = Math.min(fastestTime, run.runData.playtime);
+            if (run.neowPicked != null) {
+                neowWinRate.putIfAbsent(run.neowPicked, new Rate<>(run.neowPicked));
+                if (run.isHeartKill) {
+                    neowWinRate.get(run.neowPicked).win++;
+                } else {
+                    neowWinRate.get(run.neowPicked).loss++;
+                }
             }
-            if (run.isHeartKill) {
-                ++numVictory;
-            } else {
-                ++numDeath;
+
+            if (run.neowPicked != null && !run.neowSkipped.isEmpty()) {
+                neowPickRate.putIfAbsent(run.neowPicked, new Rate<>(run.neowPicked));
+                neowPickRate.get(run.neowPicked).win++;
+                run.neowSkipped.forEach(neow -> {
+                    neowPickRate.putIfAbsent(neow, new Rate<>(neow));
+                    neowPickRate.get(neow).loss++;
+                });
             }
-            totalFloorsClimbed += run.runData.floor_reached;
-            bossKilled += run.bossesKilled;
-            enemyKilled += run.enemiesKilled;
-            highestScore = Math.max(highestScore, run.runData.score);
         }
 
         this.cardPicksAct1 = cardPicksAct1.values().stream().sorted().collect(Collectors.toList());
         this.cardPicksAfterAct1 = cardPicksAfterAct1.values().stream().sorted().collect(Collectors.toList());
         this.cardWinRate = cardWinRate.values().stream().sorted().collect(Collectors.toList());
+        this.neowWinRate = neowWinRate.values().stream().sorted().collect(Collectors.toList());
+        this.neowPickRate = neowPickRate.values().stream().sorted().collect(Collectors.toList());
     }
 
     private static int getHighestWinStreak(List<Run> runs) {

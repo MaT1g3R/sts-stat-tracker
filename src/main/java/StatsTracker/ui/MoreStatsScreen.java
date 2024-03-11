@@ -25,7 +25,8 @@ public class MoreStatsScreen implements DropdownMenuListener {
             "Overall",
             "Card pick rate act 1",
             "Card pick rate after act 1",
-            "Card win rate"
+            "Card win rate",
+            "Neow bonus",
     };
 
     public String currentClass() {

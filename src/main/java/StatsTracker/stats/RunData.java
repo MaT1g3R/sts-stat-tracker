@@ -60,6 +60,9 @@ public class RunData {
     // Run history+ stats
     public List<String> score_breakdown = new ArrayList<>();
 
+    public List<String> neow_bonuses_skipped_log = new ArrayList<>();
+    public List<String> neow_costs_skipped_log = new ArrayList<>();
+
     public static Comparator<RunData> orderByTimestampDesc = (o1, o2) -> o2.timestamp.compareTo(o1.timestamp);
 
     public RunData() {

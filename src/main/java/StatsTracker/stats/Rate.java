@@ -15,7 +15,7 @@ public class Rate<T> implements Comparable<Rate<T>> {
         return win + loss;
     }
 
-    public double pickRatePercent() {
+    public double percent() {
         return Utils.calculatePercent(win, total());
     }
 
@@ -25,9 +25,9 @@ public class Rate<T> implements Comparable<Rate<T>> {
 
     @Override
     public int compareTo(Rate rate) {
-        if (pickRatePercent() == rate.pickRatePercent()) {
+        if (percent() == rate.percent()) {
             return what.toString().compareTo(rate.what.toString());
         }
-        return pickRatePercent() < rate.pickRatePercent() ? 1 : -1;
+        return percent() < rate.percent() ? 1 : -1;
     }
 }

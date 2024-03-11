@@ -9,7 +9,9 @@ import com.megacrit.cardcrawl.screens.stats.BattleStats;
 import com.megacrit.cardcrawl.screens.stats.ObtainStats;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,6 +29,9 @@ public class Run implements Comparable<Run> {
     public final int bossesKilled;
     public int singingBowlFloor = -1;
 
+    public final Neow neowPicked;
+    public final List<Neow> neowSkipped = new ArrayList<>();
+
     private Run(RunData runData, AbstractPlayer.PlayerClass playerClass) {
         this.runData = runData;
         this.playerClass = playerClass;
@@ -43,6 +48,16 @@ public class Run implements Comparable<Run> {
             if (key.equals("Singing Bowl")) {
                 this.singingBowlFloor = floor;
             }
+        }
+
+        if (runData.neow_bonus != null && !runData.neow_bonus.isEmpty()) {
+            this.neowPicked = new Neow(runData.neow_bonus, runData.neow_cost);
+        } else {
+            this.neowPicked = null;
+        }
+        for (int i = 0; i < runData.neow_bonuses_skipped_log.size(); i++) {
+            this.neowSkipped.add(new Neow(runData.neow_bonuses_skipped_log.get(i),
+                    runData.neow_costs_skipped_log.get(i)));
         }
     }
 

@@ -3,6 +3,7 @@ package StatsTracker.patches;
 import StatsTracker.Utils;
 import StatsTracker.stats.Card;
 import StatsTracker.stats.ClassStat;
+import StatsTracker.stats.Neow;
 import StatsTracker.stats.Rate;
 import StatsTracker.ui.CharStatRenderer;
 import StatsTracker.ui.MoreStatsScreen;
@@ -148,13 +149,14 @@ public class StatsScreenPatch {
         for (int i = 0; i < len; i++) {
             Rate<Card> c = picks.get(i);
             if (i <= len / 2) {
-                builder.append(c.what.toString()).append(" ").append(c.pickRatePercent()).append("% NL ");
+                builder.append(c.what.toString()).append(" ").append(c.percent()).append("% NL ");
             } else {
-                builder2.append(c.what.toString()).append(" ").append(c.pickRatePercent()).append("% NL ");
+                builder2.append(c.what.toString()).append(" ").append(c.percent()).append("% NL ");
             }
         }
         render2Columns(sb, screenX, renderY, builder.toString(), builder2.toString());
     }
+
 
     private static void renderCardWinRate(StatsScreen s, SpriteBatch sb, float screenX) {
         float renderY = getScrollY(s);
@@ -171,18 +173,67 @@ public class StatsScreenPatch {
             if (i <= len / 2) {
                 builder.append(c.what.toString())
                         .append(" #y")
-                        .append(c.pickRatePercent())
-                        .append("% ").append(c.winLoss())
+                        .append(c.percent())
+                        .append("% ")
+                        .append(c.winLoss())
                         .append(" NL ");
             } else {
                 builder2.append(c.what.toString())
                         .append(" #y")
-                        .append(c.pickRatePercent())
-                        .append("% ").append(c.winLoss())
+                        .append(c.percent())
+                        .append("% ")
+                        .append(c.winLoss())
                         .append(" NL ");
             }
         }
         render2Columns(sb, screenX, renderY, builder.toString(), builder2.toString());
+    }
+
+    private static void renderNeowBonus(StatsScreen s, SpriteBatch sb, float screenX) {
+        float renderY = getScrollY(s);
+        renderHeader(sb, colorForClass("Neow win rate"), screenX, renderY);
+
+        StringBuilder builder = new StringBuilder();
+        StringBuilder builder2 = new StringBuilder();
+
+        ClassStat cs = moreStatsScreen.getClassStat();
+        for (Rate<Neow> n : cs.neowWinRate) {
+            builder.append(n.what.toString())
+                    .append(" #y")
+                    .append(n.percent())
+                    .append("% ")
+                    .append(n.winLoss())
+                    .append(" NL ");
+        }
+        for (Rate<Neow> n : cs.neowPickRate) {
+            builder2.append(n.what.toString())
+                    .append(" #y")
+                    .append(n.percent())
+                    .append("% ")
+                    .append(n.winLoss())
+                    .append(" NL ");
+        }
+
+        FontHelper.renderSmartText(sb,
+                FontHelper.panelNameFont,
+                builder.toString(),
+                screenX + 75.0F * Settings.scale,
+                renderY + 766.0F * Settings.yScale,
+                9999.0F,
+                38.0F * Settings.scale,
+                Settings.CREAM_COLOR);
+
+        renderY -= 44.0F * Settings.scale * cs.neowWinRate.size();
+        renderY -= 100 * Settings.scale;
+        renderHeader(sb, colorForClass("Neow pick rate"), screenX, renderY);
+        FontHelper.renderSmartText(sb,
+                FontHelper.panelNameFont,
+                builder2.toString(),
+                screenX + 75.0F * Settings.scale,
+                renderY + 766.0F * Settings.yScale,
+                9999.0F,
+                38.0F * Settings.scale,
+                Settings.CREAM_COLOR);
     }
 
     public static void renderStatScreen(StatsScreen s, SpriteBatch sb) {
@@ -201,6 +252,9 @@ public class StatsScreenPatch {
                 break;
             case "Card win rate":
                 renderCardWinRate(s, sb, screenX);
+                break;
+            case "Neow bonus":
+                renderNeowBonus(s, sb, screenX);
                 break;
         }
 
