@@ -9,6 +9,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -131,6 +132,11 @@ public class Run implements Comparable<Run> {
         }
 
         return Optional.of(new Run(data, playerClass));
+    }
+
+    public boolean isInRange(YearMonth startDate, YearMonth endDate) {
+        YearMonth date = YearMonth.fromDate(new Date(Long.parseLong(runData.timestamp) * 1000));
+        return date.compareTo(startDate) >= 0 && date.compareTo(endDate) <= 0;
     }
 
     @Override
