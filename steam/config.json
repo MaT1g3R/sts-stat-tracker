@@ -3,7 +3,7 @@
   "title": "StatsTracker",
   "description": "Additional stats tracking",
   "visibility": "private",
-  "changeNote": "v0.0.2 - Fix win rate calculation when there are 0 runs",
+  "changeNote": "v0.1.0\n- Implement date range filter for stats\n- Add a character drop down\n- Implement card pick rate",
   "tags": [
     "Utility",
     "Qol"

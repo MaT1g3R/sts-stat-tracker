@@ -1,7 +1,15 @@
 Track additional stats about your runs.
 
-This is the very initial release, which fixes the character statistics screen (Main Menu -> Statistics -> Character Stats)
-and adds some additional info such as win rate and rotating streaks.
+The stats can be viewed at the character statistics screen (Main Menu -> Statistics -> Character Stats).
+
+Features:
+[list]
+
+[*] Fixed base game character statistics to use data from run history
+
+[*] Card pick rate in act 1 and after act 1
+
+[/list]
 
 More stats coming soon!
 
