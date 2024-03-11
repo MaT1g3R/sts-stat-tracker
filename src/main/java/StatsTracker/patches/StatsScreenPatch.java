@@ -149,9 +149,19 @@ public class StatsScreenPatch {
         for (int i = 0; i < len; i++) {
             Rate<Card> c = picks.get(i);
             if (i <= len / 2) {
-                builder.append(c.what.toString()).append(" ").append(c.percent()).append("% NL ");
+                builder.append(c.what.toString())
+                        .append(" #y")
+                        .append(c.percent())
+                        .append("% ")
+                        .append(c.winLoss())
+                        .append(" NL ");
             } else {
-                builder2.append(c.what.toString()).append(" ").append(c.percent()).append("% NL ");
+                builder2.append(c.what.toString())
+                        .append(" #y")
+                        .append(c.percent())
+                        .append("% ")
+                        .append(c.winLoss())
+                        .append(" NL ");
             }
         }
         render2Columns(sb, screenX, renderY, builder.toString(), builder2.toString());
