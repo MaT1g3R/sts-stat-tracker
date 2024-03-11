@@ -20,8 +20,8 @@ public class ClassStat {
     public final int bestWinStreak;
     public int highestScore = 0;
 
-    public final List<PickSkip<Card>> cardPicksAct1;
-    public final List<PickSkip<Card>> cardPicksAfterAct1;
+    public final List<Rate<Card>> cardPicksAct1;
+    public final List<Rate<Card>> cardPicksAfterAct1;
 
 
     public ClassStat(List<Run> runs, boolean rotate) {
@@ -32,12 +32,12 @@ public class ClassStat {
             bestWinStreak = getHighestWinStreak(runs);
         }
 
-        Map<Card, PickSkip<Card>> cardPicksAct1 = new java.util.HashMap<>();
-        Map<Card, PickSkip<Card>> cardPicksAfterAct1 = new java.util.HashMap<>();
+        Map<Card, Rate<Card>> cardPicksAct1 = new java.util.HashMap<>();
+        Map<Card, Rate<Card>> cardPicksAfterAct1 = new java.util.HashMap<>();
 
         for (Run run : runs) {
             for (CardChoiceStats c : run.runData.card_choices) {
-                Map<Card, PickSkip<Card>> map;
+                Map<Card, Rate<Card>> map;
                 if (c.floor >= 17) {
                     map = cardPicksAfterAct1;
                 } else {
@@ -45,8 +45,8 @@ public class ClassStat {
                 }
 
                 Card picked = Card.fromStringIgnoreUpgrades(c.picked);
-                map.putIfAbsent(picked, new PickSkip<>(picked));
-                map.get(picked).picks++;
+                map.putIfAbsent(picked, new Rate<>(picked));
+                map.get(picked).win++;
 
                 List<Card>
                         notPicked =
@@ -61,8 +61,8 @@ public class ClassStat {
                 }
 
                 notPicked.forEach(c1 -> {
-                    map.putIfAbsent(c1, new PickSkip<>(c1));
-                    map.get(c1).skips++;
+                    map.putIfAbsent(c1, new Rate<>(c1));
+                    map.get(c1).loss++;
                 });
             }
 

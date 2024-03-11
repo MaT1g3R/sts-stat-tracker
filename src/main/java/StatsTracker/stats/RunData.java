@@ -60,9 +60,7 @@ public class RunData {
     // Run history+ stats
     public List<String> score_breakdown = new ArrayList<>();
 
-    public static Comparator<RunData> orderByTimestampDesc = (o1, o2) -> {
-        return o2.timestamp.compareTo(o1.timestamp);
-    };
+    public static Comparator<RunData> orderByTimestampDesc = (o1, o2) -> o2.timestamp.compareTo(o1.timestamp);
 
     public RunData() {
     }

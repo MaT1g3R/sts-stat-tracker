@@ -5,7 +5,7 @@ import StatsTracker.MoreStatsScreen;
 import StatsTracker.Utils;
 import StatsTracker.stats.Card;
 import StatsTracker.stats.ClassStat;
-import StatsTracker.stats.PickSkip;
+import StatsTracker.stats.Rate;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.evacipated.cardcrawl.modthespire.lib.SpirePatch;
 import com.evacipated.cardcrawl.modthespire.lib.SpireReturn;
@@ -15,6 +15,7 @@ import com.megacrit.cardcrawl.screens.mainMenu.ScrollBar;
 import com.megacrit.cardcrawl.screens.stats.AchievementGrid;
 import com.megacrit.cardcrawl.screens.stats.StatsScreen;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static com.megacrit.cardcrawl.screens.stats.StatsScreen.NAMES;
@@ -44,6 +45,11 @@ public class StatsScreenPatch {
             default:
                 return "#y";
         }
+    }
+
+    public static String colorForClass(String s) {
+        String color = getCharColor();
+        return Arrays.stream(s.split(" ")).map(w -> color + w).reduce((s1, s2) -> s1 + " " + s2).orElse("");
     }
 
     @SpirePatch(clz = StatsScreen.class, method = SpirePatch.CONSTRUCTOR)
@@ -91,9 +97,7 @@ public class StatsScreenPatch {
     private static void renderCharacterStats(StatsScreen s, SpriteBatch sb, float screenX) {
         float renderY = Utils.getField(s, StatsScreen.class, "scrollY");
         renderHeader(sb, NAMES[0], screenX, renderY);
-        new CharStatRenderer(moreStatsScreen.classStats[moreStatsScreen.classStats.length - 1]).render(sb,
-                screenX,
-                renderY);
+        new CharStatRenderer(moreStatsScreen.getClassStat()).render(sb, screenX, renderY);
         renderY -= 400.0F * Settings.scale;
 
         for (int i = 0; i < 4; i++) {
@@ -109,23 +113,17 @@ public class StatsScreenPatch {
 
         String name = act1 ? "Card pick rate act 1" : "Card pick rate after act 1";
         name += " (top 200)";
-        String color = getCharColor();
-        StringBuilder nameBuilder = new StringBuilder();
-        for (String part : name.split(" ")) {
-            nameBuilder.append(color).append(part).append(" ");
-        }
-
-        renderHeader(sb, nameBuilder.toString(), screenX, renderY);
+        renderHeader(sb, colorForClass(name), screenX, renderY);
 
         StringBuilder builder = new StringBuilder();
         StringBuilder builder2 = new StringBuilder();
 
         ClassStat cs = moreStatsScreen.getClassStat();
-        List<PickSkip<Card>> picks = act1 ? cs.cardPicksAct1 : cs.cardPicksAfterAct1;
+        List<Rate<Card>> picks = act1 ? cs.cardPicksAct1 : cs.cardPicksAfterAct1;
 
         int len = Math.min(picks.size(), 200);
         for (int i = 0; i < len; i++) {
-            PickSkip<Card> c = picks.get(i);
+            Rate<Card> c = picks.get(i);
             if (i <= len / 2) {
                 builder.append(c.what.toString()).append(" ").append(c.pickRatePercent()).append("% NL ");
             } else {
