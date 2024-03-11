@@ -3,7 +3,7 @@
   "title": "StatsTracker",
   "description": "Additional stats tracking",
   "visibility": "private",
-  "changeNote": "v0.1.2 - Fix card name normalization",
+  "changeNote": "v1.0.0\n- Add card win rate\n- Add neow win/pick rate",
   "tags": [
     "Utility",
     "Qol"
