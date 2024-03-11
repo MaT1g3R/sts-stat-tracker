@@ -3,7 +3,7 @@
   "title": "StatsTracker",
   "description": "Additional stats tracking",
   "visibility": "private",
-  "changeNote": "v0.1.0\n- Implement date range filter for stats\n- Add a character drop down\n- Implement card pick rate",
+  "changeNote": "v0.1.1 - Fix achievement grid crash",
   "tags": [
     "Utility",
     "Qol"

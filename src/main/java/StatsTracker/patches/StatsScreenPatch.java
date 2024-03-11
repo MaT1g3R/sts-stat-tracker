@@ -11,6 +11,7 @@ import com.evacipated.cardcrawl.modthespire.lib.SpireReturn;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.helpers.FontHelper;
 import com.megacrit.cardcrawl.screens.mainMenu.ScrollBar;
+import com.megacrit.cardcrawl.screens.stats.AchievementGrid;
 import com.megacrit.cardcrawl.screens.stats.StatsScreen;
 
 import java.util.List;
@@ -51,7 +52,6 @@ public class StatsScreenPatch {
         }
     }
 
-
     @SpirePatch(clz = StatsScreen.class, method = "updateScrolling")
     public static class UpdateScrollingPatch {
         public static SpireReturn<Void> Prefix(StatsScreen __instance) {
@@ -82,6 +82,7 @@ public class StatsScreenPatch {
     @SpirePatch(clz = StatsScreen.class, method = "refreshData")
     public static class RefreshDataPatch {
         public static void Replace(StatsScreen __instance) {
+            StatsScreen.achievements = new AchievementGrid();
             moreStatsScreen.refreshData();
         }
     }
