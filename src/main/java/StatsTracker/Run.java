@@ -4,6 +4,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.google.gson.JsonSyntaxException;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.screens.stats.BattleStats;
+import com.megacrit.cardcrawl.screens.stats.ObtainStats;
 import com.megacrit.cardcrawl.screens.stats.RunData;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -28,6 +29,8 @@ public class Run implements Comparable<Run> {
     public final int enemiesKilled;
     public final int bossesKilled;
 
+    public int singingBowlFloor = -1;
+
     private Run(RunData runData, AbstractPlayer.PlayerClass playerClass) {
         this.runData = runData;
         this.playerClass = playerClass;
@@ -38,6 +41,14 @@ public class Run implements Comparable<Run> {
         Pair<Integer, Integer> enemiesKilled = enemiesKilled();
         this.enemiesKilled = enemiesKilled.getLeft();
         this.bossesKilled = enemiesKilled.getRight();
+
+        for (ObtainStats r : runData.relics_obtained) {
+            int floor = r.floor;
+            String key = r.key;
+            if (key.equals("Singing Bowl")) {
+                this.singingBowlFloor = floor;
+            }
+        }
     }
 
     private boolean isHeartKill() {

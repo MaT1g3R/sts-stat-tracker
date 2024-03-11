@@ -1,12 +1,10 @@
 package StatsTracker;
 
+import StatsTracker.stats.ClassStat;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.helpers.FontHelper;
 import com.megacrit.cardcrawl.screens.stats.CharStat;
-
-import java.math.BigDecimal;
-import java.math.MathContext;
 
 public class CharStatRenderer {
     private String info;
@@ -29,15 +27,12 @@ public class CharStatRenderer {
             }
         }
 
-        int runs = cs.numVictory + cs.numDeath;
-        double winRate = 0;
-        if (runs > 0) {
-            winRate = (100D * cs.numVictory) / runs;
-        }
-        BigDecimal bd = new BigDecimal(winRate);
-        bd = bd.round(new MathContext(3));
-
-        this.info = this.info + "Win Rate: #y" + bd + "%" + " NL ";
+        this.info =
+                this.info +
+                        "Win Rate: #y" +
+                        Utils.calculatePercent(cs.numVictory, cs.numDeath + cs.numVictory) +
+                        "%" +
+                        " NL ";
 
         this.info2 = CharStat.TEXT[17] + cs.numVictory + " NL ";
         this.info2 = this.info2 + CharStat.TEXT[18] + cs.numDeath + " NL ";

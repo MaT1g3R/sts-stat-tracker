@@ -1,5 +1,6 @@
 package StatsTracker;
 
+import StatsTracker.stats.ClassStat;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.helpers.FontHelper;
 import com.megacrit.cardcrawl.screens.options.DropdownMenu;
@@ -12,25 +13,30 @@ public class MoreStatsScreen implements DropdownMenuListener {
     public DropdownMenu startDateDropdown;
     public DropdownMenu endDateDropDown;
     public DropdownMenu classDropdown;
+    public DropdownMenu statTypeDropdown;
     public ArrayList<YearMonth> startDates;
     public ArrayList<YearMonth> endDates;
     public ClassStat[] classStats;
-
     public final String[] CLASSES = new String[]{"All", "Ironclad", "Silent", "Defect", "Watcher"};
+    public final String[] STAT_TYPES = new String[]{"Overall", "Card pick rate act 1", "Card pick rate after act 1"};
+
+    public String currentClass() {
+        return CLASSES[classDropdown.getSelectedIndex()];
+    }
 
     @Override
     public void changedSelectionTo(DropdownMenu dropdownMenu, int i, String s) {
         int startDateIndex = startDateDropdown.getSelectedIndex();
         int endDateIndex = endDateDropDown.getSelectedIndex();
-        int classIndex = classDropdown.getSelectedIndex();
 
-        setClassStats(startDates.get(startDateIndex), endDates.get(endDateIndex), CLASSES[classIndex]);
+        setClassStats(startDates.get(startDateIndex), endDates.get(endDateIndex), currentClass());
     }
 
     public void update() {
         startDateDropdown.update();
         endDateDropDown.update();
         classDropdown.update();
+        statTypeDropdown.update();
     }
 
     public void refreshData() {
@@ -51,6 +57,8 @@ public class MoreStatsScreen implements DropdownMenuListener {
                         Settings.LIGHT_YELLOW_COLOR);
 
         classDropdown = new DropdownMenu(this, CLASSES, FontHelper.tipBodyFont, Settings.LIGHT_YELLOW_COLOR);
+
+        statTypeDropdown = new DropdownMenu(null, STAT_TYPES, FontHelper.tipBodyFont, Settings.LIGHT_YELLOW_COLOR);
 
         setClassStats(startDates.get(startDateDropdown.getSelectedIndex()),
                 endDates.get(endDateDropDown.getSelectedIndex()),
