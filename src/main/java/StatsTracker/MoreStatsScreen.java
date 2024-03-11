@@ -1,6 +1,5 @@
 package StatsTracker;
 
-import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.helpers.FontHelper;
 import com.megacrit.cardcrawl.screens.options.DropdownMenu;
@@ -16,14 +15,16 @@ public class MoreStatsScreen implements DropdownMenuListener {
     public ArrayList<YearMonth> startDates;
     public ArrayList<YearMonth> endDates;
     public ClassStat[] classStats;
-    public AbstractPlayer.PlayerClass playerClass;
+
+    public final String[] CLASSES = new String[]{"All", "Ironclad", "Silent", "Defect", "Watcher"};
 
     @Override
     public void changedSelectionTo(DropdownMenu dropdownMenu, int i, String s) {
         int startDateIndex = startDateDropdown.getSelectedIndex();
         int endDateIndex = endDateDropDown.getSelectedIndex();
+        int classIndex = classDropdown.getSelectedIndex();
 
-        setClassStats(startDates.get(startDateIndex), endDates.get(endDateIndex));
+        setClassStats(startDates.get(startDateIndex), endDates.get(endDateIndex), CLASSES[classIndex]);
     }
 
     public void update() {
@@ -49,26 +50,44 @@ public class MoreStatsScreen implements DropdownMenuListener {
                         FontHelper.tipBodyFont,
                         Settings.LIGHT_YELLOW_COLOR);
 
-        classDropdown = new DropdownMenu(this, new String[]{""}, FontHelper.tipBodyFont, Settings.LIGHT_YELLOW_COLOR);
+        classDropdown = new DropdownMenu(this, CLASSES, FontHelper.tipBodyFont, Settings.LIGHT_YELLOW_COLOR);
 
         setClassStats(startDates.get(startDateDropdown.getSelectedIndex()),
-                endDates.get(endDateDropDown.getSelectedIndex()));
+                endDates.get(endDateDropDown.getSelectedIndex()),
+                CLASSES[classDropdown.getSelectedIndex()]);
     }
 
     public boolean isDropDownOpen() {
         return startDateDropdown.isOpen || endDateDropDown.isOpen || classDropdown.isOpen;
     }
 
-    private static ClassStat[] getClassStats(YearMonth startDate, YearMonth endDate) {
+    private static ClassStat[] getClassStats(YearMonth startDate, YearMonth endDate, String className) {
         ClassStat ironcladCS = new ClassStat(StatsTracker.runHistoryManager.getIroncladRuns(startDate, endDate), false);
         ClassStat silentCS = new ClassStat(StatsTracker.runHistoryManager.getSilentRuns(startDate, endDate), false);
         ClassStat defectCS = new ClassStat(StatsTracker.runHistoryManager.getDefectRuns(startDate, endDate), false);
         ClassStat watcherCS = new ClassStat(StatsTracker.runHistoryManager.getWatcherRuns(startDate, endDate), false);
-        ClassStat rotatingCS = new ClassStat(StatsTracker.runHistoryManager.getAllRuns(startDate, endDate), true);
-        return new ClassStat[]{ironcladCS, silentCS, defectCS, watcherCS, rotatingCS};
+
+        ClassStat allCS;
+        switch (className) {
+            case "Ironclad":
+                allCS = ironcladCS;
+                break;
+            case "Silent":
+                allCS = silentCS;
+                break;
+            case "Defect":
+                allCS = defectCS;
+                break;
+            case "Watcher":
+                allCS = watcherCS;
+                break;
+            default:
+                allCS = new ClassStat(StatsTracker.runHistoryManager.getAllRuns(startDate, endDate), true);
+        }
+        return new ClassStat[]{ironcladCS, silentCS, defectCS, watcherCS, allCS};
     }
 
-    private void setClassStats(YearMonth startDate, YearMonth endDate) {
-        classStats = getClassStats(startDate, endDate);
+    private void setClassStats(YearMonth startDate, YearMonth endDate, String className) {
+        classStats = getClassStats(startDate, endDate, className);
     }
 }

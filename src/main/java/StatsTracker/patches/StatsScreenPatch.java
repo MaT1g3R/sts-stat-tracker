@@ -91,20 +91,24 @@ public class StatsScreenPatch {
         float screenX = Utils.getField(s, StatsScreen.class, "screenX");
         float scrollY = Utils.getField(s, StatsScreen.class, "scrollY");
 
+        renderCharacterStats(s, sb, screenX);
+
         float labelY = scrollY + screenPosY(950);
         float dropdownY = labelY - screenPosY(40);
 
         float xDiff = 170;
         float startDateX = screenX + screenPosX(-270);
         float endDateX = startDateX + screenPosX(xDiff);
+        float characterX = endDateX + screenPosX(xDiff);
 
         FontHelper.renderSmartText(sb, FontHelper.tipBodyFont, "Start date", startDateX, labelY, Settings.CREAM_COLOR);
         FontHelper.renderSmartText(sb, FontHelper.tipBodyFont, "End date", endDateX, labelY, Settings.CREAM_COLOR);
+        FontHelper.renderSmartText(sb, FontHelper.tipBodyFont, "Character", characterX, labelY, Settings.CREAM_COLOR);
 
-        moreStatsScreen.endDateDropDown.render(sb, endDateX, dropdownY);
         moreStatsScreen.startDateDropdown.render(sb, startDateX, dropdownY);
+        moreStatsScreen.endDateDropDown.render(sb, endDateX, dropdownY);
+        moreStatsScreen.classDropdown.render(sb, characterX, dropdownY);
 
-        renderCharacterStats(s, sb, screenX);
 
         if (Settings.isControllerMode) {
             s.allCharsHb.move(300.0F * Settings.scale, scrollY + 600.0F * Settings.scale);
