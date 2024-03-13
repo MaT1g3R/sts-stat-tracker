@@ -1,5 +1,6 @@
 package StatsTracker.ui;
 
+import StatsTracker.StatsTracker;
 import StatsTracker.Utils;
 import StatsTracker.stats.ClassStat;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -40,9 +41,16 @@ public class CharStatRenderer {
         this.info2 = this.info2 + CharStat.TEXT[19] + cs.totalFloorsClimbed + " NL ";
         this.info2 = this.info2 + CharStat.TEXT[20] + cs.bossKilled + " NL ";
         this.info2 = this.info2 + CharStat.TEXT[21] + cs.enemyKilled + " NL ";
+        this.info2 += "         survival rate: #y" + cs.nob.percent() + "% #y" + cs.nob.winLoss() + " NL ";
     }
 
     public void render(SpriteBatch sb, float screenX, float renderY) {
+        sb.draw(StatsTracker.nobbers,
+                screenX + 675.0F * Settings.scale,
+                renderY + 531.0F * Settings.yScale,
+                StatsTracker.nobbers.getWidth() * 0.5F * Settings.scale,
+                StatsTracker.nobbers.getHeight() * 0.5F * Settings.scale
+        );
         FontHelper.renderSmartText(sb,
                 FontHelper.panelNameFont,
                 this.info,
@@ -51,15 +59,13 @@ public class CharStatRenderer {
                 9999.0F,
                 38.0F * Settings.scale,
                 Settings.CREAM_COLOR);
-        if (this.info2 != null) {
-            FontHelper.renderSmartText(sb,
-                    FontHelper.panelNameFont,
-                    this.info2,
-                    screenX + 675.0F * Settings.scale,
-                    renderY + 766.0F * Settings.yScale,
-                    9999.0F,
-                    38.0F * Settings.scale,
-                    Settings.CREAM_COLOR);
-        }
+        FontHelper.renderSmartText(sb,
+                FontHelper.panelNameFont,
+                this.info2,
+                screenX + 675.0F * Settings.scale,
+                renderY + 766.0F * Settings.yScale,
+                9999.0F,
+                38.0F * Settings.scale,
+                Settings.CREAM_COLOR);
     }
 }

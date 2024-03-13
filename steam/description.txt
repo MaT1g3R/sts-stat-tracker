@@ -2,10 +2,14 @@
 
 Track additional stats about your runs.
 
+Only A20H, non-seeded, non-custom runs are tracked.
+
 The stats can be viewed at the character statistics screen (Main Menu -> Statistics -> Character Stats).
 
 Features:
 [list]
+
+[*] Nob
 
 [*] Fixed base game character statistics to use data from run history
 

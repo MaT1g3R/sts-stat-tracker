@@ -24,7 +24,7 @@ public class ClassStat {
     public final List<Rate<Card>> cardWinRate;
     public final List<Rate<Neow>> neowWinRate;
     public final List<Rate<Neow>> neowPickRate;
-
+    public final Rate<String> nob = new Rate<>("nob survival rate");
 
     public ClassStat(List<Run> runs, boolean rotate) {
         this.rotate = rotate;
@@ -54,6 +54,16 @@ public class ClassStat {
             bossKilled += run.bossesKilled;
             enemyKilled += run.enemiesKilled;
             highestScore = Math.max(highestScore, run.runData.score);
+
+            run.runData.damage_taken.forEach(d -> {
+                if (d.enemies.equals("Gremlin Nob")) {
+                    nob.win++;
+                }
+            });
+            if (run.runData.killed_by != null && run.runData.killed_by.equals("Gremlin Nob")) {
+                nob.win--;
+                nob.loss++;
+            }
 
             for (CardChoiceStats c : run.runData.card_choices) {
                 Map<Card, Rate<Card>> map;

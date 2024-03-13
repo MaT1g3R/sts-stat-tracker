@@ -49,7 +49,7 @@ public class RunData {
     public List<Integer> items_purged_floors;
     public List<Integer> gold_per_floor;
     public List<String> daily_mods;
-    public List<BattleStats> damage_taken;
+    public List<BattleStats> damage_taken = new ArrayList<>();
     public List<EventStats> event_choices;
     public List<CardChoiceStats> card_choices;
     public List<ObtainStats> relics_obtained;

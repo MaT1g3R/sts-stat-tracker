@@ -2,8 +2,8 @@
   "steamPublishedID": "3177081814",
   "title": "StatsTracker",
   "description": "Additional stats tracking",
-  "visibility": "private",
-  "changeNote": "v1.0.0\n- Add card win rate\n- Add neow win/pick rate",
+  "visibility": "public",
+  "changeNote": "v1.1.0 - nob",
   "tags": [
     "Utility",
     "Qol"
