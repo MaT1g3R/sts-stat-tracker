@@ -3,7 +3,7 @@
   "title": "StatsTracker",
   "description": "Additional stats tracking",
   "visibility": "public",
-  "changeNote": "v1.1.0 - nob",
+  "changeNote": "v1.2.0 - Add boss relic win/pick rate",
   "tags": [
     "Utility",
     "Qol"

@@ -19,6 +19,8 @@ Features:
 
 [*] Neow pick/win rate
 
+[*] Boss relic pick/win rate
+
 [/list]
 
 More stats coming soon!
