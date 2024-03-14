@@ -37,7 +37,7 @@ public class RunData {
     public int upgraded;
     public int meditates;
     public List<String> master_deck;
-    public List<String> relics;
+    public List<String> relics = new ArrayList<>();
     public int circlet_count;
     public List<String> path_taken;
     public List<String> path_per_floor;
@@ -50,7 +50,7 @@ public class RunData {
     public List<Integer> gold_per_floor;
     public List<String> daily_mods;
     public List<BattleStats> damage_taken = new ArrayList<>();
-    public List<EventStats> event_choices;
+    public List<EventStats> event_choices = new ArrayList<>();
     public List<CardChoiceStats> card_choices;
     public List<ObtainStats> relics_obtained;
     public List<ObtainStats> potions_obtained;

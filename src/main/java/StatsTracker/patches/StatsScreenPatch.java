@@ -1,10 +1,7 @@
 package StatsTracker.patches;
 
 import StatsTracker.Utils;
-import StatsTracker.stats.Card;
-import StatsTracker.stats.ClassStat;
-import StatsTracker.stats.Neow;
-import StatsTracker.stats.Rate;
+import StatsTracker.stats.*;
 import StatsTracker.ui.CharStatRenderer;
 import StatsTracker.ui.MoreStatsScreen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -246,6 +243,147 @@ public class StatsScreenPatch {
                 Settings.CREAM_COLOR);
     }
 
+    private static void renderBossRelicPickRate(StatsScreen s, SpriteBatch sb, float screenX) {
+        float renderY = getScrollY(s);
+        ClassStat cs = moreStatsScreen.getClassStat();
+        renderHeader(sb, colorForClass("Boss relic pick rate (act 1)"), screenX, renderY);
+
+        StringBuilder act1 = new StringBuilder();
+        StringBuilder act12 = new StringBuilder();
+
+        StringBuilder act2 = new StringBuilder();
+        StringBuilder act22 = new StringBuilder();
+
+        for (int i = 0; i < cs.bossRelicPickRateAct1.size(); i++) {
+            Rate<BossRelic> r = cs.bossRelicPickRateAct1.get(i);
+            if (i <= cs.bossRelicPickRateAct1.size() / 2) {
+                act1.append(r.what.toString())
+                        .append(" #y")
+                        .append(r.percent())
+                        .append("% ")
+                        .append(r.winLoss())
+                        .append(" NL ");
+            } else {
+                act12.append(r.what.toString())
+                        .append(" #y")
+                        .append(r.percent())
+                        .append("% ")
+                        .append(r.winLoss())
+                        .append(" NL ");
+            }
+        }
+        for (int i = 0; i < cs.bossRelicPickRateAct2.size(); i++) {
+            Rate<BossRelic> r = cs.bossRelicPickRateAct2.get(i);
+            if (i <= cs.bossRelicPickRateAct2.size() / 2) {
+                act2.append(r.what.toString())
+                        .append(" #y")
+                        .append(r.percent())
+                        .append("% ")
+                        .append(r.winLoss())
+                        .append(" NL ");
+            } else {
+                act22.append(r.what.toString())
+                        .append(" #y")
+                        .append(r.percent())
+                        .append("% ")
+                        .append(r.winLoss())
+                        .append(" NL ");
+            }
+        }
+
+        render2Columns(sb, screenX, renderY, act1.toString(), act12.toString());
+
+        renderY -= 22.0F * Settings.scale * cs.bossRelicPickRateAct1.size();
+        renderY -= 100 * Settings.scale;
+
+        renderHeader(sb, colorForClass("Boss relic pick rate (act 2)"), screenX, renderY);
+        render2Columns(sb, screenX, renderY, act2.toString(), act22.toString());
+    }
+
+    private static void renderBossRelicWinRate(StatsScreen s, SpriteBatch sb, float screenX) {
+        float renderY = getScrollY(s);
+        ClassStat cs = moreStatsScreen.getClassStat();
+        renderHeader(sb, colorForClass("Boss relic win rate (act 1)"), screenX, renderY);
+
+        StringBuilder act1 = new StringBuilder();
+        StringBuilder act12 = new StringBuilder();
+
+        StringBuilder act2 = new StringBuilder();
+        StringBuilder act22 = new StringBuilder();
+
+        StringBuilder swap = new StringBuilder();
+        StringBuilder swap2 = new StringBuilder();
+
+        for (int i = 0; i < cs.bossRelicWinRateAct1.size(); i++) {
+            Rate<BossRelic> r = cs.bossRelicWinRateAct1.get(i);
+            if (i <= cs.bossRelicWinRateAct1.size() / 2) {
+                act1.append(r.what.toString())
+                        .append(" #y")
+                        .append(r.percent())
+                        .append("% ")
+                        .append(r.winLoss())
+                        .append(" NL ");
+            } else {
+                act12.append(r.what.toString())
+                        .append(" #y")
+                        .append(r.percent())
+                        .append("% ")
+                        .append(r.winLoss())
+                        .append(" NL ");
+            }
+        }
+        for (int i = 0; i < cs.bossRelicWinRateAct2.size(); i++) {
+            Rate<BossRelic> r = cs.bossRelicWinRateAct2.get(i);
+            if (i <= cs.bossRelicWinRateAct2.size() / 2) {
+                act2.append(r.what.toString())
+                        .append(" #y")
+                        .append(r.percent())
+                        .append("% ")
+                        .append(r.winLoss())
+                        .append(" NL ");
+            } else {
+                act22.append(r.what.toString())
+                        .append(" #y")
+                        .append(r.percent())
+                        .append("% ")
+                        .append(r.winLoss())
+                        .append(" NL ");
+            }
+        }
+        for (int i = 0; i < cs.bossRelicWinRateSwap.size(); i++) {
+            Rate<BossRelic> r = cs.bossRelicWinRateSwap.get(i);
+            if (i <= cs.bossRelicWinRateSwap.size() / 2) {
+                swap.append(r.what.toString())
+                        .append(" #y")
+                        .append(r.percent())
+                        .append("% ")
+                        .append(r.winLoss())
+                        .append(" NL ");
+            } else {
+                swap2.append(r.what.toString())
+                        .append(" #y")
+                        .append(r.percent())
+                        .append("% ")
+                        .append(r.winLoss())
+                        .append(" NL ");
+            }
+        }
+
+        render2Columns(sb, screenX, renderY, act1.toString(), act12.toString());
+
+        renderY -= 22.0F * Settings.scale * cs.bossRelicPickRateAct1.size();
+        renderY -= 100 * Settings.scale;
+
+        renderHeader(sb, colorForClass("Boss relic win rate (act 2)"), screenX, renderY);
+        render2Columns(sb, screenX, renderY, act2.toString(), act22.toString());
+
+        renderY -= 22.0F * Settings.scale * cs.bossRelicPickRateAct2.size();
+        renderY -= 100 * Settings.scale;
+
+        renderHeader(sb, colorForClass("Boss swap win rate"), screenX, renderY);
+        render2Columns(sb, screenX, renderY, swap.toString(), swap2.toString());
+    }
+
     public static void renderStatScreen(StatsScreen s, SpriteBatch sb) {
         float screenX = Utils.getField(s, StatsScreen.class, "screenX");
         float scrollY = Utils.getField(s, StatsScreen.class, "scrollY");
@@ -265,6 +403,12 @@ public class StatsScreenPatch {
                 break;
             case "Neow bonus":
                 renderNeowBonus(s, sb, screenX);
+                break;
+            case "Boss relic pick rate":
+                renderBossRelicPickRate(s, sb, screenX);
+                break;
+            case "Boss relic win rate":
+                renderBossRelicWinRate(s, sb, screenX);
                 break;
         }
 

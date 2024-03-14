@@ -21,13 +21,15 @@ public class MoreStatsScreen implements DropdownMenuListener {
     public ArrayList<YearMonth> endDates;
     public ClassStat[] classStats;
     public final String[] CLASSES = new String[]{"All", "Ironclad", "Silent", "Defect", "Watcher"};
-    public final String[] STAT_TYPES = new String[]{
-            "Overall",
-            "Card pick rate act 1",
-            "Card pick rate after act 1",
-            "Card win rate",
-            "Neow bonus",
-    };
+    public final String[]
+            STAT_TYPES =
+            new String[]{"Overall",
+                    "Card pick rate act 1",
+                    "Card pick rate after act 1",
+                    "Card win rate",
+                    "Neow bonus",
+                    "Boss relic pick rate",
+                    "Boss relic win rate"};
 
     public String currentClass() {
         return CLASSES[classDropdown.getSelectedIndex()];
