@@ -21,6 +21,10 @@ Features:
 
 [*] Boss relic pick/win rate
 
+[*] Encounter average HP loss
+
+[*] Encounter mortality rate
+
 [/list]
 
 More stats coming soon!

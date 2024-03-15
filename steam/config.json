@@ -3,7 +3,7 @@
   "title": "StatsTracker",
   "description": "Additional stats tracking",
   "visibility": "public",
-  "changeNote": "v1.2.0 - Add boss relic win/pick rate",
+  "changeNote": "v1.3.0\n- Add encounter average HP loss\n- Add encounter mortality rate",
   "tags": [
     "Utility",
     "Qol"
