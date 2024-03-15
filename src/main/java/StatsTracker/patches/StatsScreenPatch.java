@@ -1,7 +1,9 @@
 package StatsTracker.patches;
 
 import StatsTracker.Utils;
-import StatsTracker.stats.*;
+import StatsTracker.stats.Card;
+import StatsTracker.stats.ClassStat;
+import StatsTracker.stats.Rate;
 import StatsTracker.ui.CharStatRenderer;
 import StatsTracker.ui.MoreStatsScreen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -20,6 +22,48 @@ import static com.megacrit.cardcrawl.screens.stats.StatsScreen.NAMES;
 import static com.megacrit.cardcrawl.screens.stats.StatsScreen.renderHeader;
 
 public class StatsScreenPatch {
+    @SpirePatch(clz = StatsScreen.class, method = "updateScrolling")
+    public static class UpdateScrollingPatch {
+        public static SpireReturn<Void> Prefix(StatsScreen __instance) {
+            if (moreStatsScreen.isDropDownOpen()) {
+                return SpireReturn.Return();
+            }
+            return SpireReturn.Continue();
+        }
+    }
+
+    @SpirePatch(clz = StatsScreen.class, method = "update")
+    public static class UpdatePatch {
+        public static void Postfix(StatsScreen __instance) {
+            moreStatsScreen.update();
+        }
+    }
+
+    @SpirePatch(clz = StatsScreen.class, method = "refreshData")
+    public static class RefreshDataPatch {
+        public static void Replace(StatsScreen __instance) {
+            StatsScreen.achievements = new AchievementGrid();
+            moreStatsScreen.refreshData();
+        }
+    }
+
+    @SpirePatch(clz = StatsScreen.class, method = SpirePatch.CONSTRUCTOR)
+    public static class ConstructorPatch {
+        public static void Postfix(StatsScreen __instance) {
+            moreStatsScreen = new MoreStatsScreen();
+        }
+    }
+
+    @SpirePatch(clz = StatsScreen.class, method = "render")
+    public static class RenderPatch {
+        public static void Replace(StatsScreen __instance, SpriteBatch sb) {
+            renderStatScreen(__instance, sb);
+            __instance.button.render(sb);
+            ScrollBar scrollBar = Utils.getField(__instance, StatsScreen.class, "scrollBar");
+            scrollBar.render(sb);
+        }
+    }
+
     public static MoreStatsScreen moreStatsScreen;
 
     private static float screenPosX(float val) {
@@ -45,52 +89,15 @@ public class StatsScreenPatch {
         }
     }
 
-    public static String colorForClass(String s) {
-        String color = getCharColor();
+    public static String colorText(String s, String color) {
         return Arrays.stream(s.split(" ")).map(w -> color + w).reduce((s1, s2) -> s1 + " " + s2).orElse("");
     }
 
-    @SpirePatch(clz = StatsScreen.class, method = SpirePatch.CONSTRUCTOR)
-    public static class ConstructorPatch {
-        public static void Postfix(StatsScreen __instance) {
-            moreStatsScreen = new MoreStatsScreen();
-        }
+    public static String colorForClass(String s) {
+        String color = getCharColor();
+        return colorText(s, color);
     }
 
-    @SpirePatch(clz = StatsScreen.class, method = "updateScrolling")
-    public static class UpdateScrollingPatch {
-        public static SpireReturn<Void> Prefix(StatsScreen __instance) {
-            if (moreStatsScreen.isDropDownOpen()) {
-                return SpireReturn.Return();
-            }
-            return SpireReturn.Continue();
-        }
-    }
-
-    @SpirePatch(clz = StatsScreen.class, method = "update")
-    public static class UpdatePatch {
-        public static void Postfix(StatsScreen __instance) {
-            moreStatsScreen.update();
-        }
-    }
-
-    @SpirePatch(clz = StatsScreen.class, method = "render")
-    public static class RenderPatch {
-        public static void Replace(StatsScreen __instance, SpriteBatch sb) {
-            renderStatScreen(__instance, sb);
-            __instance.button.render(sb);
-            ScrollBar scrollBar = Utils.getField(__instance, StatsScreen.class, "scrollBar");
-            scrollBar.render(sb);
-        }
-    }
-
-    @SpirePatch(clz = StatsScreen.class, method = "refreshData")
-    public static class RefreshDataPatch {
-        public static void Replace(StatsScreen __instance) {
-            StatsScreen.achievements = new AchievementGrid();
-            moreStatsScreen.refreshData();
-        }
-    }
 
     private static float getScrollY(StatsScreen s) {
         return Utils.getField(s, StatsScreen.class, "scrollY");
@@ -130,21 +137,16 @@ public class StatsScreenPatch {
                 Settings.CREAM_COLOR);
     }
 
-    private static void renderCardPickRate(StatsScreen s, SpriteBatch sb, boolean act1, float screenX) {
-        float renderY = getScrollY(s);
-        String name = act1 ? "Card pick rate act 1" : "Card pick rate after act 1";
-        name += " (top 200)";
-        renderHeader(sb, colorForClass(name), screenX, renderY);
-
+    public static <A> void renderRates(SpriteBatch sb, float screenX, float renderY, int maxRows, List<Rate<A>> rates) {
+        int len = rates.size();
+        if (maxRows > 0) {
+            len = Math.min(len, maxRows);
+        }
         StringBuilder builder = new StringBuilder();
         StringBuilder builder2 = new StringBuilder();
 
-        ClassStat cs = moreStatsScreen.getClassStat();
-        List<Rate<Card>> picks = act1 ? cs.cardPicksAct1 : cs.cardPicksAfterAct1;
-
-        int len = Math.min(picks.size(), 200);
         for (int i = 0; i < len; i++) {
-            Rate<Card> c = picks.get(i);
+            Rate<A> c = rates.get(i);
             if (i <= len / 2) {
                 builder.append(c.what.toString())
                         .append(" #y")
@@ -164,63 +166,25 @@ public class StatsScreenPatch {
         render2Columns(sb, screenX, renderY, builder.toString(), builder2.toString());
     }
 
-
-    private static void renderCardWinRate(StatsScreen s, SpriteBatch sb, float screenX) {
-        float renderY = getScrollY(s);
-        String name = "Card win rate (top 200)";
-        renderHeader(sb, colorForClass(name), screenX, renderY);
-
+    public static <A> void renderRates1Col(SpriteBatch sb,
+                                           float screenX,
+                                           float renderY,
+                                           int maxRows,
+                                           List<Rate<A>> rates) {
+        int len = rates.size();
+        if (maxRows > 0) {
+            len = Math.min(len, maxRows);
+        }
         StringBuilder builder = new StringBuilder();
-        StringBuilder builder2 = new StringBuilder();
-
-        ClassStat cs = moreStatsScreen.getClassStat();
-        int len = Math.min(cs.cardWinRate.size(), 200);
         for (int i = 0; i < len; i++) {
-            Rate<Card> c = cs.cardWinRate.get(i);
-            if (i <= len / 2) {
-                builder.append(c.what.toString())
-                        .append(" #y")
-                        .append(c.percent())
-                        .append("% ")
-                        .append(c.winLoss())
-                        .append(" NL ");
-            } else {
-                builder2.append(c.what.toString())
-                        .append(" #y")
-                        .append(c.percent())
-                        .append("% ")
-                        .append(c.winLoss())
-                        .append(" NL ");
-            }
-        }
-        render2Columns(sb, screenX, renderY, builder.toString(), builder2.toString());
-    }
-
-    private static void renderNeowBonus(StatsScreen s, SpriteBatch sb, float screenX) {
-        float renderY = getScrollY(s);
-        renderHeader(sb, colorForClass("Neow win rate"), screenX, renderY);
-
-        StringBuilder builder = new StringBuilder();
-        StringBuilder builder2 = new StringBuilder();
-
-        ClassStat cs = moreStatsScreen.getClassStat();
-        for (Rate<Neow> n : cs.neowWinRate) {
-            builder.append(n.what.toString())
+            Rate<A> c = rates.get(i);
+            builder.append(c.what.toString())
                     .append(" #y")
-                    .append(n.percent())
+                    .append(c.percent())
                     .append("% ")
-                    .append(n.winLoss())
+                    .append(c.winLoss())
                     .append(" NL ");
         }
-        for (Rate<Neow> n : cs.neowPickRate) {
-            builder2.append(n.what.toString())
-                    .append(" #y")
-                    .append(n.percent())
-                    .append("% ")
-                    .append(n.winLoss())
-                    .append(" NL ");
-        }
-
         FontHelper.renderSmartText(sb,
                 FontHelper.panelNameFont,
                 builder.toString(),
@@ -229,18 +193,41 @@ public class StatsScreenPatch {
                 9999.0F,
                 38.0F * Settings.scale,
                 Settings.CREAM_COLOR);
+    }
+
+    private static void renderCardPickRate(StatsScreen s, SpriteBatch sb, boolean act1, float screenX) {
+        float renderY = getScrollY(s);
+        String name = act1 ? "Card pick rate act 1" : "Card pick rate after act 1";
+        name += " (top 200)";
+        renderHeader(sb, colorForClass(name), screenX, renderY);
+
+        ClassStat cs = moreStatsScreen.getClassStat();
+        List<Rate<Card>> picks = act1 ? cs.cardPicksAct1 : cs.cardPicksAfterAct1;
+        renderRates(sb, screenX, renderY, 200, picks);
+    }
+
+
+    private static void renderCardWinRate(StatsScreen s, SpriteBatch sb, float screenX) {
+        float renderY = getScrollY(s);
+        String name = "Card win rate (top 200)";
+        renderHeader(sb, colorForClass(name), screenX, renderY);
+
+        ClassStat cs = moreStatsScreen.getClassStat();
+        renderRates(sb, screenX, renderY, 200, cs.cardWinRate);
+    }
+
+    private static void renderNeowBonus(StatsScreen s, SpriteBatch sb, float screenX) {
+        float renderY = getScrollY(s);
+        renderHeader(sb, colorForClass("Neow win rate"), screenX, renderY);
+
+        ClassStat cs = moreStatsScreen.getClassStat();
+        renderRates1Col(sb, screenX, renderY, 0, cs.neowWinRate);
 
         renderY -= 44.0F * Settings.scale * cs.neowWinRate.size();
         renderY -= 100 * Settings.scale;
         renderHeader(sb, colorForClass("Neow pick rate"), screenX, renderY);
-        FontHelper.renderSmartText(sb,
-                FontHelper.panelNameFont,
-                builder2.toString(),
-                screenX + 75.0F * Settings.scale,
-                renderY + 766.0F * Settings.yScale,
-                9999.0F,
-                38.0F * Settings.scale,
-                Settings.CREAM_COLOR);
+
+        renderRates1Col(sb, screenX, renderY, 0, cs.neowPickRate);
     }
 
     private static void renderBossRelicPickRate(StatsScreen s, SpriteBatch sb, float screenX) {
@@ -248,140 +235,33 @@ public class StatsScreenPatch {
         ClassStat cs = moreStatsScreen.getClassStat();
         renderHeader(sb, colorForClass("Boss relic pick rate (act 1)"), screenX, renderY);
 
-        StringBuilder act1 = new StringBuilder();
-        StringBuilder act12 = new StringBuilder();
-
-        StringBuilder act2 = new StringBuilder();
-        StringBuilder act22 = new StringBuilder();
-
-        for (int i = 0; i < cs.bossRelicPickRateAct1.size(); i++) {
-            Rate<BossRelic> r = cs.bossRelicPickRateAct1.get(i);
-            if (i <= cs.bossRelicPickRateAct1.size() / 2) {
-                act1.append(r.what.toString())
-                        .append(" #y")
-                        .append(r.percent())
-                        .append("% ")
-                        .append(r.winLoss())
-                        .append(" NL ");
-            } else {
-                act12.append(r.what.toString())
-                        .append(" #y")
-                        .append(r.percent())
-                        .append("% ")
-                        .append(r.winLoss())
-                        .append(" NL ");
-            }
-        }
-        for (int i = 0; i < cs.bossRelicPickRateAct2.size(); i++) {
-            Rate<BossRelic> r = cs.bossRelicPickRateAct2.get(i);
-            if (i <= cs.bossRelicPickRateAct2.size() / 2) {
-                act2.append(r.what.toString())
-                        .append(" #y")
-                        .append(r.percent())
-                        .append("% ")
-                        .append(r.winLoss())
-                        .append(" NL ");
-            } else {
-                act22.append(r.what.toString())
-                        .append(" #y")
-                        .append(r.percent())
-                        .append("% ")
-                        .append(r.winLoss())
-                        .append(" NL ");
-            }
-        }
-
-        render2Columns(sb, screenX, renderY, act1.toString(), act12.toString());
+        renderRates(sb, screenX, renderY, 0, cs.bossRelicPickRateAct1);
 
         renderY -= 22.0F * Settings.scale * cs.bossRelicPickRateAct1.size();
         renderY -= 100 * Settings.scale;
-
         renderHeader(sb, colorForClass("Boss relic pick rate (act 2)"), screenX, renderY);
-        render2Columns(sb, screenX, renderY, act2.toString(), act22.toString());
+
+        renderRates(sb, screenX, renderY, 0, cs.bossRelicPickRateAct2);
     }
 
     private static void renderBossRelicWinRate(StatsScreen s, SpriteBatch sb, float screenX) {
         float renderY = getScrollY(s);
         ClassStat cs = moreStatsScreen.getClassStat();
+
         renderHeader(sb, colorForClass("Boss relic win rate (act 1)"), screenX, renderY);
-
-        StringBuilder act1 = new StringBuilder();
-        StringBuilder act12 = new StringBuilder();
-
-        StringBuilder act2 = new StringBuilder();
-        StringBuilder act22 = new StringBuilder();
-
-        StringBuilder swap = new StringBuilder();
-        StringBuilder swap2 = new StringBuilder();
-
-        for (int i = 0; i < cs.bossRelicWinRateAct1.size(); i++) {
-            Rate<BossRelic> r = cs.bossRelicWinRateAct1.get(i);
-            if (i <= cs.bossRelicWinRateAct1.size() / 2) {
-                act1.append(r.what.toString())
-                        .append(" #y")
-                        .append(r.percent())
-                        .append("% ")
-                        .append(r.winLoss())
-                        .append(" NL ");
-            } else {
-                act12.append(r.what.toString())
-                        .append(" #y")
-                        .append(r.percent())
-                        .append("% ")
-                        .append(r.winLoss())
-                        .append(" NL ");
-            }
-        }
-        for (int i = 0; i < cs.bossRelicWinRateAct2.size(); i++) {
-            Rate<BossRelic> r = cs.bossRelicWinRateAct2.get(i);
-            if (i <= cs.bossRelicWinRateAct2.size() / 2) {
-                act2.append(r.what.toString())
-                        .append(" #y")
-                        .append(r.percent())
-                        .append("% ")
-                        .append(r.winLoss())
-                        .append(" NL ");
-            } else {
-                act22.append(r.what.toString())
-                        .append(" #y")
-                        .append(r.percent())
-                        .append("% ")
-                        .append(r.winLoss())
-                        .append(" NL ");
-            }
-        }
-        for (int i = 0; i < cs.bossRelicWinRateSwap.size(); i++) {
-            Rate<BossRelic> r = cs.bossRelicWinRateSwap.get(i);
-            if (i <= cs.bossRelicWinRateSwap.size() / 2) {
-                swap.append(r.what.toString())
-                        .append(" #y")
-                        .append(r.percent())
-                        .append("% ")
-                        .append(r.winLoss())
-                        .append(" NL ");
-            } else {
-                swap2.append(r.what.toString())
-                        .append(" #y")
-                        .append(r.percent())
-                        .append("% ")
-                        .append(r.winLoss())
-                        .append(" NL ");
-            }
-        }
-
-        render2Columns(sb, screenX, renderY, act1.toString(), act12.toString());
+        renderRates(sb, screenX, renderY, 0, cs.bossRelicWinRateAct1);
 
         renderY -= 22.0F * Settings.scale * cs.bossRelicPickRateAct1.size();
         renderY -= 100 * Settings.scale;
 
         renderHeader(sb, colorForClass("Boss relic win rate (act 2)"), screenX, renderY);
-        render2Columns(sb, screenX, renderY, act2.toString(), act22.toString());
+        renderRates(sb, screenX, renderY, 0, cs.bossRelicWinRateAct2);
 
         renderY -= 22.0F * Settings.scale * cs.bossRelicPickRateAct2.size();
         renderY -= 100 * Settings.scale;
 
         renderHeader(sb, colorForClass("Boss swap win rate"), screenX, renderY);
-        render2Columns(sb, screenX, renderY, swap.toString(), swap2.toString());
+        renderRates(sb, screenX, renderY, 0, cs.bossRelicWinRateSwap);
     }
 
     public static void renderStatScreen(StatsScreen s, SpriteBatch sb) {
