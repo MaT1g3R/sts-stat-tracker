@@ -6,6 +6,7 @@ import StatsTracker.stats.ClassStat;
 import StatsTracker.stats.Rate;
 import StatsTracker.ui.CharStatRenderer;
 import StatsTracker.ui.MoreStatsScreen;
+import basemod.Pair;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.evacipated.cardcrawl.modthespire.lib.SpirePatch;
 import com.evacipated.cardcrawl.modthespire.lib.SpireReturn;
@@ -17,6 +18,7 @@ import com.megacrit.cardcrawl.screens.stats.StatsScreen;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 import static com.megacrit.cardcrawl.screens.stats.StatsScreen.NAMES;
 import static com.megacrit.cardcrawl.screens.stats.StatsScreen.renderHeader;
@@ -137,8 +139,13 @@ public class StatsScreenPatch {
                 Settings.CREAM_COLOR);
     }
 
-    public static <A> void renderRates(SpriteBatch sb, float screenX, float renderY, int maxRows, List<Rate<A>> rates) {
-        int len = rates.size();
+    public static <T> void renderT(SpriteBatch sb,
+                                   float screenX,
+                                   float renderY,
+                                   int maxRows,
+                                   List<T> xs,
+                                   Function<T, String> toString) {
+        int len = xs.size();
         if (maxRows > 0) {
             len = Math.min(len, maxRows);
         }
@@ -146,24 +153,23 @@ public class StatsScreenPatch {
         StringBuilder builder2 = new StringBuilder();
 
         for (int i = 0; i < len; i++) {
-            Rate<A> c = rates.get(i);
+            T x = xs.get(i);
             if (i <= len / 2) {
-                builder.append(c.what.toString())
-                        .append(" #y")
-                        .append(c.percent())
-                        .append("% ")
-                        .append(c.winLoss())
-                        .append(" NL ");
+                builder.append(toString.apply(x)).append(" NL ");
             } else {
-                builder2.append(c.what.toString())
-                        .append(" #y")
-                        .append(c.percent())
-                        .append("% ")
-                        .append(c.winLoss())
-                        .append(" NL ");
+                builder2.append(toString.apply(x)).append(" NL ");
             }
         }
         render2Columns(sb, screenX, renderY, builder.toString(), builder2.toString());
+    }
+
+    public static <A> void renderRates(SpriteBatch sb, float screenX, float renderY, int maxRows, List<Rate<A>> rates) {
+        renderT(sb,
+                screenX,
+                renderY,
+                maxRows,
+                rates,
+                (Rate<A> c) -> c.what.toString() + " #y" + c.percent() + "% " + c.winLoss());
     }
 
     public static <A> void renderRates1Col(SpriteBatch sb,
@@ -264,6 +270,60 @@ public class StatsScreenPatch {
         renderRates(sb, screenX, renderY, 0, cs.bossRelicWinRateSwap);
     }
 
+    private static void renderEncounterHPLoss(StatsScreen s, SpriteBatch sb, float screenX) {
+        float renderY = getScrollY(s);
+        ClassStat cs = moreStatsScreen.getClassStat();
+        List<Pair<String, Double>> act1 = cs.averageDamageTaken.get(1);
+        List<Pair<String, Double>> act2 = cs.averageDamageTaken.get(2);
+        List<Pair<String, Double>> act3 = cs.averageDamageTaken.get(3);
+        List<Pair<String, Double>> act4 = cs.averageDamageTaken.get(4);
+
+        renderHeader(sb, colorForClass("Average encounter HP loss (act 1)"), screenX, renderY);
+        renderT(sb, screenX, renderY, 0, act1, x -> x.getKey() + " #y" + Utils.round(x.getValue(), 3));
+        renderY -= 22.0F * Settings.scale * act1.size();
+        renderY -= 100 * Settings.scale;
+
+        renderHeader(sb, colorForClass("Average encounter HP loss (act 2)"), screenX, renderY);
+        renderT(sb, screenX, renderY, 0, act2, x -> x.getKey() + " #y" + Utils.round(x.getValue(), 3));
+        renderY -= 22.0F * Settings.scale * act2.size();
+        renderY -= 100 * Settings.scale;
+
+        renderHeader(sb, colorForClass("Average encounter HP loss (act 3)"), screenX, renderY);
+        renderT(sb, screenX, renderY, 0, act3, x -> x.getKey() + " #y" + Utils.round(x.getValue(), 3));
+        renderY -= 22.0F * Settings.scale * act3.size();
+        renderY -= 100 * Settings.scale;
+
+        renderHeader(sb, colorForClass("Average encounter HP loss (act 4)"), screenX, renderY);
+        renderT(sb, screenX, renderY, 0, act4, x -> x.getKey() + " #y" + Utils.round(x.getValue(), 3));
+    }
+
+    private static void renderEncounterMortalityRate(StatsScreen s, SpriteBatch sb, float screenX) {
+        float renderY = getScrollY(s);
+        ClassStat cs = moreStatsScreen.getClassStat();
+        List<Rate<String>> act1 = cs.encounterDeadRate.get(1);
+        List<Rate<String>> act2 = cs.encounterDeadRate.get(2);
+        List<Rate<String>> act3 = cs.encounterDeadRate.get(3);
+        List<Rate<String>> act4 = cs.encounterDeadRate.get(4);
+
+        renderHeader(sb, colorForClass("Encounter mortality rate (act 1)"), screenX, renderY);
+        renderRates(sb, screenX, renderY, 0, act1);
+        renderY -= 22.0F * Settings.scale * act1.size();
+        renderY -= 100 * Settings.scale;
+
+        renderHeader(sb, colorForClass("Encounter mortality rate (act 2)"), screenX, renderY);
+        renderRates(sb, screenX, renderY, 0, act2);
+        renderY -= 22.0F * Settings.scale * act2.size();
+        renderY -= 100 * Settings.scale;
+
+        renderHeader(sb, colorForClass("Encounter mortality rate (act 3)"), screenX, renderY);
+        renderRates(sb, screenX, renderY, 0, act3);
+        renderY -= 22.0F * Settings.scale * act3.size();
+        renderY -= 100 * Settings.scale;
+
+        renderHeader(sb, colorForClass("Encounter mortality rate (act 4)"), screenX, renderY);
+        renderRates(sb, screenX, renderY, 0, act4);
+    }
+
     public static void renderStatScreen(StatsScreen s, SpriteBatch sb) {
         float screenX = Utils.getField(s, StatsScreen.class, "screenX");
         float scrollY = Utils.getField(s, StatsScreen.class, "scrollY");
@@ -289,6 +349,12 @@ public class StatsScreenPatch {
                 break;
             case "Boss relic win rate":
                 renderBossRelicWinRate(s, sb, screenX);
+                break;
+            case "Encounter average HP loss":
+                renderEncounterHPLoss(s, sb, screenX);
+                break;
+            case "Encounter mortality rate":
+                renderEncounterMortalityRate(s, sb, screenX);
                 break;
         }
 

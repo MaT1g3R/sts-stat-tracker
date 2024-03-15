@@ -1,18 +1,19 @@
 package StatsTracker.stats;
 
+import basemod.Pair;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
+import com.megacrit.cardcrawl.screens.stats.BattleStats;
 import com.megacrit.cardcrawl.screens.stats.BossRelicChoiceStats;
 import com.megacrit.cardcrawl.screens.stats.CardChoiceStats;
 import com.megacrit.cardcrawl.screens.stats.EventStats;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ClassStat {
-
-
     public final boolean rotate;
     public long playTime = 0;
     public long fastestTime = Integer.MAX_VALUE;
@@ -34,19 +35,38 @@ public class ClassStat {
     public List<Rate<BossRelic>> bossRelicWinRateAct1;
     public List<Rate<BossRelic>> bossRelicWinRateAct2;
     public List<Rate<BossRelic>> bossRelicWinRateSwap;
+    public Map<Integer, List<Pair<String, Double>>> averageDamageTaken = new HashMap<>();
+    public Map<Integer, List<Rate<String>>> encounterDeadRate = new HashMap<>();
     public Rate<String> nob = new Rate<>("nob survival rate");
 
     private static class StatCollector {
-        Map<Card, Rate<Card>> cardPicksAct1 = new java.util.HashMap<>();
-        Map<Card, Rate<Card>> cardPicksAfterAct1 = new java.util.HashMap<>();
-        Map<Card, Rate<Card>> cardWinRate = new java.util.HashMap<>();
-        Map<Neow, Rate<Neow>> neowWinRate = new java.util.HashMap<>();
-        Map<Neow, Rate<Neow>> neowPickRate = new java.util.HashMap<>();
-        Map<BossRelic, Rate<BossRelic>> bossRelicPickRateAct1 = new java.util.HashMap<>();
-        Map<BossRelic, Rate<BossRelic>> bossRelicPickRateAct2 = new java.util.HashMap<>();
-        Map<BossRelic, Rate<BossRelic>> bossRelicWinRateAct1 = new java.util.HashMap<>();
-        Map<BossRelic, Rate<BossRelic>> bossRelicWinRateAct2 = new java.util.HashMap<>();
-        Map<BossRelic, Rate<BossRelic>> bossRelicWinRateSwap = new java.util.HashMap<>();
+        Map<Card, Rate<Card>> cardPicksAct1 = new HashMap<>();
+        Map<Card, Rate<Card>> cardPicksAfterAct1 = new HashMap<>();
+        Map<Card, Rate<Card>> cardWinRate = new HashMap<>();
+        Map<Neow, Rate<Neow>> neowWinRate = new HashMap<>();
+        Map<Neow, Rate<Neow>> neowPickRate = new HashMap<>();
+        Map<BossRelic, Rate<BossRelic>> bossRelicPickRateAct1 = new HashMap<>();
+        Map<BossRelic, Rate<BossRelic>> bossRelicPickRateAct2 = new HashMap<>();
+        Map<BossRelic, Rate<BossRelic>> bossRelicWinRateAct1 = new HashMap<>();
+        Map<BossRelic, Rate<BossRelic>> bossRelicWinRateAct2 = new HashMap<>();
+        Map<BossRelic, Rate<BossRelic>> bossRelicWinRateSwap = new HashMap<>();
+        Map<Integer, Map<String, List<Double>>>
+                encounterHPLossMap =
+                new HashMap<Integer, Map<String, List<Double>>>() {{
+                    put(1, new HashMap<>());
+                    put(2, new HashMap<>());
+                    put(3, new HashMap<>());
+                    put(4, new HashMap<>());
+                }};
+        Map<Integer, List<Pair<String, Double>>> avgEncounterDamage = new HashMap<>();
+
+        Map<Integer, Map<String, Rate<String>>> encounterDeadRate = new HashMap<Integer, Map<String, Rate<String>>>() {{
+            put(1, new HashMap<>());
+            put(2, new HashMap<>());
+            put(3, new HashMap<>());
+            put(4, new HashMap<>());
+        }};
+        Rate<String> nob = new Rate<>("nob survival rate");
 
         private void cardPickStats(Run run) {
             for (CardChoiceStats c : run.runData.card_choices) {
@@ -164,11 +184,64 @@ public class ClassStat {
             }
         }
 
+
+        private void encounterStats(Run run) {
+            for (BattleStats bs : run.runData.damage_taken) {
+                if (bs.enemies.equals("Gremlin Nob")) {
+                    nob.win++;
+                }
+                int act = run.getAct(bs.floor);
+
+                Map<String, Rate<String>> ded = encounterDeadRate.get(act);
+                ded.putIfAbsent(bs.enemies, new Rate<>(bs.enemies));
+                ded.get(bs.enemies).loss++;
+
+
+                Map<String, List<Double>> m = encounterHPLossMap.get(act);
+                m.putIfAbsent(bs.enemies, new ArrayList<>());
+                m.get(bs.enemies).add((double) bs.damage);
+            }
+
+
+            if (run.runData.killed_by != null && !run.runData.killed_by.isEmpty()) {
+                String killedBy = run.runData.killed_by;
+                if (killedBy.equals("Gremlin Nob")) {
+                    nob.win--;
+                    nob.loss++;
+                }
+                int act = run.getAct(run.runData.floor_reached);
+                Rate<String> k = encounterDeadRate.getOrDefault(act, new HashMap<>()).get(killedBy);
+                if (k != null) {
+                    k.win++;
+                    k.loss--;
+                }
+            }
+        }
+
+        private void finaliseEncounterStats() {
+            encounterHPLossMap.forEach((act, v) -> {
+                List<Pair<String, Double>> pairs = new ArrayList<>();
+                v.forEach((name, damages) -> {
+                    double average = damages.stream().reduce(Double::sum).map(x -> x / damages.size()).orElse(0D);
+                    Pair<String, Double> pair = new Pair<>(name, average);
+                    pairs.add(pair);
+                });
+                pairs.sort((o1, o2) -> {
+                    if (o1.getValue().equals(o2.getValue())) {
+                        return o1.getKey().compareTo(o2.getKey());
+                    }
+                    return o2.getValue().compareTo(o1.getValue());
+                });
+                avgEncounterDamage.put(act, pairs);
+            });
+        }
+
         void collect(Run run) {
             cardPickStats(run);
             deckStats(run);
             neowStats(run);
             bossRelicStats(run);
+            encounterStats(run);
         }
 
         private <A> List<A> sortedMapValues(Map<?, A> map) {
@@ -188,6 +261,14 @@ public class ClassStat {
             cs.bossRelicWinRateAct1 = sortedMapValues(bossRelicWinRateAct1);
             cs.bossRelicWinRateAct2 = sortedMapValues(bossRelicWinRateAct2);
             cs.bossRelicWinRateSwap = sortedMapValues(bossRelicWinRateSwap);
+
+            finaliseEncounterStats();
+            cs.averageDamageTaken = avgEncounterDamage;
+
+            cs.nob = nob;
+            encounterDeadRate.forEach((k, v) -> {
+                cs.encounterDeadRate.put(k, sortedMapValues(v));
+            });
         }
     }
 
@@ -217,16 +298,6 @@ public class ClassStat {
             bossKilled += run.bossesKilled;
             enemyKilled += run.enemiesKilled;
             highestScore = Math.max(highestScore, run.runData.score);
-
-            run.runData.damage_taken.forEach(d -> {
-                if (d.enemies.equals("Gremlin Nob")) {
-                    nob.win++;
-                }
-            });
-            if (run.runData.killed_by != null && run.runData.killed_by.equals("Gremlin Nob")) {
-                nob.win--;
-                nob.loss++;
-            }
         }
 
         collector.finalise(this);

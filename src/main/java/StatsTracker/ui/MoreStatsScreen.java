@@ -29,7 +29,10 @@ public class MoreStatsScreen implements DropdownMenuListener {
                     "Card win rate",
                     "Neow bonus",
                     "Boss relic pick rate",
-                    "Boss relic win rate"};
+                    "Boss relic win rate",
+                    "Encounter average HP loss",
+                    "Encounter mortality rate",
+            };
 
     public String currentClass() {
         return CLASSES[classDropdown.getSelectedIndex()];

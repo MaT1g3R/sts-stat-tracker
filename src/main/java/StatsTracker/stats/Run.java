@@ -6,6 +6,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.google.gson.JsonSyntaxException;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.screens.stats.BattleStats;
+import com.megacrit.cardcrawl.screens.stats.EventStats;
 import com.megacrit.cardcrawl.screens.stats.ObtainStats;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -28,7 +29,7 @@ public class Run implements Comparable<Run> {
     public final int enemiesKilled;
     public final int bossesKilled;
     public int singingBowlFloor = -1;
-
+    private int portalFloor = -1;
     public final Neow neowPicked;
     public final List<Neow> neowSkipped = new ArrayList<>();
 
@@ -41,6 +42,12 @@ public class Run implements Comparable<Run> {
         Pair<Integer, Integer> enemiesKilled = enemiesKilled();
         this.enemiesKilled = enemiesKilled.getLeft();
         this.bossesKilled = enemiesKilled.getRight();
+
+        for (EventStats s : runData.event_choices) {
+            if (s.event_name.equals("SecretPortal") && s.player_choice.equals("Took Portal")) {
+                portalFloor = s.floor;
+            }
+        }
 
         for (ObtainStats r : runData.relics_obtained) {
             int floor = r.floor;
@@ -143,8 +150,31 @@ public class Run implements Comparable<Run> {
         return date.compareTo(startDate) >= 0 && date.compareTo(endDate) <= 0;
     }
 
+    public int getAct(int floor) {
+        if (floor <= 17) {
+            return 1;
+        }
+        if (floor <= 34) {
+            return 2;
+        }
+
+        if (portalFloor > 0) {
+            if (floor <= portalFloor + 3) {
+                return 3;
+            } else {
+                return 4;
+            }
+        }
+
+        if (floor <= 52) {
+            return 3;
+        }
+        return 4;
+    }
+
     @Override
     public int compareTo(Run run) {
         return RunData.orderByTimestampDesc.compare(run.runData, this.runData);
     }
+
 }

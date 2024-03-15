@@ -64,8 +64,12 @@ public class Utils {
             return 0;
         }
         double rate = (100D * value) / total;
-        BigDecimal bd = new BigDecimal(rate);
-        bd = bd.round(new MathContext(3));
+        return round(rate, 3);
+    }
+
+    public static double round(double value, int places) {
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.round(new MathContext(places));
         return bd.doubleValue();
     }
 
