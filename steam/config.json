@@ -3,7 +3,7 @@
   "title": "StatsTracker",
   "description": "Additional stats tracking",
   "visibility": "public",
-  "changeNote": "v1.3.0\n- Add encounter average HP loss\n- Add encounter mortality rate",
+  "changeNote": "v2.0.0\n- Add avg potions used per encounter\n- Add survival rate per act\n- Add relic win rate when purchased",
   "tags": [
     "Utility",
     "Qol"

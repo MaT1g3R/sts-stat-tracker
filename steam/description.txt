@@ -25,6 +25,12 @@ Features:
 
 [*] Encounter mortality rate
 
+[*] Encounter average potions used
+
+[*] Relic win rate when purchased
+
+[*] Survival rate per act
+
 [/list]
 
 More stats coming soon!
