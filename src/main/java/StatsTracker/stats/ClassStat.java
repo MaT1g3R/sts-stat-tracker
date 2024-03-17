@@ -38,6 +38,8 @@ public class ClassStat {
     public Map<Integer, List<Pair<String, Double>>> averageDamageTaken = new HashMap<>();
     public Map<Integer, List<Rate<String>>> encounterDeadRate = new HashMap<>();
     public Rate<String> nob = new Rate<>("nob survival rate");
+    public Map<Integer, List<Mean>> averagePotionUse = new HashMap<>();
+    public Map<Integer, Rate<Integer>> survivalRatePerAct = new HashMap<>();
 
     private static class StatCollector {
         Map<Card, Rate<Card>> cardPicksAct1 = new HashMap<>();
@@ -66,7 +68,22 @@ public class ClassStat {
             put(3, new HashMap<>());
             put(4, new HashMap<>());
         }};
+
+        Map<Integer, Map<String, Mean>> encounterPotionUseMap = new HashMap<Integer, Map<String, Mean>>() {{
+            put(1, new HashMap<>());
+            put(2, new HashMap<>());
+            put(3, new HashMap<>());
+            put(4, new HashMap<>());
+        }};
+
+        Map<Integer, List<Mean>> averagePotionUse = new HashMap<>();
         Rate<String> nob = new Rate<>("nob survival rate");
+        public Map<Integer, Rate<Integer>> survivalRatePerAct = new HashMap<Integer, Rate<Integer>>() {{
+            put(1, new Rate<>(1));
+            put(2, new Rate<>(2));
+            put(3, new Rate<>(3));
+            put(4, new Rate<>(4));
+        }};
 
         private void cardPickStats(Run run) {
             for (CardChoiceStats c : run.runData.card_choices) {
@@ -186,22 +203,35 @@ public class ClassStat {
 
 
         private void encounterStats(Run run) {
+            Map<Integer, Integer> potByFloor = new HashMap<>();
+            for (int i = 0; i < run.runData.potion_use_per_floor.size(); ++i) {
+                int floor = i + 1;
+                int potionsUsed = Math.min(run.runData.potion_use_per_floor.get(i).size(), 9);
+                potByFloor.put(floor, potionsUsed);
+            }
+
             for (BattleStats bs : run.runData.damage_taken) {
                 if (bs.enemies.equals("Gremlin Nob")) {
                     nob.win++;
                 }
                 int act = run.getAct(bs.floor);
 
+                if (!run.runData.potion_use_per_floor.isEmpty()) {
+                    int potsUsed = potByFloor.getOrDefault(bs.floor, -1);
+                    if (potsUsed >= 0) {
+                        encounterPotionUseMap.get(act).putIfAbsent(bs.enemies, new Mean(bs.enemies));
+                        encounterPotionUseMap.get(act).get(bs.enemies).add(potsUsed);
+                    }
+                }
+
                 Map<String, Rate<String>> ded = encounterDeadRate.get(act);
                 ded.putIfAbsent(bs.enemies, new Rate<>(bs.enemies));
                 ded.get(bs.enemies).loss++;
-
 
                 Map<String, List<Double>> m = encounterHPLossMap.get(act);
                 m.putIfAbsent(bs.enemies, new ArrayList<>());
                 m.get(bs.enemies).add((double) bs.damage);
             }
-
 
             if (run.runData.killed_by != null && !run.runData.killed_by.isEmpty()) {
                 String killedBy = run.runData.killed_by;
@@ -234,6 +264,49 @@ public class ClassStat {
                 });
                 avgEncounterDamage.put(act, pairs);
             });
+
+            encounterPotionUseMap.forEach((act, xs) -> {
+                averagePotionUse.put(act, sortedMapValues(xs));
+            });
+        }
+
+        private void survivalRatePerAct(Run run) {
+            Rate<Integer> act1 = survivalRatePerAct.get(1);
+            Rate<Integer> act2 = survivalRatePerAct.get(2);
+            Rate<Integer> act3 = survivalRatePerAct.get(3);
+            Rate<Integer> act4 = survivalRatePerAct.get(4);
+
+            if (run.isHeartKill) {
+                act1.win++;
+                act2.win++;
+                act3.win++;
+                act4.win++;
+                return;
+            }
+
+            int floor = run.runData.floor_reached;
+            int act = run.getAct(floor);
+
+            switch (act) {
+                case 1:
+                    act1.loss++;
+                    break;
+                case 2:
+                    act1.win++;
+                    act2.loss++;
+                    break;
+                case 3:
+                    act1.win++;
+                    act2.win++;
+                    act3.loss++;
+                    break;
+                case 4:
+                    act1.win++;
+                    act2.win++;
+                    act3.win++;
+                    act4.loss++;
+                    break;
+            }
         }
 
         void collect(Run run) {
@@ -242,6 +315,7 @@ public class ClassStat {
             neowStats(run);
             bossRelicStats(run);
             encounterStats(run);
+            survivalRatePerAct(run);
         }
 
         private <A> List<A> sortedMapValues(Map<?, A> map) {
@@ -264,11 +338,14 @@ public class ClassStat {
 
             finaliseEncounterStats();
             cs.averageDamageTaken = avgEncounterDamage;
+            cs.averagePotionUse = averagePotionUse;
 
             cs.nob = nob;
             encounterDeadRate.forEach((k, v) -> {
                 cs.encounterDeadRate.put(k, sortedMapValues(v));
             });
+
+            cs.survivalRatePerAct = survivalRatePerAct;
         }
     }
 

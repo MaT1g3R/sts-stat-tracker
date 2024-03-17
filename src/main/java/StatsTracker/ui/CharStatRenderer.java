@@ -35,6 +35,15 @@ public class CharStatRenderer {
                         Utils.calculatePercent(cs.numVictory, cs.numDeath + cs.numVictory) +
                         "%" +
                         " NL ";
+        this.info +=
+                "Survival rate per act: NL #y" +
+                        cs.survivalRatePerAct.get(1).percent() +
+                        "% #y" +
+                        cs.survivalRatePerAct.get(2).percent() +
+                        "% #y" +
+                        cs.survivalRatePerAct.get(3).percent() +
+                        "% #y" +
+                        cs.survivalRatePerAct.get(4).percent() + "% NL ";
 
         this.info2 = CharStat.TEXT[17] + cs.numVictory + " NL ";
         this.info2 = this.info2 + CharStat.TEXT[18] + cs.numDeath + " NL ";

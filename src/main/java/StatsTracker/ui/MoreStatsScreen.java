@@ -32,6 +32,7 @@ public class MoreStatsScreen implements DropdownMenuListener {
                     "Boss relic win rate",
                     "Encounter average HP loss",
                     "Encounter mortality rate",
+                    "Encounter average potions used",
             };
 
     public String currentClass() {

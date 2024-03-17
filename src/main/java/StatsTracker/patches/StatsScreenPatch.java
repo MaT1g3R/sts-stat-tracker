@@ -3,6 +3,7 @@ package StatsTracker.patches;
 import StatsTracker.Utils;
 import StatsTracker.stats.Card;
 import StatsTracker.stats.ClassStat;
+import StatsTracker.stats.Mean;
 import StatsTracker.stats.Rate;
 import StatsTracker.ui.CharStatRenderer;
 import StatsTracker.ui.MoreStatsScreen;
@@ -16,6 +17,7 @@ import com.megacrit.cardcrawl.screens.mainMenu.ScrollBar;
 import com.megacrit.cardcrawl.screens.stats.AchievementGrid;
 import com.megacrit.cardcrawl.screens.stats.StatsScreen;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
@@ -324,6 +326,33 @@ public class StatsScreenPatch {
         renderRates(sb, screenX, renderY, 0, act4);
     }
 
+    private static void renderEncounterPotionsUsed(StatsScreen s, SpriteBatch sb, float screenX) {
+        float renderY = getScrollY(s);
+        ClassStat cs = moreStatsScreen.getClassStat();
+        List<Mean> act1 = cs.averagePotionUse.getOrDefault(1, new ArrayList<>());
+        List<Mean> act2 = cs.averagePotionUse.getOrDefault(2, new ArrayList<>());
+        List<Mean> act3 = cs.averagePotionUse.getOrDefault(3, new ArrayList<>());
+        List<Mean> act4 = cs.averagePotionUse.getOrDefault(4, new ArrayList<>());
+
+        renderHeader(sb, colorForClass("Average encounter potions used (act 1)"), screenX, renderY);
+        renderT(sb, screenX, renderY, 0, act1, x -> x.what + " #y" + Utils.round(x.mean(), 3));
+        renderY -= 22.0F * Settings.scale * act1.size();
+        renderY -= 100 * Settings.scale;
+
+        renderHeader(sb, colorForClass("Average encounter potions used (act 2)"), screenX, renderY);
+        renderT(sb, screenX, renderY, 0, act2, x -> x.what + " #y" + Utils.round(x.mean(), 3));
+        renderY -= 22.0F * Settings.scale * act2.size();
+        renderY -= 100 * Settings.scale;
+
+        renderHeader(sb, colorForClass("Average encounter potions used (act 3)"), screenX, renderY);
+        renderT(sb, screenX, renderY, 0, act3, x -> x.what + " #y" + Utils.round(x.mean(), 3));
+        renderY -= 22.0F * Settings.scale * act3.size();
+        renderY -= 100 * Settings.scale;
+
+        renderHeader(sb, colorForClass("Average encounter potions used (act 4)"), screenX, renderY);
+        renderT(sb, screenX, renderY, 0, act4, x -> x.what + " #y" + Utils.round(x.mean(), 3));
+    }
+
     public static void renderStatScreen(StatsScreen s, SpriteBatch sb) {
         float screenX = Utils.getField(s, StatsScreen.class, "screenX");
         float scrollY = Utils.getField(s, StatsScreen.class, "scrollY");
@@ -355,6 +384,9 @@ public class StatsScreenPatch {
                 break;
             case "Encounter mortality rate":
                 renderEncounterMortalityRate(s, sb, screenX);
+                break;
+            case "Encounter average potions used":
+                renderEncounterPotionsUsed(s, sb, screenX);
                 break;
         }
 

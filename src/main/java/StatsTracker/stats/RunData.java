@@ -63,6 +63,8 @@ public class RunData {
     public List<String> neow_bonuses_skipped_log = new ArrayList<>();
     public List<String> neow_costs_skipped_log = new ArrayList<>();
 
+    public List<List<String>> potion_use_per_floor = new ArrayList<>();
+
     public static Comparator<RunData> orderByTimestampDesc = (o1, o2) -> o2.timestamp.compareTo(o1.timestamp);
 
     public RunData() {
