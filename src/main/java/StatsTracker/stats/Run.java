@@ -10,12 +10,10 @@ import com.megacrit.cardcrawl.screens.stats.EventStats;
 import com.megacrit.cardcrawl.screens.stats.ObtainStats;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static basemod.BaseMod.gson;
 
@@ -32,12 +30,15 @@ public class Run implements Comparable<Run> {
     private int portalFloor = -1;
     public final Neow neowPicked;
     public final List<Neow> neowSkipped = new ArrayList<>();
+    public final List<String> relicsPurchased;
 
     private Run(RunData runData, AbstractPlayer.PlayerClass playerClass) {
         this.runData = runData;
         this.playerClass = playerClass;
         this.isHeartKill = isHeartKill();
         this.isA20 = runData.is_ascension_mode && runData.ascension_level == 20;
+
+        List<String> relics = new ArrayList<>(runData.relics);
 
         Pair<Integer, Integer> enemiesKilled = enemiesKilled();
         this.enemiesKilled = enemiesKilled.getLeft();
@@ -47,7 +48,13 @@ public class Run implements Comparable<Run> {
             if (s.event_name.equals("SecretPortal") && s.player_choice.equals("Took Portal")) {
                 portalFloor = s.floor;
             }
+
+            if (s.event_name.equals("N'loth") && s.relics_lost != null) {
+                s.relics_lost.stream().filter(Objects::nonNull).filter(x -> !x.isEmpty()).forEach(relics::add);
+            }
         }
+
+        relicsPurchased = runData.items_purchased.stream().filter(relics::contains).collect(Collectors.toList());
 
         for (ObtainStats r : runData.relics_obtained) {
             int floor = r.floor;

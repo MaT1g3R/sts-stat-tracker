@@ -43,7 +43,7 @@ public class RunData {
     public List<String> path_per_floor;
     public List<Integer> current_hp_per_floor;
     public List<Integer> max_hp_per_floor;
-    public List<String> items_purchased;
+    public List<String> items_purchased = new ArrayList<>();
     public List<Integer> item_purchase_floors;
     public List<String> items_purged;
     public List<Integer> items_purged_floors;

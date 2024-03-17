@@ -353,6 +353,15 @@ public class StatsScreenPatch {
         renderT(sb, screenX, renderY, 0, act4, x -> x.what + " #y" + Utils.round(x.mean(), 3));
     }
 
+    private static void renderRelicWinRateWhenPurchased(StatsScreen s, SpriteBatch sb, float screenX) {
+        float renderY = getScrollY(s);
+        String name = "Relic win rate when purchased";
+        renderHeader(sb, colorForClass(name), screenX, renderY);
+
+        ClassStat cs = moreStatsScreen.getClassStat();
+        renderRates(sb, screenX, renderY, 0, cs.relicPurchasedWinRate);
+    }
+
     public static void renderStatScreen(StatsScreen s, SpriteBatch sb) {
         float screenX = Utils.getField(s, StatsScreen.class, "screenX");
         float scrollY = Utils.getField(s, StatsScreen.class, "scrollY");
@@ -387,6 +396,9 @@ public class StatsScreenPatch {
                 break;
             case "Encounter average potions used":
                 renderEncounterPotionsUsed(s, sb, screenX);
+                break;
+            case "Relic win rate when purchased":
+                renderRelicWinRateWhenPurchased(s, sb, screenX);
                 break;
         }
 

@@ -41,6 +41,8 @@ public class ClassStat {
     public Map<Integer, List<Mean>> averagePotionUse = new HashMap<>();
     public Map<Integer, Rate<Integer>> survivalRatePerAct = new HashMap<>();
 
+    public List<Rate<String>> relicPurchasedWinRate;
+
     private static class StatCollector {
         Map<Card, Rate<Card>> cardPicksAct1 = new HashMap<>();
         Map<Card, Rate<Card>> cardPicksAfterAct1 = new HashMap<>();
@@ -78,12 +80,14 @@ public class ClassStat {
 
         Map<Integer, List<Mean>> averagePotionUse = new HashMap<>();
         Rate<String> nob = new Rate<>("nob survival rate");
-        public Map<Integer, Rate<Integer>> survivalRatePerAct = new HashMap<Integer, Rate<Integer>>() {{
+        Map<Integer, Rate<Integer>> survivalRatePerAct = new HashMap<Integer, Rate<Integer>>() {{
             put(1, new Rate<>(1));
             put(2, new Rate<>(2));
             put(3, new Rate<>(3));
             put(4, new Rate<>(4));
         }};
+
+        Map<String, Rate<String>> relicPurchasedWinRate = new HashMap<>();
 
         private void cardPickStats(Run run) {
             for (CardChoiceStats c : run.runData.card_choices) {
@@ -309,6 +313,18 @@ public class ClassStat {
             }
         }
 
+        private void relicStats(Run run) {
+            run.relicsPurchased.forEach(r -> {
+                relicPurchasedWinRate.putIfAbsent(r, new Rate<>(r));
+                Rate<String> rate = relicPurchasedWinRate.get(r);
+                if (run.isHeartKill) {
+                    rate.win++;
+                } else {
+                    rate.loss++;
+                }
+            });
+        }
+
         void collect(Run run) {
             cardPickStats(run);
             deckStats(run);
@@ -316,6 +332,7 @@ public class ClassStat {
             bossRelicStats(run);
             encounterStats(run);
             survivalRatePerAct(run);
+            relicStats(run);
         }
 
         private <A> List<A> sortedMapValues(Map<?, A> map) {
@@ -346,6 +363,7 @@ public class ClassStat {
             });
 
             cs.survivalRatePerAct = survivalRatePerAct;
+            cs.relicPurchasedWinRate = sortedMapValues(relicPurchasedWinRate);
         }
     }
 
