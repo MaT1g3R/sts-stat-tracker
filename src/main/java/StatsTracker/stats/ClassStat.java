@@ -235,7 +235,11 @@ public class ClassStat {
 
                 Map<String, List<Double>> m = encounterHPLossMap.get(act);
                 m.putIfAbsent(bs.enemies, new ArrayList<>());
-                m.get(bs.enemies).add((double) bs.damage);
+                double damage = bs.damage;
+                if (damage >= 99999) {
+                    damage -= 99999;
+                }
+                m.get(bs.enemies).add(damage);
             }
 
             if (run.runData.killed_by != null && !run.runData.killed_by.isEmpty()) {
