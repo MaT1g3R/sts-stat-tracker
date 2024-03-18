@@ -33,6 +33,7 @@ public class MoreStatsScreen implements DropdownMenuListener {
                     "Encounter average HP loss",
                     "Encounter mortality rate",
                     "Encounter average potions used",
+                    "Relic win rate",
                     "Relic win rate when purchased",
             };
 

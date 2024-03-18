@@ -40,7 +40,7 @@ public class ClassStat {
     public Rate<String> nob = new Rate<>("nob survival rate");
     public Map<Integer, List<Mean>> averagePotionUse = new HashMap<>();
     public Map<Integer, Rate<Integer>> survivalRatePerAct = new HashMap<>();
-
+    public List<Rate<String>> relicWinRate;
     public List<Rate<String>> relicPurchasedWinRate;
 
     private static class StatCollector {
@@ -88,6 +88,7 @@ public class ClassStat {
         }};
 
         Map<String, Rate<String>> relicPurchasedWinRate = new HashMap<>();
+        Map<String, Rate<String>> relicWinRate = new HashMap<>();
 
         private void cardPickStats(Run run) {
             for (CardChoiceStats c : run.runData.card_choices) {
@@ -323,6 +324,15 @@ public class ClassStat {
                     rate.loss++;
                 }
             });
+            run.runData.relics.forEach(r -> {
+                relicWinRate.putIfAbsent(r, new Rate<>(r));
+                Rate<String> rate = relicWinRate.get(r);
+                if (run.isHeartKill) {
+                    rate.win++;
+                } else {
+                    rate.loss++;
+                }
+            });
         }
 
         void collect(Run run) {
@@ -363,6 +373,7 @@ public class ClassStat {
             });
 
             cs.survivalRatePerAct = survivalRatePerAct;
+            cs.relicWinRate = sortedMapValues(relicWinRate);
             cs.relicPurchasedWinRate = sortedMapValues(relicPurchasedWinRate);
         }
     }
