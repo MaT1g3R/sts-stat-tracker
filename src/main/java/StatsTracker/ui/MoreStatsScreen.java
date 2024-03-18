@@ -17,6 +17,8 @@ public class MoreStatsScreen implements DropdownMenuListener {
     public DropdownMenu endDateDropDown;
     public DropdownMenu classDropdown;
     public DropdownMenu statTypeDropdown;
+
+    public DropdownMenu sampleSizeDropdown;
     public ArrayList<YearMonth> startDates;
     public ArrayList<YearMonth> endDates;
     public ClassStat[] classStats;
@@ -58,6 +60,7 @@ public class MoreStatsScreen implements DropdownMenuListener {
         endDateDropDown.update();
         classDropdown.update();
         statTypeDropdown.update();
+        sampleSizeDropdown.update();
     }
 
     public void refreshData() {
@@ -85,6 +88,12 @@ public class MoreStatsScreen implements DropdownMenuListener {
         classDropdown = new DropdownMenu(this, CLASSES, FontHelper.tipBodyFont, Settings.LIGHT_YELLOW_COLOR);
 
         statTypeDropdown = new DropdownMenu(null, STAT_TYPES, FontHelper.tipBodyFont, Settings.LIGHT_YELLOW_COLOR);
+
+        sampleSizeDropdown =
+                new DropdownMenu(null,
+                        new String[]{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"},
+                        FontHelper.tipBodyFont,
+                        Settings.LIGHT_YELLOW_COLOR);
 
         setClassStats(startDates.get(startDateDropdown.getSelectedIndex()),
                 endDates.get(endDateDropDown.getSelectedIndex()),

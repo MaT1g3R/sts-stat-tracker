@@ -3,10 +3,9 @@ package StatsTracker.stats;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Mean implements Comparable<Mean> {
+public class Mean implements Comparable<Mean>, SampleSize {
     public String what;
     private final List<Double> values = new ArrayList<>();
-
     private double cachedMean = 0;
     private int cachedCount = 0;
 
@@ -39,5 +38,10 @@ public class Mean implements Comparable<Mean> {
             return what.compareTo(mean.what);
         }
         return diff > 0 ? 1 : -1;
+    }
+
+    @Override
+    public int getSampleSize() {
+        return values.size();
     }
 }

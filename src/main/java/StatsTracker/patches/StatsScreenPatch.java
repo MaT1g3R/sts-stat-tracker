@@ -1,13 +1,9 @@
 package StatsTracker.patches;
 
 import StatsTracker.Utils;
-import StatsTracker.stats.Card;
-import StatsTracker.stats.ClassStat;
-import StatsTracker.stats.Mean;
-import StatsTracker.stats.Rate;
+import StatsTracker.stats.*;
 import StatsTracker.ui.CharStatRenderer;
 import StatsTracker.ui.MoreStatsScreen;
-import basemod.Pair;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.evacipated.cardcrawl.modthespire.lib.SpirePatch;
 import com.evacipated.cardcrawl.modthespire.lib.SpireReturn;
@@ -21,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.megacrit.cardcrawl.screens.stats.StatsScreen.NAMES;
 import static com.megacrit.cardcrawl.screens.stats.StatsScreen.renderHeader;
@@ -141,12 +138,17 @@ public class StatsScreenPatch {
                 Settings.CREAM_COLOR);
     }
 
-    public static <T> void renderT(SpriteBatch sb,
-                                   float screenX,
-                                   float renderY,
-                                   int maxRows,
-                                   List<T> xs,
-                                   Function<T, String> toString) {
+    public static <T extends SampleSize> void renderT(SpriteBatch sb,
+                                                      float screenX,
+                                                      float renderY,
+                                                      int maxRows,
+                                                      List<T> xs,
+                                                      Function<T, String> toString) {
+        xs =
+                xs.stream()
+                        .filter(x -> x.getSampleSize() >= moreStatsScreen.sampleSizeDropdown.getSelectedIndex())
+                        .collect(
+                                Collectors.toList());
         int len = xs.size();
         if (maxRows > 0) {
             len = Math.min(len, maxRows);
@@ -165,7 +167,11 @@ public class StatsScreenPatch {
         render2Columns(sb, screenX, renderY, builder.toString(), builder2.toString());
     }
 
-    public static <A> void renderRates(SpriteBatch sb, float screenX, float renderY, int maxRows, List<Rate<A>> rates) {
+    public static <A> void renderRates(SpriteBatch sb,
+                                       float screenX,
+                                       float renderY,
+                                       int maxRows,
+                                       List<Rate<A>> rates) {
         renderT(sb,
                 screenX,
                 renderY,
@@ -179,6 +185,11 @@ public class StatsScreenPatch {
                                            float renderY,
                                            int maxRows,
                                            List<Rate<A>> rates) {
+        rates =
+                rates.stream()
+                        .filter(x -> x.getSampleSize() >= moreStatsScreen.sampleSizeDropdown.getSelectedIndex())
+                        .collect(
+                                Collectors.toList());
         int len = rates.size();
         if (maxRows > 0) {
             len = Math.min(len, maxRows);
@@ -275,28 +286,28 @@ public class StatsScreenPatch {
     private static void renderEncounterHPLoss(StatsScreen s, SpriteBatch sb, float screenX) {
         float renderY = getScrollY(s);
         ClassStat cs = moreStatsScreen.getClassStat();
-        List<Pair<String, Double>> act1 = cs.averageDamageTaken.get(1);
-        List<Pair<String, Double>> act2 = cs.averageDamageTaken.get(2);
-        List<Pair<String, Double>> act3 = cs.averageDamageTaken.get(3);
-        List<Pair<String, Double>> act4 = cs.averageDamageTaken.get(4);
+        List<Mean> act1 = cs.averageDamageTaken.getOrDefault(1, new ArrayList<>());
+        List<Mean> act2 = cs.averageDamageTaken.getOrDefault(2, new ArrayList<>());
+        List<Mean> act3 = cs.averageDamageTaken.getOrDefault(3, new ArrayList<>());
+        List<Mean> act4 = cs.averageDamageTaken.getOrDefault(4, new ArrayList<>());
 
         renderHeader(sb, colorForClass("Average encounter HP loss (act 1)"), screenX, renderY);
-        renderT(sb, screenX, renderY, 0, act1, x -> x.getKey() + " #y" + Utils.round(x.getValue(), 3));
+        renderT(sb, screenX, renderY, 0, act1, x -> x.what + " #y" + Utils.round(x.mean(), 3));
         renderY -= 22.0F * Settings.scale * act1.size();
         renderY -= 100 * Settings.scale;
 
         renderHeader(sb, colorForClass("Average encounter HP loss (act 2)"), screenX, renderY);
-        renderT(sb, screenX, renderY, 0, act2, x -> x.getKey() + " #y" + Utils.round(x.getValue(), 3));
+        renderT(sb, screenX, renderY, 0, act2, x -> x.what + " #y" + Utils.round(x.mean(), 3));
         renderY -= 22.0F * Settings.scale * act2.size();
         renderY -= 100 * Settings.scale;
 
         renderHeader(sb, colorForClass("Average encounter HP loss (act 3)"), screenX, renderY);
-        renderT(sb, screenX, renderY, 0, act3, x -> x.getKey() + " #y" + Utils.round(x.getValue(), 3));
+        renderT(sb, screenX, renderY, 0, act3, x -> x.what + " #y" + Utils.round(x.mean(), 3));
         renderY -= 22.0F * Settings.scale * act3.size();
         renderY -= 100 * Settings.scale;
 
         renderHeader(sb, colorForClass("Average encounter HP loss (act 4)"), screenX, renderY);
-        renderT(sb, screenX, renderY, 0, act4, x -> x.getKey() + " #y" + Utils.round(x.getValue(), 3));
+        renderT(sb, screenX, renderY, 0, act4, x -> x.what + " #y" + Utils.round(x.mean(), 3));
     }
 
     private static void renderEncounterMortalityRate(StatsScreen s, SpriteBatch sb, float screenX) {
@@ -374,9 +385,11 @@ public class StatsScreenPatch {
     public static void renderStatScreen(StatsScreen s, SpriteBatch sb) {
         float screenX = Utils.getField(s, StatsScreen.class, "screenX");
         float scrollY = Utils.getField(s, StatsScreen.class, "scrollY");
+        boolean renderSampleSize = true;
 
         switch (moreStatsScreen.STAT_TYPES[moreStatsScreen.statTypeDropdown.getSelectedIndex()]) {
             case "Overall":
+                renderSampleSize = false;
                 renderCharacterStats(s, sb, screenX);
                 break;
             case "Card pick rate act 1":
@@ -422,16 +435,28 @@ public class StatsScreenPatch {
         float endDateX = startDateX + screenPosX(xDiff);
         float characterX = endDateX + screenPosX(xDiff);
         float statTypeX = characterX + screenPosX(xDiff);
+        float sampleSizeX = statTypeX + screenPosX(375);
 
         FontHelper.renderSmartText(sb, FontHelper.tipBodyFont, "Start date", startDateX, labelY, Settings.CREAM_COLOR);
         FontHelper.renderSmartText(sb, FontHelper.tipBodyFont, "End date", endDateX, labelY, Settings.CREAM_COLOR);
         FontHelper.renderSmartText(sb, FontHelper.tipBodyFont, "Character", characterX, labelY, Settings.CREAM_COLOR);
         FontHelper.renderSmartText(sb, FontHelper.tipBodyFont, "Stat type", statTypeX, labelY, Settings.CREAM_COLOR);
+        if (renderSampleSize) {
+            FontHelper.renderSmartText(sb,
+                    FontHelper.tipBodyFont,
+                    "Min sample size",
+                    sampleSizeX,
+                    labelY,
+                    Settings.CREAM_COLOR);
+        }
 
         moreStatsScreen.startDateDropdown.render(sb, startDateX, dropdownY);
         moreStatsScreen.endDateDropDown.render(sb, endDateX, dropdownY);
         moreStatsScreen.classDropdown.render(sb, characterX, dropdownY);
         moreStatsScreen.statTypeDropdown.render(sb, statTypeX, dropdownY);
+        if (renderSampleSize) {
+            moreStatsScreen.sampleSizeDropdown.render(sb, sampleSizeX, dropdownY);
+        }
 
         if (Settings.isControllerMode) {
             s.allCharsHb.move(300.0F * Settings.scale, scrollY + 600.0F * Settings.scale);

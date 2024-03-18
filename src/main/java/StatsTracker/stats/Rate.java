@@ -2,7 +2,7 @@ package StatsTracker.stats;
 
 import StatsTracker.Utils;
 
-public class Rate<T> implements Comparable<Rate<T>> {
+public class Rate<T> implements Comparable<Rate<T>>, SampleSize {
     public final T what;
     public int win = 0;
     public int loss = 0;
@@ -29,5 +29,10 @@ public class Rate<T> implements Comparable<Rate<T>> {
             return what.toString().compareTo(rate.what.toString());
         }
         return percent() < rate.percent() ? 1 : -1;
+    }
+
+    @Override
+    public int getSampleSize() {
+        return total();
     }
 }

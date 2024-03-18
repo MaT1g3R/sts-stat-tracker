@@ -1,6 +1,5 @@
 package StatsTracker.stats;
 
-import basemod.Pair;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.screens.stats.BattleStats;
 import com.megacrit.cardcrawl.screens.stats.BossRelicChoiceStats;
@@ -35,7 +34,7 @@ public class ClassStat {
     public List<Rate<BossRelic>> bossRelicWinRateAct1;
     public List<Rate<BossRelic>> bossRelicWinRateAct2;
     public List<Rate<BossRelic>> bossRelicWinRateSwap;
-    public Map<Integer, List<Pair<String, Double>>> averageDamageTaken = new HashMap<>();
+    public Map<Integer, List<Mean>> averageDamageTaken = new HashMap<>();
     public Map<Integer, List<Rate<String>>> encounterDeadRate = new HashMap<>();
     public Rate<String> nob = new Rate<>("nob survival rate");
     public Map<Integer, List<Mean>> averagePotionUse = new HashMap<>();
@@ -54,15 +53,15 @@ public class ClassStat {
         Map<BossRelic, Rate<BossRelic>> bossRelicWinRateAct1 = new HashMap<>();
         Map<BossRelic, Rate<BossRelic>> bossRelicWinRateAct2 = new HashMap<>();
         Map<BossRelic, Rate<BossRelic>> bossRelicWinRateSwap = new HashMap<>();
-        Map<Integer, Map<String, List<Double>>>
+        Map<Integer, Map<String, Mean>>
                 encounterHPLossMap =
-                new HashMap<Integer, Map<String, List<Double>>>() {{
+                new HashMap<Integer, Map<String, Mean>>() {{
                     put(1, new HashMap<>());
                     put(2, new HashMap<>());
                     put(3, new HashMap<>());
                     put(4, new HashMap<>());
                 }};
-        Map<Integer, List<Pair<String, Double>>> avgEncounterDamage = new HashMap<>();
+        Map<Integer, List<Mean>> avgEncounterDamage = new HashMap<>();
 
         Map<Integer, Map<String, Rate<String>>> encounterDeadRate = new HashMap<Integer, Map<String, Rate<String>>>() {{
             put(1, new HashMap<>());
@@ -233,8 +232,8 @@ public class ClassStat {
                 ded.putIfAbsent(bs.enemies, new Rate<>(bs.enemies));
                 ded.get(bs.enemies).loss++;
 
-                Map<String, List<Double>> m = encounterHPLossMap.get(act);
-                m.putIfAbsent(bs.enemies, new ArrayList<>());
+                Map<String, Mean> m = encounterHPLossMap.get(act);
+                m.putIfAbsent(bs.enemies, new Mean(bs.enemies));
                 double damage = bs.damage;
                 if (damage >= 99999) {
                     damage -= 99999;
@@ -258,20 +257,8 @@ public class ClassStat {
         }
 
         private void finaliseEncounterStats() {
-            encounterHPLossMap.forEach((act, v) -> {
-                List<Pair<String, Double>> pairs = new ArrayList<>();
-                v.forEach((name, damages) -> {
-                    double average = damages.stream().reduce(Double::sum).map(x -> x / damages.size()).orElse(0D);
-                    Pair<String, Double> pair = new Pair<>(name, average);
-                    pairs.add(pair);
-                });
-                pairs.sort((o1, o2) -> {
-                    if (o1.getValue().equals(o2.getValue())) {
-                        return o1.getKey().compareTo(o2.getKey());
-                    }
-                    return o2.getValue().compareTo(o1.getValue());
-                });
-                avgEncounterDamage.put(act, pairs);
+            encounterHPLossMap.forEach((act, xs) -> {
+                avgEncounterDamage.put(act, sortedMapValues(xs));
             });
 
             encounterPotionUseMap.forEach((act, xs) -> {
