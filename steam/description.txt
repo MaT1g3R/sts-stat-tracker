@@ -27,6 +27,8 @@ Features:
 
 [*] Encounter average potions used
 
+[*] Relic win rate
+
 [*] Relic win rate when purchased
 
 [*] Survival rate per act
