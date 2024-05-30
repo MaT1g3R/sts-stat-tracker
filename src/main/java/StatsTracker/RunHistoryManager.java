@@ -48,28 +48,33 @@ public class RunHistoryManager {
                 .sorted();
     }
 
-    private static List<Run> getRunsInRange(List<Run> runs, YearMonth start, YearMonth end) {
-        return runs.stream().filter(run -> run.isInRange(start, end)).collect(Collectors.toList());
+    private static List<Run> getRunsInRange(List<Run> runs, YearMonth start, YearMonth end, boolean includeAbandons) {
+        return runs.stream().filter(run -> run.isInRange(start, end)).filter(run -> {
+            if (includeAbandons) {
+                return true;
+            }
+            return run.runData.victory || (run.runData.killed_by != null && !run.runData.killed_by.isEmpty());
+        }).collect(Collectors.toList());
     }
 
-    public List<Run> getAllRuns(YearMonth start, YearMonth end) {
-        return getRunsInRange(allRuns, start, end);
+    public List<Run> getAllRuns(YearMonth start, YearMonth end, boolean includeAbandons) {
+        return getRunsInRange(allRuns, start, end, includeAbandons);
     }
 
-    public List<Run> getIroncladRuns(YearMonth start, YearMonth end) {
-        return getRunsInRange(ironcladRuns, start, end);
+    public List<Run> getIroncladRuns(YearMonth start, YearMonth end, boolean includeAbandons) {
+        return getRunsInRange(ironcladRuns, start, end, includeAbandons);
     }
 
-    public List<Run> getSilentRuns(YearMonth start, YearMonth end) {
-        return getRunsInRange(silentRuns, start, end);
+    public List<Run> getSilentRuns(YearMonth start, YearMonth end, boolean includeAbandons) {
+        return getRunsInRange(silentRuns, start, end, includeAbandons);
     }
 
-    public List<Run> getDefectRuns(YearMonth start, YearMonth end) {
-        return getRunsInRange(defectRuns, start, end);
+    public List<Run> getDefectRuns(YearMonth start, YearMonth end, boolean includeAbandons) {
+        return getRunsInRange(defectRuns, start, end, includeAbandons);
     }
 
-    public List<Run> getWatcherRuns(YearMonth start, YearMonth end) {
-        return getRunsInRange(watcherRuns, start, end);
+    public List<Run> getWatcherRuns(YearMonth start, YearMonth end, boolean includeAbandons) {
+        return getRunsInRange(watcherRuns, start, end, includeAbandons);
     }
 
 

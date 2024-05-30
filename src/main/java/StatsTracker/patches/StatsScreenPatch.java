@@ -435,12 +435,19 @@ public class StatsScreenPatch {
         float endDateX = startDateX + screenPosX(xDiff);
         float characterX = endDateX + screenPosX(xDiff);
         float statTypeX = characterX + screenPosX(xDiff);
-        float sampleSizeX = statTypeX + screenPosX(375);
+        float includeAbandonsX = statTypeX + screenPosX(375);
+        float sampleSizeX = includeAbandonsX + screenPosX(xDiff * 2);
 
         FontHelper.renderSmartText(sb, FontHelper.tipBodyFont, "Start date", startDateX, labelY, Settings.CREAM_COLOR);
         FontHelper.renderSmartText(sb, FontHelper.tipBodyFont, "End date", endDateX, labelY, Settings.CREAM_COLOR);
         FontHelper.renderSmartText(sb, FontHelper.tipBodyFont, "Character", characterX, labelY, Settings.CREAM_COLOR);
         FontHelper.renderSmartText(sb, FontHelper.tipBodyFont, "Stat type", statTypeX, labelY, Settings.CREAM_COLOR);
+        FontHelper.renderSmartText(sb,
+                FontHelper.tipBodyFont,
+                "Include Abandons?",
+                includeAbandonsX,
+                labelY,
+                Settings.CREAM_COLOR);
         if (renderSampleSize) {
             FontHelper.renderSmartText(sb,
                     FontHelper.tipBodyFont,
@@ -454,6 +461,7 @@ public class StatsScreenPatch {
         moreStatsScreen.endDateDropDown.render(sb, endDateX, dropdownY);
         moreStatsScreen.classDropdown.render(sb, characterX, dropdownY);
         moreStatsScreen.statTypeDropdown.render(sb, statTypeX, dropdownY);
+        moreStatsScreen.abandonDropdown.render(sb, includeAbandonsX, dropdownY);
         if (renderSampleSize) {
             moreStatsScreen.sampleSizeDropdown.render(sb, sampleSizeX, dropdownY);
         }

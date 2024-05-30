@@ -17,7 +17,7 @@ public class MoreStatsScreen implements DropdownMenuListener {
     public DropdownMenu endDateDropDown;
     public DropdownMenu classDropdown;
     public DropdownMenu statTypeDropdown;
-
+    public DropdownMenu abandonDropdown;
     public DropdownMenu sampleSizeDropdown;
     public ArrayList<YearMonth> startDates;
     public ArrayList<YearMonth> endDates;
@@ -52,7 +52,10 @@ public class MoreStatsScreen implements DropdownMenuListener {
         int startDateIndex = startDateDropdown.getSelectedIndex();
         int endDateIndex = endDateDropDown.getSelectedIndex();
 
-        setClassStats(startDates.get(startDateIndex), endDates.get(endDateIndex), currentClass());
+        setClassStats(startDates.get(startDateIndex),
+                endDates.get(endDateIndex),
+                currentClass(),
+                abandonDropdown.getSelectedIndex() == 0);
     }
 
     public void update() {
@@ -60,6 +63,7 @@ public class MoreStatsScreen implements DropdownMenuListener {
         endDateDropDown.update();
         classDropdown.update();
         statTypeDropdown.update();
+        abandonDropdown.update();
         sampleSizeDropdown.update();
     }
 
@@ -89,6 +93,9 @@ public class MoreStatsScreen implements DropdownMenuListener {
 
         statTypeDropdown = new DropdownMenu(null, STAT_TYPES, FontHelper.tipBodyFont, Settings.LIGHT_YELLOW_COLOR);
 
+        abandonDropdown =
+                new DropdownMenu(this, new String[]{"Yes", "No"}, FontHelper.tipBodyFont, Settings.LIGHT_YELLOW_COLOR);
+
         sampleSizeDropdown =
                 new DropdownMenu(null,
                         new String[]{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"},
@@ -97,18 +104,31 @@ public class MoreStatsScreen implements DropdownMenuListener {
 
         setClassStats(startDates.get(startDateDropdown.getSelectedIndex()),
                 endDates.get(endDateDropDown.getSelectedIndex()),
-                CLASSES[classDropdown.getSelectedIndex()]);
+                CLASSES[classDropdown.getSelectedIndex()], abandonDropdown.getSelectedIndex() == 0);
     }
 
     public boolean isDropDownOpen() {
         return startDateDropdown.isOpen || endDateDropDown.isOpen || classDropdown.isOpen;
     }
 
-    private static ClassStat[] getClassStats(YearMonth startDate, YearMonth endDate, String className) {
-        ClassStat ironcladCS = new ClassStat(StatsTracker.runHistoryManager.getIroncladRuns(startDate, endDate), false);
-        ClassStat silentCS = new ClassStat(StatsTracker.runHistoryManager.getSilentRuns(startDate, endDate), false);
-        ClassStat defectCS = new ClassStat(StatsTracker.runHistoryManager.getDefectRuns(startDate, endDate), false);
-        ClassStat watcherCS = new ClassStat(StatsTracker.runHistoryManager.getWatcherRuns(startDate, endDate), false);
+    private static ClassStat[] getClassStats(YearMonth startDate,
+                                             YearMonth endDate,
+                                             String className,
+                                             boolean includeAbandons) {
+        ClassStat
+                ironcladCS =
+                new ClassStat(StatsTracker.runHistoryManager.getIroncladRuns(startDate, endDate, includeAbandons),
+                        false);
+        ClassStat
+                silentCS =
+                new ClassStat(StatsTracker.runHistoryManager.getSilentRuns(startDate, endDate, includeAbandons), false);
+        ClassStat
+                defectCS =
+                new ClassStat(StatsTracker.runHistoryManager.getDefectRuns(startDate, endDate, includeAbandons), false);
+        ClassStat
+                watcherCS =
+                new ClassStat(StatsTracker.runHistoryManager.getWatcherRuns(startDate, endDate, includeAbandons),
+                        false);
 
         ClassStat allCS;
         switch (className) {
@@ -125,12 +145,14 @@ public class MoreStatsScreen implements DropdownMenuListener {
                 allCS = watcherCS;
                 break;
             default:
-                allCS = new ClassStat(StatsTracker.runHistoryManager.getAllRuns(startDate, endDate), true);
+                allCS =
+                        new ClassStat(StatsTracker.runHistoryManager.getAllRuns(startDate, endDate, includeAbandons),
+                                true);
         }
         return new ClassStat[]{ironcladCS, silentCS, defectCS, watcherCS, allCS};
     }
 
-    private void setClassStats(YearMonth startDate, YearMonth endDate, String className) {
-        classStats = getClassStats(startDate, endDate, className);
+    private void setClassStats(YearMonth startDate, YearMonth endDate, String className, boolean includeAbandons) {
+        classStats = getClassStats(startDate, endDate, className, includeAbandons);
     }
 }
