@@ -3,7 +3,7 @@
   "title": "StatsTracker",
   "description": "Additional stats tracking",
   "visibility": "public",
-  "changeNote": "v2.1.0\n- Add relic winrate\n- Ignore blasphemy in damage taken\n- Add sample size filter",
+  "changeNote": "v2.2.0\n- Add average run time\n- Add abandoned run filter",
   "tags": [
     "Utility",
     "Qol"

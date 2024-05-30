@@ -33,6 +33,8 @@ Features:
 
 [*] Survival rate per act
 
+[*] Average run time (wins)
+
 [/list]
 
 More stats coming soon!
