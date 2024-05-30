@@ -23,7 +23,7 @@ public class ClassStat {
     public int enemyKilled = 0;
     public final int bestWinStreak;
     public int highestScore = 0;
-
+    public Mean averageWinningTime;
     public List<Rate<Card>> cardPicksAct1;
     public List<Rate<Card>> cardPicksAfterAct1;
     public List<Rate<Card>> cardWinRate;
@@ -43,6 +43,7 @@ public class ClassStat {
     public List<Rate<String>> relicPurchasedWinRate;
 
     private static class StatCollector {
+        Mean averageWinningTime = new Mean("Average Time (wins)");
         Map<Card, Rate<Card>> cardPicksAct1 = new HashMap<>();
         Map<Card, Rate<Card>> cardPicksAfterAct1 = new HashMap<>();
         Map<Card, Rate<Card>> cardWinRate = new HashMap<>();
@@ -326,6 +327,12 @@ public class ClassStat {
             });
         }
 
+        private void runTimeStats(Run run) {
+            if (run.isHeartKill) {
+                averageWinningTime.add(run.runData.playtime);
+            }
+        }
+
         void collect(Run run) {
             cardPickStats(run);
             deckStats(run);
@@ -334,6 +341,7 @@ public class ClassStat {
             encounterStats(run);
             survivalRatePerAct(run);
             relicStats(run);
+            runTimeStats(run);
         }
 
         private <A> List<A> sortedMapValues(Map<?, A> map) {
@@ -366,6 +374,8 @@ public class ClassStat {
             cs.survivalRatePerAct = survivalRatePerAct;
             cs.relicWinRate = sortedMapValues(relicWinRate);
             cs.relicPurchasedWinRate = sortedMapValues(relicPurchasedWinRate);
+
+            cs.averageWinningTime = averageWinningTime;
         }
     }
 

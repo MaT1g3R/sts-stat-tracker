@@ -18,6 +18,13 @@ public class CharStatRenderer {
         if (cs.fastestTime != 0L) {
             this.info = this.info + CharStat.TEXT[13] + CharStat.formatHMSM(cs.fastestTime) + " NL ";
         }
+        if (cs.averageWinningTime.mean() != 0D) {
+            this.info +=
+                    cs.averageWinningTime.what +
+                            ": " +
+                            CharStat.formatHMSM((long) cs.averageWinningTime.mean()) +
+                            " NL ";
+        }
 
         this.info = this.info + CharStat.TEXT[23] + cs.highestScore + " NL ";
         if (cs.bestWinStreak > 0) {
