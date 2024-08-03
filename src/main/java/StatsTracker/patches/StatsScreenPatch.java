@@ -382,6 +382,27 @@ public class StatsScreenPatch {
         renderRates(sb, screenX, renderY, 0, cs.relicPurchasedWinRate);
     }
 
+    private static void renderEventWinRate(StatsScreen s, SpriteBatch sb, float screenX) {
+        float renderY = getScrollY(s);
+        ClassStat cs = moreStatsScreen.getClassStat();
+        List<Rate<String>> act1 = cs.eventWinRateAct1;
+        List<Rate<String>> act2 = cs.eventWinRateAct2;
+        List<Rate<String>> act3 = cs.eventWinRateAct3;
+
+        renderHeader(sb, colorForClass("Event win rate (act 1)"), screenX, renderY);
+        renderRates(sb, screenX, renderY, 0, act1);
+        renderY -= 22.0F * Settings.scale * act1.size();
+        renderY -= 100 * Settings.scale;
+
+        renderHeader(sb, colorForClass("Event win rate (act 2)"), screenX, renderY);
+        renderRates(sb, screenX, renderY, 0, act2);
+        renderY -= 22.0F * Settings.scale * act2.size();
+        renderY -= 100 * Settings.scale;
+
+        renderHeader(sb, colorForClass("Event win rate (act 3)"), screenX, renderY);
+        renderRates(sb, screenX, renderY, 0, act3);
+    }
+
     public static void renderStatScreen(StatsScreen s, SpriteBatch sb) {
         float screenX = Utils.getField(s, StatsScreen.class, "screenX");
         float scrollY = Utils.getField(s, StatsScreen.class, "scrollY");
@@ -424,6 +445,9 @@ public class StatsScreenPatch {
                 break;
             case "Relic win rate when purchased":
                 renderRelicWinRateWhenPurchased(s, sb, screenX);
+                break;
+            case "Event win rate per act":
+                renderEventWinRate(s, sb, screenX);
                 break;
         }
 

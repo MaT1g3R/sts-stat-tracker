@@ -3,7 +3,7 @@
   "title": "StatsTracker",
   "description": "Additional stats tracking",
   "visibility": "public",
-  "changeNote": "v2.2.0\n- Add average run time\n- Add abandoned run filter",
+  "changeNote": "v2.3.0 - Add event win rate",
   "tags": [
     "Utility",
     "Qol"

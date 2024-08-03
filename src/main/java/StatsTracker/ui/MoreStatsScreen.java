@@ -37,6 +37,7 @@ public class MoreStatsScreen implements DropdownMenuListener {
                     "Encounter average potions used",
                     "Relic win rate",
                     "Relic win rate when purchased",
+                    "Event win rate per act",
             };
 
     public String currentClass() {

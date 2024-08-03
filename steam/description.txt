@@ -35,6 +35,8 @@ Features:
 
 [*] Average run time (wins)
 
+[*] Event win rate per act
+
 [/list]
 
 More stats coming soon!

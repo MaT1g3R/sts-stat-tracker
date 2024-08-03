@@ -42,6 +42,10 @@ public class ClassStat {
     public List<Rate<String>> relicWinRate;
     public List<Rate<String>> relicPurchasedWinRate;
 
+    public List<Rate<String>> eventWinRateAct1;
+    public List<Rate<String>> eventWinRateAct2;
+    public List<Rate<String>> eventWinRateAct3;
+
     private static class StatCollector {
         Mean averageWinningTime = new Mean("Average Time (wins)");
         Map<Card, Rate<Card>> cardPicksAct1 = new HashMap<>();
@@ -89,6 +93,11 @@ public class ClassStat {
 
         Map<String, Rate<String>> relicPurchasedWinRate = new HashMap<>();
         Map<String, Rate<String>> relicWinRate = new HashMap<>();
+        Map<Integer, Map<String, Rate<String>>> eventWinRate = new HashMap<Integer, Map<String, Rate<String>>>() {{
+            put(1, new HashMap<>());
+            put(2, new HashMap<>());
+            put(3, new HashMap<>());
+        }};
 
         private void cardPickStats(Run run) {
             for (CardChoiceStats c : run.runData.card_choices) {
@@ -333,6 +342,20 @@ public class ClassStat {
             }
         }
 
+        private void eventStats(Run run) {
+            run.runData.event_choices.forEach(e -> {
+                int act = run.getAct(e.floor);
+                String event = e.event_name;
+                Map<String, Rate<String>> m = eventWinRate.get(act);
+                m.putIfAbsent(event, new Rate<>(event));
+                if (run.isHeartKill) {
+                    m.get(event).win++;
+                } else {
+                    m.get(event).loss++;
+                }
+            });
+        }
+
         void collect(Run run) {
             cardPickStats(run);
             deckStats(run);
@@ -342,6 +365,7 @@ public class ClassStat {
             survivalRatePerAct(run);
             relicStats(run);
             runTimeStats(run);
+            eventStats(run);
         }
 
         private <A> List<A> sortedMapValues(Map<?, A> map) {
@@ -376,6 +400,10 @@ public class ClassStat {
             cs.relicPurchasedWinRate = sortedMapValues(relicPurchasedWinRate);
 
             cs.averageWinningTime = averageWinningTime;
+
+            cs.eventWinRateAct1 = sortedMapValues(eventWinRate.get(1));
+            cs.eventWinRateAct2 = sortedMapValues(eventWinRate.get(2));
+            cs.eventWinRateAct3 = sortedMapValues(eventWinRate.get(3));
         }
     }
 
