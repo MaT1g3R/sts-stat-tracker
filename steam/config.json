@@ -3,7 +3,7 @@
   "title": "StatsTracker",
   "description": "Additional stats tracking",
   "visibility": "public",
-  "changeNote": "v2.3.0 - Add event win rate",
+  "changeNote": "v2.3.1 - Fix crash",
   "tags": [
     "Utility",
     "Qol"

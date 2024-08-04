@@ -347,6 +347,9 @@ public class ClassStat {
                 int act = run.getAct(e.floor);
                 String event = e.event_name;
                 Map<String, Rate<String>> m = eventWinRate.get(act);
+                if (m == null) {
+                    return;
+                }
                 m.putIfAbsent(event, new Rate<>(event));
                 if (run.isHeartKill) {
                     m.get(event).win++;
