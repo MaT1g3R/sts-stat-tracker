@@ -3,7 +3,7 @@
   "title": "StatsTracker",
   "description": "Additional stats tracking",
   "visibility": "public",
-  "changeNote": "v2.3.1 - Fix crash",
+  "changeNote": "v2.4.0 - Add meta scaling stats",
   "tags": [
     "Utility",
     "Qol"

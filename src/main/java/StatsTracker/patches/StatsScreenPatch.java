@@ -403,6 +403,20 @@ public class StatsScreenPatch {
         renderRates(sb, screenX, renderY, 0, act3);
     }
 
+    private static void renderMetaScaling(StatsScreen s, SpriteBatch sb, float screenX) {
+        float renderY = getScrollY(s);
+        renderHeader(sb, NAMES[0], screenX, renderY);
+        moreStatsScreen.getClassStat().metaScaling.render(sb, screenX, renderY);
+        renderY -= 350.0F * Settings.scale;
+
+        for (int i = 0; i < 4; i++) {
+            String name = NAMES[i + 2];
+            renderHeader(sb, name, screenX, renderY);
+            moreStatsScreen.classStats[i].metaScaling.render(sb, screenX, renderY);
+            renderY -= 350.0F * Settings.scale;
+        }
+    }
+
     public static void renderStatScreen(StatsScreen s, SpriteBatch sb) {
         float screenX = Utils.getField(s, StatsScreen.class, "screenX");
         float scrollY = Utils.getField(s, StatsScreen.class, "scrollY");
@@ -448,6 +462,9 @@ public class StatsScreenPatch {
                 break;
             case "Event win rate per act":
                 renderEventWinRate(s, sb, screenX);
+                break;
+            case "Meta Scaling":
+                renderMetaScaling(s, sb, screenX);
                 break;
         }
 

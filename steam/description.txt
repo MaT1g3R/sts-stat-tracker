@@ -37,6 +37,8 @@ Features:
 
 [*] Event win rate per act
 
+[*] Meta scaling stats
+
 [/list]
 
 More stats coming soon!

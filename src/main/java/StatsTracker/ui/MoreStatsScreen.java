@@ -38,6 +38,7 @@ public class MoreStatsScreen implements DropdownMenuListener {
                     "Relic win rate",
                     "Relic win rate when purchased",
                     "Event win rate per act",
+                    "Meta Scaling",
             };
 
     public String currentClass() {

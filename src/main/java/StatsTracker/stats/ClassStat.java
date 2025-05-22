@@ -45,6 +45,7 @@ public class ClassStat {
     public List<Rate<String>> eventWinRateAct1;
     public List<Rate<String>> eventWinRateAct2;
     public List<Rate<String>> eventWinRateAct3;
+    public MetaScaling metaScaling = new MetaScaling();
 
     private static class StatCollector {
         Mean averageWinningTime = new Mean("Average Time (wins)");
@@ -422,6 +423,7 @@ public class ClassStat {
 
         for (Run run : runs) {
             collector.collect(run);
+            this.metaScaling.addRun(run.runData);
 
             playTime += run.runData.playtime;
             if (run.isHeartKill) {

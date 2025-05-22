@@ -3,9 +3,7 @@ package StatsTracker.stats;
 
 import com.megacrit.cardcrawl.screens.stats.*;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class RunData {
     public String character_chosen;
@@ -59,13 +57,13 @@ public class RunData {
 
     // Run history+ stats
     public List<String> score_breakdown = new ArrayList<>();
-
     public List<String> neow_bonuses_skipped_log = new ArrayList<>();
     public List<String> neow_costs_skipped_log = new ArrayList<>();
-
     public List<List<String>> potion_use_per_floor = new ArrayList<>();
-
     public static Comparator<RunData> orderByTimestampDesc = (o1, o2) -> o2.timestamp.compareTo(o1.timestamp);
+    public Map<String, List<Integer>> improvable_cards = new HashMap<>();
+    public List<List<String>> potions_obtained_alchemize = new ArrayList<>();
+    public List<List<String>> lesson_learned_per_floor = new ArrayList<>();
 
     public RunData() {
     }
