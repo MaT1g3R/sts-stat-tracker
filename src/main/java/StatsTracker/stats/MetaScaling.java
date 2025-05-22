@@ -61,7 +61,7 @@ public class MetaScaling {
 
     private int parseGold(RunData run) {
         for (String score : run.score_breakdown) {
-            if (score.contains("Money Money")) {
+            if (score.contains("Money Money") || score.contains("I Like Gold")) {
                 // Extract gold amount from the score breakdown line
                 // Example: Money Money (1596)
                 try {

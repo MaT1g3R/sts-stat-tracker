@@ -3,7 +3,7 @@
   "title": "StatsTracker",
   "description": "Additional stats tracking",
   "visibility": "public",
-  "changeNote": "v2.4.0 - Add meta scaling stats",
+  "changeNote": "v2.4.1 - Fix max gold",
   "tags": [
     "Utility",
     "Qol"
