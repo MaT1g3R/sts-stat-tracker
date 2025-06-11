@@ -5,7 +5,7 @@
     "vmService"
   ],
   "description": "Advanced stats tracking",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "sts_version": "07-30-2020",
   "mts_version": "3.15.0",
   "dependencies": [

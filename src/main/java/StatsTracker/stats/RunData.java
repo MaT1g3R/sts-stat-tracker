@@ -50,7 +50,7 @@ public class RunData {
     public List<BattleStats> damage_taken = new ArrayList<>();
     public List<EventStats> event_choices = new ArrayList<>();
     public List<CardChoiceStats> card_choices;
-    public List<ObtainStats> relics_obtained;
+    public List<ObtainStats> relics_obtained = new ArrayList<>();
     public List<ObtainStats> potions_obtained;
     public List<BossRelicChoiceStats> boss_relics;
     public List<CampfireChoice> campfire_choices;

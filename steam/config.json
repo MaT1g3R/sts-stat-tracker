@@ -3,7 +3,7 @@
   "title": "StatsTracker",
   "description": "Additional stats tracking",
   "visibility": "public",
-  "changeNote": "v2.4.1 - Fix max gold",
+  "changeNote": "v2.4.2 - Fix null pointer exception",
   "tags": [
     "Utility",
     "Qol"
