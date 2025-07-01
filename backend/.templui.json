@@ -1,0 +1,7 @@
+{
+  "componentsDir": "components",
+  "utilsDir": "utils",
+  "moduleName": "github.com/MaT1g3R/stats-tracker",
+  "jsDir": "assets/js",
+  "jsPublicPath": "/assets/js"
+}

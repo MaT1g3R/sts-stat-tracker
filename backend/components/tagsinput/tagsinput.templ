@@ -1,0 +1,81 @@
+// templui component tagsinput - version: v0.81.1 installed by templui v0.81.1
+package tagsinput
+
+import (
+	"github.com/MaT1g3R/stats-tracker/components/badge"
+	"github.com/MaT1g3R/stats-tracker/components/input"
+	"github.com/MaT1g3R/stats-tracker/utils"
+)
+
+type Props struct {
+	ID          string
+	Name        string
+	Value       []string
+	Placeholder string
+	Class       string
+	HasError    bool
+	Attributes  templ.Attributes
+	Disabled    bool
+	Readonly    bool
+}
+
+templ TagsInput(p Props) {
+	<div
+		id={ p.ID + "-container" }
+		class={
+			utils.TwMerge(
+				"flex items-center flex-wrap gap-2 p-2 rounded-md bg-background",
+				"focus-within:ring-2 focus-within:ring-offset-2 focus-visible:outline-hidden border ring-offset-background",
+				"peer disabled:opacity-50 w-full border",
+				utils.If(p.HasError, "border-destructive ring-destructive"),
+				p.Class,
+			),
+		}
+		data-tags-input
+		data-name={ p.Name }
+		{ p.Attributes... }
+	>
+		<div class="flex items-center flex-wrap gap-2" data-tags-container>
+			for _, tag := range p.Value {
+				@badge.Badge(badge.Props{
+					Attributes: templ.Attributes{"data-tag-chip": ""},
+				}) {
+					<span>{ tag }</span>
+					<button
+						type="button"
+						class="ml-1 text-current hover:text-destructive disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+						disabled?={ p.Disabled }
+						data-tag-remove
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+						</svg>
+					</button>
+				}
+			}
+		</div>
+		<div data-input-container>
+			@input.Input(input.Props{
+				ID:          p.ID,
+				Class:       "border-none focus-visible:ring-0 focus-visible:ring-offset-0",
+				Type:        input.TypeText,
+				Placeholder: p.Placeholder,
+				Disabled:    p.Disabled,
+				Readonly:    p.Readonly,
+				Attributes: utils.MergeAttributes(
+					templ.Attributes{"data-text-input": ""},
+					p.Attributes,
+				),
+			})
+		</div>
+		<div data-hidden-inputs>
+			for _, tag := range p.Value {
+				<input type="hidden" name={ p.Name } value={ tag }/>
+			}
+		</div>
+	</div>
+}
+
+templ Script() {
+	<script defer src="/assets/js/tagsinput.min.js"></script>
+}
