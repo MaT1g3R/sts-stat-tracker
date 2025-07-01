@@ -1,0 +1,302 @@
+// templui component selectbox - version: v0.81.1 installed by templui v0.81.1
+package selectbox
+
+import (
+	"context"
+	"fmt"
+	"github.com/MaT1g3R/stats-tracker/components/button"
+	"github.com/MaT1g3R/stats-tracker/components/icon"
+	"github.com/MaT1g3R/stats-tracker/components/popover"
+	"github.com/MaT1g3R/stats-tracker/utils"
+	"strconv"
+)
+
+type contextKey string
+
+var contentIDKey contextKey = "contentID"
+
+type Props struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+	Multiple   bool
+}
+
+type TriggerProps struct {
+	ID                string
+	Class             string
+	Attributes        templ.Attributes
+	Name              string
+	Required          bool
+	Disabled          bool
+	HasError          bool
+	Multiple          bool
+	ShowPills         bool
+	SelectedCountText string
+}
+
+type ValueProps struct {
+	ID          string
+	Class       string
+	Attributes  templ.Attributes
+	Placeholder string
+	Multiple    bool
+}
+
+type ContentProps struct {
+	ID                string
+	Class             string
+	Attributes        templ.Attributes
+	NoSearch          bool
+	SearchPlaceholder string
+}
+
+type GroupProps struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+}
+
+type LabelProps struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+}
+
+type ItemProps struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+	Value      string
+	Selected   bool
+	Disabled   bool
+}
+
+templ SelectBox(props ...Props) {
+	{{
+		var p Props
+		if len(props) > 0 {
+			p = props[0]
+		}
+		wrapperID := p.ID
+		if wrapperID == "" {
+			wrapperID = utils.RandomID()
+		}
+		contentID := fmt.Sprintf("%s-content", wrapperID)
+		ctx = context.WithValue(ctx, contentIDKey, contentID)
+	}}
+	<div
+		id={ wrapperID }
+		class={ utils.TwMerge("select-container w-full relative", p.Class) }
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+templ Trigger(props ...TriggerProps) {
+	{{
+		var p TriggerProps
+		if len(props) > 0 {
+			p = props[0]
+		}
+		contentID, ok := ctx.Value(contentIDKey).(string)
+		if !ok {
+			contentID = "fallback-select-content-id"
+		}
+		if p.ShowPills {
+			p.Multiple = true
+		}
+	}}
+	@popover.Trigger(popover.TriggerProps{
+		For:         contentID,
+		TriggerType: popover.TriggerTypeClick,
+	}) {
+		@button.Button(button.Props{
+			ID:      p.ID,
+			Type:    "button",
+			Variant: button.VariantOutline,
+			Class: utils.TwMerge(
+				"w-full select-trigger flex items-center justify-between focus:ring-2 focus:ring-offset-2",
+				utils.If(p.HasError, "border-destructive ring-destructive"),
+				p.Class,
+			),
+			Disabled: p.Disabled,
+			Attributes: utils.MergeAttributes(
+				templ.Attributes{
+					"data-content-id":          contentID,
+					"data-multiple":            strconv.FormatBool(p.Multiple),
+					"data-show-pills":          strconv.FormatBool(p.ShowPills),
+					"data-selected-count-text": p.SelectedCountText,
+					"tabindex":                 "0",
+					"required":                 strconv.FormatBool(p.Required),
+				},
+				p.Attributes,
+			),
+		}) {
+			<input
+				type="hidden"
+				if p.Name != "" {
+					name={ p.Name }
+				}
+				required?={ p.Required }
+			/>
+			{ children... }
+			<span class="pointer-events-none ml-1">
+				@icon.ChevronDown(icon.Props{
+					Size:  16,
+					Class: "text-muted-foreground",
+				})
+			</span>
+		}
+	}
+}
+
+templ Value(props ...ValueProps) {
+	{{ var p ValueProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<span
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={ utils.TwMerge("block truncate select-value text-muted-foreground", p.Class) }
+		{ p.Attributes... }
+	>
+		if p.Placeholder != "" {
+			{ p.Placeholder }
+		}
+		{ children... }
+	</span>
+}
+
+templ Content(props ...ContentProps) {
+	{{
+		var p ContentProps
+		if len(props) > 0 {
+			p = props[0]
+		}
+		contentID, ok := ctx.Value(contentIDKey).(string)
+		if !ok {
+			contentID = "fallback-select-content-id"
+		}
+	}}
+	@popover.Content(popover.ContentProps{
+		ID:         contentID,
+		Placement:  popover.PlacementBottomStart,
+		Offset:     4,
+		MatchWidth: true,
+		DisableESC: !p.NoSearch,
+		Class: utils.TwMerge(
+			"p-1 select-content z-50 overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md",
+			"min-w-[var(--popover-trigger-width)] w-[var(--popover-trigger-width)]",
+			p.Class,
+		),
+		Attributes: utils.MergeAttributes(
+			templ.Attributes{
+				"role":     "listbox",
+				"tabindex": "-1",
+			},
+			p.Attributes,
+		),
+	}) {
+		if !p.NoSearch {
+			<div class="sticky top-0 bg-popover p-1">
+				<div class="relative">
+					<span class="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground">
+						@icon.Search(icon.Props{Size: 16})
+					</span>
+					<input
+						type="text"
+						class="w-full pl-8 pr-2 py-2 text-sm rounded-md border bg-background"
+						placeholder={ p.SearchPlaceholder }
+						data-select-search
+					/>
+				</div>
+			</div>
+		}
+		<div class="max-h-[300px] overflow-y-auto">
+			{ children... }
+		</div>
+	}
+}
+
+templ Group(props ...GroupProps) {
+	{{ var p GroupProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={ utils.TwMerge("p-1", p.Class) }
+		role="group"
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+templ Label(props ...LabelProps) {
+	{{ var p LabelProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<span
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={ utils.TwMerge("px-2 py-1.5 text-sm font-medium", p.Class) }
+		{ p.Attributes... }
+	>
+		{ children... }
+	</span>
+}
+
+templ Item(props ...ItemProps) {
+	{{ var p ItemProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			utils.TwMerge(
+				"select-item relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 px-2 text-sm font-light outline-none",
+				"hover:bg-accent hover:text-accent-foreground",
+				"focus:bg-accent focus:text-accent-foreground",
+				utils.If(p.Selected, "bg-accent text-accent-foreground"),
+				utils.If(p.Disabled, "pointer-events-none opacity-50"),
+				p.Class,
+			),
+		}
+		role="option"
+		data-value={ p.Value }
+		data-selected={ strconv.FormatBool(p.Selected) }
+		data-disabled={ strconv.FormatBool(p.Disabled) }
+		tabindex="0"
+		{ p.Attributes... }
+	>
+		<span class="truncate select-item-text">
+			{ children... }
+		</span>
+		<span
+			class={
+				utils.TwMerge(
+					"select-check absolute right-2 flex h-3.5 w-3.5 items-center justify-center",
+					utils.IfElse(p.Selected, "opacity-100", "opacity-0"),
+				),
+			}
+		>
+			@icon.Check(icon.Props{Size: 16})
+		</span>
+	</div>
+}
+
+templ Script() {
+	<script defer src="/assets/js/selectbox.min.js"></script>
+}

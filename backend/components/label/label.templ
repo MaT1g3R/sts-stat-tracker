@@ -1,0 +1,42 @@
+// templui component label - version: v0.81.1 installed by templui v0.81.1
+package label
+
+import "github.com/MaT1g3R/stats-tracker/utils"
+
+type Props struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+	For        string
+	Error      string
+}
+
+templ Label(props ...Props) {
+	{{ var p Props }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<label
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		if p.For != "" {
+			for={ p.For }
+		}
+		class={
+			utils.TwMerge(
+				"text-sm font-medium leading-none inline-block",
+				utils.If(len(p.Error) > 0, "text-destructive"),
+				p.Class,
+			),
+		}
+		data-disabled-style="opacity-50 cursor-not-allowed"
+		{ p.Attributes... }
+	>
+		{ children... }
+	</label>
+}
+
+templ Script() {
+	<script defer src="/assets/js/label.min.js"></script>
+}

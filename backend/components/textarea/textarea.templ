@@ -1,0 +1,70 @@
+// templui component textarea - version: v0.81.1 installed by templui v0.81.1
+package textarea
+
+import (
+	"github.com/MaT1g3R/stats-tracker/utils"
+	"strconv"
+)
+
+type Props struct {
+	ID          string
+	Class       string
+	Attributes  templ.Attributes
+	Name        string
+	Value       string
+	Placeholder string
+	Rows        int
+	AutoResize  bool
+	Disabled    bool
+	Required    bool
+	Readonly    bool
+
+}
+
+templ Textarea(props ...Props) {
+	{{ var p Props }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	if p.ID == "" {
+		{{ p.ID = utils.RandomID() }}
+	}
+	<textarea
+		id={ p.ID }
+		data-textarea
+		if p.Name != "" {
+			name={ p.Name }
+		}
+		if p.Placeholder != "" {
+			placeholder={ p.Placeholder }
+		}
+		if p.Rows > 0 {
+			rows={ strconv.Itoa(p.Rows) }
+		}
+		disabled?={ p.Disabled }
+		required?={ p.Required }
+		readonly?={ p.Readonly }
+		if p.AutoResize {
+			data-auto-resize="true"
+		}
+		class={
+			utils.TwMerge(
+				"flex w-full px-3 py-2",
+				"min-h-[80px]", // Default min-height (adjust if needed)
+				"rounded-md border border-input bg-background text-sm",
+				"ring-offset-background",
+				"placeholder:text-muted-foreground",
+				"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+				"disabled:cursor-not-allowed disabled:opacity-50",
+				// Add overflow-hidden only if auto-resizing to prevent scrollbar flicker
+				utils.If(p.AutoResize, "overflow-hidden resize-none"),
+				p.Class,
+			),
+		}
+		{ p.Attributes... }
+	>{ p.Value }</textarea>
+}
+
+templ Script() {
+	<script defer src="/assets/js/textarea.min.js"></script>
+}

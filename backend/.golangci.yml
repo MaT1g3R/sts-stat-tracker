@@ -1,0 +1,113 @@
+version: "2"
+linters:
+  default: none
+  enable:
+    - bodyclose
+    - depguard
+    - errcheck
+    - errorlint
+    - funlen
+    - gochecknoinits
+    - goconst
+    - gocyclo
+    - gosec
+    - govet
+    - ineffassign
+    - lll
+    - misspell
+    - nakedret
+    - prealloc
+    - staticcheck
+    - unconvert
+    - unparam
+    - unused
+  settings:
+    dupl:
+      threshold: 100
+    goconst:
+      min-len: 6
+      min-occurrences: 8
+    gocyclo:
+      min-complexity: 15
+    lll:
+      line-length: 120
+    nakedret:
+      max-func-lines: 0
+    depguard:
+      rules:
+        main:
+          list-mode: lax
+          deny:
+            - pkg: github.com/davecgh/go-spew
+            - pkg: github.com/pkg/errors 
+              desc: 'use Go 1.13 errors instead: https://blog.golang.org/go1.13-errors'
+            - pkg: gotest.tools/assert 
+              desc: use gotest.tools/v3/assert instead
+  exclusions:
+    generated: lax
+    rules:
+      - linters:
+          - gosec
+        text: G104
+      - linters:
+          - staticcheck
+        text: SA5001
+      - linters:
+          - staticcheck
+        path: _test\.go
+      - linters:
+          - staticcheck
+        path: testing
+      - linters:
+          - golint
+        text: should have( a package)? comment
+      - linters:
+          - lll
+        source: https?://
+      - linters:
+          - lll
+        source: '"message":'
+      - linters:
+          - errcheck
+        source: ^\s*defer .*\.Close(.*)$
+      - linters:
+          - ineffassign
+        source: ^\s*ctx.*=.*$
+      - linters:
+          - staticcheck
+        source: ^\s*ctx.*=.*$
+      - linters:
+          - funlen
+        text: ^Function 'Test.*
+      - linters:
+          - staticcheck
+        text: ST1000
+      - linters:
+          - unparam
+        path: _test\.go
+      - linters:
+          - gochecknoinits
+        path: /rootcerts
+      - linters:
+          - gosec
+        path: /rootcerts
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+      - components
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    goimports:
+      local-prefixes:
+        - github.com/MaT1g3R/slaytherelics
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+      - components
