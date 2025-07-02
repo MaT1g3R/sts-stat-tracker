@@ -18,7 +18,7 @@ import static basemod.BaseMod.gson;
 import static basemod.BaseMod.logger;
 
 public class Run implements Comparable<Run> {
-    private int portalFloor = -1;
+    private transient int portalFloor = -1;
     private transient final RunData runData;
 
     public final AbstractPlayer.PlayerClass playerClass;
