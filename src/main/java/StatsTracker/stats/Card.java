@@ -64,6 +64,7 @@ public class Card implements Comparable<Card> {
         replacements.put("Ghostly", "Apparition");
         replacements.put("Wraith Form v2", "Wraith Form");
         replacements.put("Fasting2", "Fasting");
+        replacements.put("Conserve Battery", "Charge Battery");
 
         return replacements;
     }

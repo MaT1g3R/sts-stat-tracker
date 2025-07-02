@@ -15,8 +15,8 @@ public class MetaScaling {
     public int maxAlgo = 0;
     public int maxLesson = 0;
 
-    private String info = "";
-    private String info2 = "";
+    private transient String info = "";
+    private transient String info2 = "";
 
     public MetaScaling() {
     }
