@@ -62,6 +62,9 @@ public class Card implements Comparable<Card> {
         replacements.put("Path to Victory", "Pressure Points");
         replacements.put("PathToVictory", "Pressure Points");
         replacements.put("Ghostly", "Apparition");
+        replacements.put("Wraith Form v2", "Wraith Form");
+        replacements.put("Fasting2", "Fasting");
+
         return replacements;
     }
 
