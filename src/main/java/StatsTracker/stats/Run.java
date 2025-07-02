@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static basemod.BaseMod.gson;
+import static basemod.BaseMod.logger;
 
 public class Run implements Comparable<Run> {
     private int portalFloor = -1;
@@ -166,8 +167,75 @@ public class Run implements Comparable<Run> {
         }
     }
 
+    private static List<String> bannedCards = Arrays.asList("pride", "omega");
+    private static List<String> bannedRelics = Arrays.asList("bargainbundle", "pet ghost", "replayfunnel");
+    private static List<String>
+            bannedNeows =
+            Arrays.asList("CHOOSE_OTHER_CHAR_RANDOM_RARE_CARD",
+                    "SWAP_MEMBERSHIP_COURIER",
+                    "CHOOSE_OTHER_CHAR_RANDOM_UNCOMMON_CARD",
+                    "CHOOSE_OTHER_CHAR_RANDOM_COMMON_CARD",
+                    "GAIN_POTION_SLOT",
+                    "GAIN_TWO_POTION_SLOTS",
+                    "GAIN_TWO_RANDOM_COMMON_RELICS");
+
+
     public boolean valid() {
-        return !runData.chose_seed && !runData.is_special_run && !runData.is_daily && !runData.is_endless && isA20;
+        boolean
+                valid =
+                !runData.chose_seed && !runData.is_special_run && !runData.is_daily && !runData.is_endless && isA20;
+        if (!valid) {
+            return false;
+        }
+
+        for (Card c : this.masterDeck) {
+            if (c.name.contains(":")) {
+                return false;
+            }
+            if (bannedCards.contains(c.name.toLowerCase())) {
+                return false;
+            }
+        }
+
+        for (String r : this.relics) {
+            if (r.contains(":")) {
+                return false;
+            }
+            if (bannedRelics.contains(r.toLowerCase())) {
+                return false;
+            }
+        }
+
+        for (BossRelicChoiceStats b : bossRelicChoiceStats) {
+            if (b == null) {
+                continue;
+            }
+            if (b.picked != null && b.picked.contains(":")) {
+                return false;
+            }
+            for (String s : b.not_picked) {
+                if (s != null && s.contains(":")) {
+                    return false;
+                }
+            }
+        }
+
+        if (neowPicked == null) {
+            logger.info("Skipped neow == null {}", this.timestamp);
+            return false;
+        }
+
+        if (bannedNeows.contains(neowPicked.bonus)) {
+            return false;
+        }
+
+        for (Neow n : neowSkipped) {
+            if (bannedNeows.contains(n.bonus)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private int parseGold() {
