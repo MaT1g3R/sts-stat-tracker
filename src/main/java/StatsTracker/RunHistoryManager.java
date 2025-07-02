@@ -30,18 +30,13 @@ public class RunHistoryManager {
                 })
                 .flatMap(s -> Arrays.stream(s.list()).map(Run::fromFile))
                 .flatMap(o -> o.map(Stream::of).orElse(Stream.empty()))
-                .filter(d -> !d.runData.chose_seed)
-                .filter(d -> !d.runData.is_special_run)
-                .filter(d -> !d.runData.is_daily)
-                .filter(d -> !d.runData.is_endless)
-                .filter(d -> d.isA20)
+                .filter(Run::valid)
                 .sorted();
     }
 
     public Stream<YearMonth> getDates() {
         return allRuns.stream()
-                .map(run -> run.runData.timestamp)
-                .map(Long::parseLong)
+                .map(run -> run.timestamp)
                 .map(ts -> new Date(ts * 1000))
                 .map(YearMonth::fromDate)
                 .distinct()
@@ -53,7 +48,7 @@ public class RunHistoryManager {
             if (includeAbandons) {
                 return true;
             }
-            return run.runData.victory || (run.runData.killed_by != null && !run.runData.killed_by.isEmpty());
+            return !run.abandoned;
         }).collect(Collectors.toList());
     }
 

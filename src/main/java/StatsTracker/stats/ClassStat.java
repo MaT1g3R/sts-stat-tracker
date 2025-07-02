@@ -1,10 +1,7 @@
 package StatsTracker.stats;
 
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
-import com.megacrit.cardcrawl.screens.stats.BattleStats;
 import com.megacrit.cardcrawl.screens.stats.BossRelicChoiceStats;
-import com.megacrit.cardcrawl.screens.stats.CardChoiceStats;
-import com.megacrit.cardcrawl.screens.stats.EventStats;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,14 +56,12 @@ public class ClassStat {
         Map<BossRelic, Rate<BossRelic>> bossRelicWinRateAct1 = new HashMap<>();
         Map<BossRelic, Rate<BossRelic>> bossRelicWinRateAct2 = new HashMap<>();
         Map<BossRelic, Rate<BossRelic>> bossRelicWinRateSwap = new HashMap<>();
-        Map<Integer, Map<String, Mean>>
-                encounterHPLossMap =
-                new HashMap<Integer, Map<String, Mean>>() {{
-                    put(1, new HashMap<>());
-                    put(2, new HashMap<>());
-                    put(3, new HashMap<>());
-                    put(4, new HashMap<>());
-                }};
+        Map<Integer, Map<String, Mean>> encounterHPLossMap = new HashMap<Integer, Map<String, Mean>>() {{
+            put(1, new HashMap<>());
+            put(2, new HashMap<>());
+            put(3, new HashMap<>());
+            put(4, new HashMap<>());
+        }};
         Map<Integer, List<Mean>> avgEncounterDamage = new HashMap<>();
 
         Map<Integer, Map<String, Rate<String>>> encounterDeadRate = new HashMap<Integer, Map<String, Rate<String>>>() {{
@@ -101,24 +96,11 @@ public class ClassStat {
         }};
 
         private void cardPickStats(Run run) {
-            for (CardChoiceStats c : run.runData.card_choices) {
+            for (CardChoice c : run.cardChoices) {
                 Map<Card, Rate<Card>> map = c.floor >= 17 ? cardPicksAfterAct1 : cardPicksAct1;
-                Card picked = Card.fromStringIgnoreUpgrades(c.picked);
-                map.putIfAbsent(picked, new Rate<>(picked));
-                map.get(picked).win++;
-                List<Card>
-                        notPicked =
-                        c.not_picked.stream().map(Card::fromStringIgnoreUpgrades).collect(Collectors.toList());
-
-                if (!picked.name.equals("SKIP") && !picked.name.equals("Singing Bowl")) {
-                    if (-1 < run.singingBowlFloor && run.singingBowlFloor <= c.floor) {
-                        notPicked.add(Card.SingingBowl());
-                    } else {
-                        notPicked.add(Card.SKIP());
-                    }
-                }
-
-                notPicked.forEach(c1 -> {
+                map.putIfAbsent(c.picked, new Rate<>(c.picked));
+                map.get(c.picked).win++;
+                c.skipped.forEach(c1 -> {
                     map.putIfAbsent(c1, new Rate<>(c1));
                     map.get(c1).loss++;
                 });
@@ -126,14 +108,17 @@ public class ClassStat {
         }
 
         private void deckStats(Run run) {
-            run.runData.master_deck.stream().map(Card::fromStringIgnoreUpgrades).distinct().forEach(card -> {
-                cardWinRate.putIfAbsent(card, new Rate<>(card));
-                if (run.isHeartKill) {
-                    cardWinRate.get(card).win++;
-                } else {
-                    cardWinRate.get(card).loss++;
-                }
-            });
+            run.masterDeck.stream()
+                    .map(c -> Card.fromStringIgnoreUpgrades(c.name))
+                    .distinct()
+                    .forEach(card -> {
+                        cardWinRate.putIfAbsent(card, new Rate<>(card));
+                        if (run.isHeartKill) {
+                            cardWinRate.get(card).win++;
+                        } else {
+                            cardWinRate.get(card).loss++;
+                        }
+                    });
         }
 
         private void neowStats(Run run) {
@@ -157,34 +142,17 @@ public class ClassStat {
         }
 
         private void bossRelicStats(Run run) {
-            String nlothsGift = "Nloth's Gift";
-            String nloth = "N'loth";
-
-            if (run.runData.neow_bonus != null && run.runData.neow_bonus.equals("BOSS_RELIC")) {
-                String s = "";
-                if (!run.runData.relics.isEmpty()) {
-                    s = run.runData.relics.get(0);
-                }
-                if (s.equals(nlothsGift)) {
-                    for (EventStats e : run.runData.event_choices) {
-                        if (e.event_name.equals(nloth)) {
-                            s = e.relics_lost.stream().findFirst().orElse("");
-                        }
-                    }
-                }
-                if (!s.isEmpty()) {
-                    BossRelic b = new BossRelic(s, 0);
-                    bossRelicWinRateSwap.putIfAbsent(b, new Rate<>(b));
-                    if (run.isHeartKill) {
-                        bossRelicWinRateSwap.get(b).win++;
-                    } else {
-                        bossRelicWinRateSwap.get(b).loss++;
-                    }
+            if (run.bossSwapRelic != null) {
+                bossRelicWinRateSwap.putIfAbsent(run.bossSwapRelic, new Rate<>(run.bossSwapRelic));
+                if (run.isHeartKill) {
+                    bossRelicWinRateSwap.get(run.bossSwapRelic).win++;
+                } else {
+                    bossRelicWinRateSwap.get(run.bossSwapRelic).loss++;
                 }
             }
 
-            for (int i = 0; i < run.runData.boss_relics.size(); ++i) {
-                BossRelicChoiceStats bs = run.runData.boss_relics.get(i);
+            for (int i = 0; i < run.bossRelicChoiceStats.size(); ++i) {
+                BossRelicChoiceStats bs = run.bossRelicChoiceStats.get(i);
                 int act = i == 0 ? 1 : 2;
                 List<String> skipped = new ArrayList<>(bs.not_picked);
                 Map<BossRelic, Rate<BossRelic>> pickRateMap = act == 1 ? bossRelicPickRateAct1 : bossRelicPickRateAct2;
@@ -218,47 +186,37 @@ public class ClassStat {
 
 
         private void encounterStats(Run run) {
-            Map<Integer, Integer> potByFloor = new HashMap<>();
-            for (int i = 0; i < run.runData.potion_use_per_floor.size(); ++i) {
-                int floor = i + 1;
-                int potionsUsed = Math.min(run.runData.potion_use_per_floor.get(i).size(), 9);
-                potByFloor.put(floor, potionsUsed);
-            }
-
-            for (BattleStats bs : run.runData.damage_taken) {
-                if (bs.enemies.equals("Gremlin Nob")) {
+            for (EncounterStats es : run.encounterStats) {
+                if (es.enemies.equals("Gremlin Nob")) {
                     nob.win++;
                 }
-                int act = run.getAct(bs.floor);
-
-                if (!run.runData.potion_use_per_floor.isEmpty()) {
-                    int potsUsed = potByFloor.getOrDefault(bs.floor, -1);
-                    if (potsUsed >= 0) {
-                        encounterPotionUseMap.get(act).putIfAbsent(bs.enemies, new Mean(bs.enemies));
-                        encounterPotionUseMap.get(act).get(bs.enemies).add(potsUsed);
-                    }
+                int act = run.getAct(es.floor);
+                int potsUsed = es.potionsUsed;
+                if (potsUsed >= 0) {
+                    encounterPotionUseMap.get(act).putIfAbsent(es.enemies, new Mean(es.enemies));
+                    encounterPotionUseMap.get(act).get(es.enemies).add(potsUsed);
                 }
 
                 Map<String, Rate<String>> ded = encounterDeadRate.get(act);
-                ded.putIfAbsent(bs.enemies, new Rate<>(bs.enemies));
-                ded.get(bs.enemies).loss++;
+                ded.putIfAbsent(es.enemies, new Rate<>(es.enemies));
+                ded.get(es.enemies).loss++;
 
                 Map<String, Mean> m = encounterHPLossMap.get(act);
-                m.putIfAbsent(bs.enemies, new Mean(bs.enemies));
-                double damage = bs.damage;
+                m.putIfAbsent(es.enemies, new Mean(es.enemies));
+                double damage = es.damage;
                 if (damage >= 99999) {
                     damage -= 99999;
                 }
-                m.get(bs.enemies).add(damage);
+                m.get(es.enemies).add(damage);
             }
 
-            if (run.runData.killed_by != null && !run.runData.killed_by.isEmpty()) {
-                String killedBy = run.runData.killed_by;
+            if (run.killedBy != null && !run.killedBy.isEmpty()) {
+                String killedBy = run.killedBy;
                 if (killedBy.equals("Gremlin Nob")) {
                     nob.win--;
                     nob.loss++;
                 }
-                int act = run.getAct(run.runData.floor_reached);
+                int act = run.getAct(run.floorsReached);
                 Rate<String> k = encounterDeadRate.getOrDefault(act, new HashMap<>()).get(killedBy);
                 if (k != null) {
                     k.win++;
@@ -291,7 +249,7 @@ public class ClassStat {
                 return;
             }
 
-            int floor = run.runData.floor_reached;
+            int floor = run.floorsReached;
             int act = run.getAct(floor);
 
             switch (act) {
@@ -326,7 +284,7 @@ public class ClassStat {
                     rate.loss++;
                 }
             });
-            run.runData.relics.forEach(r -> {
+            run.relics.forEach(r -> {
                 relicWinRate.putIfAbsent(r, new Rate<>(r));
                 Rate<String> rate = relicWinRate.get(r);
                 if (run.isHeartKill) {
@@ -339,12 +297,12 @@ public class ClassStat {
 
         private void runTimeStats(Run run) {
             if (run.isHeartKill) {
-                averageWinningTime.add(run.runData.playtime);
+                averageWinningTime.add(run.playtime);
             }
         }
 
         private void eventStats(Run run) {
-            run.runData.event_choices.forEach(e -> {
+            run.eventStats.forEach(e -> {
                 int act = run.getAct(e.floor);
                 String event = e.event_name;
                 Map<String, Rate<String>> m = eventWinRate.get(act);
@@ -423,21 +381,21 @@ public class ClassStat {
 
         for (Run run : runs) {
             collector.collect(run);
-            this.metaScaling.addRun(run.runData);
+            this.metaScaling.addRun(run);
 
-            playTime += run.runData.playtime;
+            playTime += run.playtime;
             if (run.isHeartKill) {
-                fastestTime = Math.min(fastestTime, run.runData.playtime);
+                fastestTime = Math.min(fastestTime, run.playtime);
             }
             if (run.isHeartKill) {
                 ++numVictory;
             } else {
                 ++numDeath;
             }
-            totalFloorsClimbed += run.runData.floor_reached;
+            totalFloorsClimbed += run.floorsReached;
             bossKilled += run.bossesKilled;
             enemyKilled += run.enemiesKilled;
-            highestScore = Math.max(highestScore, run.runData.score);
+            highestScore = Math.max(highestScore, run.score);
         }
 
         collector.finalise(this);

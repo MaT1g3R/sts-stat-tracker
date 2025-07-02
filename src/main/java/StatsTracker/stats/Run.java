@@ -5,12 +5,11 @@ import StatsTracker.YearMonth;
 import com.badlogic.gdx.files.FileHandle;
 import com.google.gson.JsonSyntaxException;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
-import com.megacrit.cardcrawl.screens.stats.BattleStats;
-import com.megacrit.cardcrawl.screens.stats.EventStats;
-import com.megacrit.cardcrawl.screens.stats.ObtainStats;
+import com.megacrit.cardcrawl.screens.stats.*;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -18,27 +17,65 @@ import java.util.stream.Collectors;
 import static basemod.BaseMod.gson;
 
 public class Run implements Comparable<Run> {
-    public final RunData runData;
+    private int portalFloor = -1;
+    private transient final RunData runData;
+
     public final AbstractPlayer.PlayerClass playerClass;
 
     public final boolean isHeartKill;
     public final boolean isA20;
+    public final boolean abandoned;
+    public final long timestamp;
+    public final String killedBy;
+    public final int floorsReached;
+    public final int playtime;
+    public final int score;
+    public final int gold;
+    public final int maxHP;
+    public final int potionsCreated;
+    public final int lessonsLearned;
+    public final int maxDagger;
+    public final int maxAlgo;
+    public final int maxSearingBlow;
 
     public final int enemiesKilled;
     public final int bossesKilled;
-    public int singingBowlFloor = -1;
-    private int portalFloor = -1;
     public final Neow neowPicked;
     public final List<Neow> neowSkipped = new ArrayList<>();
     public final List<String> relicsPurchased;
+
+    public final List<CardChoice> cardChoices = new ArrayList<>();
+    public final List<Card> masterDeck;
+    public final BossRelic bossSwapRelic;
+    public final List<BossRelicChoiceStats> bossRelicChoiceStats;
+    public final List<EncounterStats> encounterStats = new ArrayList<>();
+    public final List<String> relics;
+    public final List<EventStats> eventStats;
+    public final List<String> itemsPurged;
 
     private Run(RunData runData, AbstractPlayer.PlayerClass playerClass) {
         this.runData = runData;
         this.playerClass = playerClass;
         this.isHeartKill = isHeartKill();
         this.isA20 = runData.is_ascension_mode && runData.ascension_level == 20;
+        this.timestamp = Long.parseLong(runData.timestamp);
 
-        List<String> relics = new ArrayList<>(runData.relics);
+        boolean abandoned = false;
+        if (runData.killed_by == null || runData.killed_by.isEmpty()) {
+            if (!runData.victory) {
+                abandoned = true;
+            }
+        }
+        this.abandoned = abandoned;
+
+        masterDeck = runData.master_deck.stream().map(Card::fromString).collect(Collectors.toList());
+        killedBy = runData.killed_by;
+        floorsReached = runData.floor_reached;
+        relics = runData.relics;
+        playtime = runData.playtime;
+        eventStats = runData.event_choices;
+        score = runData.score;
+        itemsPurged = runData.items_purged;
 
         Pair<Integer, Integer> enemiesKilled = enemiesKilled();
         this.enemiesKilled = enemiesKilled.getLeft();
@@ -56,11 +93,12 @@ public class Run implements Comparable<Run> {
 
         relicsPurchased = runData.items_purchased.stream().filter(relics::contains).collect(Collectors.toList());
 
+        int singingBowlFloor = -1;
         for (ObtainStats r : runData.relics_obtained) {
             int floor = r.floor;
             String key = r.key;
             if (key.equals("Singing Bowl")) {
-                this.singingBowlFloor = floor;
+                singingBowlFloor = floor;
             }
         }
 
@@ -73,6 +111,116 @@ public class Run implements Comparable<Run> {
             this.neowSkipped.add(new Neow(runData.neow_bonuses_skipped_log.get(i),
                     runData.neow_costs_skipped_log.get(i)));
         }
+
+        bossSwapRelic = this.bossSwapRelic();
+        bossRelicChoiceStats = runData.boss_relics;
+
+        Map<Integer, Integer> potByFloor = new HashMap<>();
+        for (int i = 0; i < runData.potion_use_per_floor.size(); ++i) {
+            int floor = i + 1;
+            int potionsUsed = Math.min(runData.potion_use_per_floor.get(i).size(), 9);
+            potByFloor.put(floor, potionsUsed);
+        }
+
+        for (BattleStats bs : runData.damage_taken) {
+            int potsUsed = potByFloor.getOrDefault(bs.floor, -1);
+            EncounterStats e = new EncounterStats(bs.floor, bs.enemies, bs.damage, bs.turns, potsUsed);
+            encounterStats.add(e);
+        }
+        gold = parseGold();
+        maxHP = getMaxHP();
+        potionsCreated = getPotionsCreated();
+        lessonsLearned = getLessonsLearned();
+        maxSearingBlow = parseSearingBlow();
+
+        AtomicInteger maxDagger = new AtomicInteger();
+        AtomicInteger maxAlgo = new AtomicInteger();
+        runData.improvable_cards.forEach((n, cs) -> {
+            String name = n.toLowerCase();
+            if (name.contains("ritualdagger")) {
+                cs.forEach(c -> {
+                    maxDagger.set(Math.max(maxDagger.get(), c));
+                });
+            } else if (name.contains("genetic algorithm")) {
+                cs.forEach(c -> {
+                    maxAlgo.set(Math.max(maxAlgo.get(), c));
+                });
+            }
+        });
+        this.maxDagger = maxDagger.get();
+        this.maxAlgo = maxAlgo.get();
+
+        for (CardChoiceStats c : runData.card_choices) {
+            Card picked = Card.fromStringIgnoreUpgrades(c.picked);
+            List<Card>
+                    notPicked =
+                    c.not_picked.stream().map(Card::fromStringIgnoreUpgrades).collect(Collectors.toList());
+            if (!picked.name.equals("SKIP") && !picked.name.equals("Singing Bowl")) {
+                if (-1 < singingBowlFloor && singingBowlFloor <= c.floor) {
+                    notPicked.add(Card.SingingBowl());
+                } else {
+                    notPicked.add(Card.SKIP());
+                }
+            }
+            cardChoices.add(new CardChoice(picked, notPicked, c.floor));
+        }
+    }
+
+    public boolean valid() {
+        return !runData.chose_seed && !runData.is_special_run && !runData.is_daily && !runData.is_endless && isA20;
+    }
+
+    private int parseGold() {
+        for (String score : runData.score_breakdown) {
+            if (score.contains("Money Money") || score.contains("I Like Gold")) {
+                // Extract gold amount from the score breakdown line
+                // Example: Money Money (1596)
+                try {
+                    return Integer.parseInt(score.split("\\(")[1].split("\\)")[0]);
+                } catch (Exception e) {
+                    StatsTracker.logger.warn("Failed to parse gold amount from score breakdown: " + score);
+                    return 0;
+                }
+            }
+        }
+        return 0;
+    }
+
+    private int getMaxHP() {
+        if (runData.max_hp_per_floor.isEmpty()) {
+            return 0;
+        }
+        return runData.max_hp_per_floor.get(runData.max_hp_per_floor.size() - 1);
+    }
+
+    private int getPotionsCreated() {
+        int p = 0;
+        for (List<String> l : runData.potions_obtained_alchemize) {
+            p += l.size();
+        }
+        return p;
+    }
+
+    private int getLessonsLearned() {
+        int c = 0;
+        for (List<String> l : runData.lesson_learned_per_floor) {
+            c += l.size();
+        }
+        return c;
+    }
+
+    private int parseSearingBlow() {
+        int m = 0;
+        for (Card card : masterDeck) {
+            if (card.name.equals("Searing Blow")) {
+                try {
+                    m = Math.max(m, card.upgrades);
+                } catch (Exception e) {
+                    StatsTracker.logger.warn("Failed to parse Searing Blow upgrade count from master deck: " + card);
+                }
+            }
+        }
+        return m;
     }
 
     private boolean isHeartKill() {
@@ -109,6 +257,33 @@ public class Run implements Comparable<Run> {
         return Pair.of(enemiesKilled, bossesKilled);
     }
 
+    private BossRelic bossSwapRelic() {
+        String nlothsGift = "Nloth's Gift";
+        String nloth = "N'loth";
+        String s = "";
+
+        if (neowPicked != null && Objects.equals(neowPicked.bonus, "BOSS_RELIC")) {
+            if (!runData.relics.isEmpty()) {
+                s = runData.relics.get(0);
+            }
+            if (s.equals(nlothsGift)) {
+                for (EventStats e : runData.event_choices) {
+                    if (e.event_name.equals(nloth)) {
+                        s = e.relics_lost.stream().findFirst().orElse("");
+                    }
+                }
+            }
+        }
+
+        if (!s.isEmpty()) {
+            return new BossRelic(s, 0);
+        }
+        return null;
+    }
+
+    public String toJSON() {
+        return gson.toJson(this);
+    }
 
     public static Optional<Run> fromFile(FileHandle file) {
         RunData data;
