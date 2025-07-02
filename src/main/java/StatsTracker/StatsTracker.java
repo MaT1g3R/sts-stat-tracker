@@ -13,13 +13,24 @@ import com.megacrit.cardcrawl.helpers.ImageMaster;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+
 @SpireInitializer
 public class StatsTracker implements PostInitializeSubscriber {
     public static final Logger logger = LogManager.getLogger(StatsTracker.class.getName());
     public static Texture nobbers;
     public static RunHistoryManager runHistoryManager;
 
+    private final Config config;
+    private final HTTPClient httpClient;
+
     public StatsTracker() {
+        try {
+            config = new Config();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        httpClient = new HTTPClient(config.getEndpoint(), config.userID, config.token);
         BaseMod.subscribe(this);
     }
 
@@ -47,6 +58,11 @@ public class StatsTracker implements PostInitializeSubscriber {
                         (lbl -> {
                         }),
                         (btn -> {
+                            try {
+                                config.setAutoSync(btn.enabled);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
                         }));
 
         settingsPanel.addUIElement(syncButton);
