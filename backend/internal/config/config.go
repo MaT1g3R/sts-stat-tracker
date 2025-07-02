@@ -50,7 +50,7 @@ func Load() (*Config, error) {
 	config.DatabaseConnLifetime = getEnvAsDuration("DATABASE_CONN_LIFETIME", 5*time.Minute)
 
 	// Server settings
-	config.Port = getEnvAsInt("PORT", 8080)
+	config.Port = getEnvAsInt("PORT", 8090)
 	config.Host = getEnvAsString("HOST", "")
 	config.ReadTimeout = getEnvAsDuration("READ_TIMEOUT", 5*time.Second)
 	config.WriteTimeout = getEnvAsDuration("WRITE_TIMEOUT", 10*time.Second)
@@ -61,7 +61,7 @@ func Load() (*Config, error) {
 	config.LogLevel = getEnvAsLogLevel("LOG_LEVEL", slog.LevelInfo)
 	config.EnableProfiler = getEnvAsBool("ENABLE_PROFILER", false)
 	config.EnableCORS = getEnvAsBool("ENABLE_CORS", true)
-	config.AllowedOrigins = getEnvAsStringSlice("ALLOWED_ORIGINS", []string{"http://localhost:8080"})
+	config.AllowedOrigins = getEnvAsStringSlice("ALLOWED_ORIGINS", []string{"http://localhost:8090"})
 	config.MaxRequestSize = getEnvAsInt64("MAX_REQUEST_SIZE", 10<<20) // 10 MB
 	config.StaticFilesDir = getEnvAsString("STATIC_FILES_DIR", "./assets")
 	config.TemplatesCacheDir = getEnvAsString("TEMPLATES_CACHE_DIR", "./tmp/templates")
