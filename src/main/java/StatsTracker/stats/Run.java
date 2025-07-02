@@ -358,5 +358,4 @@ public class Run implements Comparable<Run> {
     public int compareTo(Run run) {
         return RunData.orderByTimestampDesc.compare(run.runData, this.runData);
     }
-
 }
