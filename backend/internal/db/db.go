@@ -128,6 +128,39 @@ func (db *DB) GetUser(ctx context.Context, name string) (model.User, error) {
 	return user, nil
 }
 
+func (db *DB) SearchUsersByPrefix(ctx context.Context, prefix string, limit int) ([]model.User, error) {
+	if limit <= 0 {
+		limit = 10 // Default limit if not specified or invalid
+	}
+
+	rows, err := db.Pool.Query(ctx, `
+		SELECT username, created_at, last_seen
+		FROM users
+		WHERE username ILIKE $1 || '%'
+		ORDER BY last_seen DESC, username ASC
+		LIMIT $2
+	`, prefix, limit)
+	if err != nil {
+		return nil, fmt.Errorf("failed to search users by prefix: %w", err)
+	}
+	defer rows.Close()
+
+	var users []model.User
+	for rows.Next() {
+		var user model.User
+		if err := rows.Scan(&user.Username, &user.CreatedAt, &user.LastSeenAt); err != nil {
+			return nil, fmt.Errorf("failed to scan user row: %w", err)
+		}
+		users = append(users, user)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating user rows: %w", err)
+	}
+
+	return users, nil
+}
+
 func (db *DB) CreateOrGetUser(ctx context.Context, username string) (model.User, error) {
 	var user model.User
 	now := time.Now()

@@ -46,9 +46,11 @@ func NewApp(cfg *config.Config, logger *slog.Logger, db *db.DB, authClient *clie
 
 	// API routes
 	mux.HandleFunc("POST /api/v1/upload-all", app.UploadAll)
+	mux.HandleFunc("GET /api/players/search", app.handlePlayerSearch)
 
 	// App routes
 	mux.HandleFunc("GET /app/players/{name}", app.handlePlayer)
+	mux.HandleFunc("GET /app/players", app.handlePlayers)
 
 	// Create server with timeouts
 	server := &http.Server{

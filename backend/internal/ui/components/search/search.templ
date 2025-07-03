@@ -1,0 +1,75 @@
+package search
+
+import (
+    "fmt"
+    "github.com/MaT1g3R/stats-tracker/utils"
+)
+
+type PlayerResult struct {
+    Name     string
+    LastSeen string
+    Avatar   string
+}
+
+type ResultsProps struct {
+    Players []PlayerResult
+    Query   string
+    Class   string
+}
+
+templ PlayerResults(props ...ResultsProps) {
+    {{ var p ResultsProps }}
+    if len(props) > 0 {
+        {{ p = props[0] }}
+    }
+
+    <div class={ utils.TwMerge("space-y-2", p.Class) }>
+        if len(p.Players) == 0 && p.Query != "" {
+            <div class="text-center py-4 text-gray-500 dark:text-gray-400">
+                <p>No players found matching "{ p.Query }"</p>
+            </div>
+        } else if len(p.Players) > 0 {
+            <div class="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                Found { fmt.Sprintf("%d", len(p.Players)) } player(s)
+            </div>
+            for _, player := range p.Players {
+                @PlayerResultItem(player)
+            }
+        }
+    </div>
+}
+
+templ PlayerResultItem(player PlayerResult) {
+    <div 
+        class="search-result-item flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors"
+        data-player-name={ player.Name }
+        role="button"
+        tabindex="0"
+    >
+        <!-- Avatar placeholder -->
+        <div class="w-10 h-10 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center">
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                { string([]rune(player.Name)[0]) }
+            </span>
+        </div>
+
+        <!-- Player info -->
+        <div class="flex-1 min-w-0">
+            <div class="text-sm font-medium text-gray-900 dark:text-white truncate">
+                { player.Name }
+            </div>
+            if player.LastSeen != "" {
+                <div class="text-xs text-gray-500 dark:text-gray-400">
+                    Last seen: { player.LastSeen }
+                </div>
+            }
+        </div>
+
+        <!-- Arrow indicator -->
+        <div class="text-gray-400 dark:text-gray-500">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+        </div>
+    </div>
+}
