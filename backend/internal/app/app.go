@@ -17,21 +17,23 @@ type App struct {
 	cfg    *config.Config
 	logger *slog.Logger
 
-	db         *db.DB
-	authClient *clients.AuthClient
+	db           *db.DB
+	authClient   *clients.AuthClient
+	twitchClient *clients.TwitchClient
 }
 
-func NewApp(cfg *config.Config, logger *slog.Logger, db *db.DB, authClient *clients.AuthClient) *App {
-	// If authClient is nil, create a new one
-	if authClient == nil {
-		authClient = clients.NewAuthClient(cfg.AuthAPIURL)
-	}
-
+func NewApp(
+	cfg *config.Config,
+	logger *slog.Logger,
+	db *db.DB,
+	authClient *clients.AuthClient,
+	twitchClient *clients.TwitchClient) *App {
 	app := &App{
-		cfg:        cfg,
-		logger:     logger,
-		db:         db,
-		authClient: authClient,
+		cfg:          cfg,
+		logger:       logger,
+		db:           db,
+		authClient:   authClient,
+		twitchClient: twitchClient,
 	}
 
 	// Setup HTTP server

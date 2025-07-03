@@ -10,7 +10,7 @@ import (
 
 	"github.com/MaT1g3R/stats-tracker/internal/clients"
 
-	api2 "github.com/MaT1g3R/stats-tracker/internal/app"
+	"github.com/MaT1g3R/stats-tracker/internal/app"
 
 	"github.com/MaT1g3R/stats-tracker/internal/config"
 	"github.com/MaT1g3R/stats-tracker/internal/db"
@@ -54,7 +54,8 @@ func main() {
 	}
 
 	authClient := clients.NewAuthClient(cfg.AuthAPIURL)
-	api := api2.NewApp(cfg, logger, database, authClient)
+	twitchClient := clients.NewTwitchClient(cfg.TwitchClientID, cfg.TwitchClientSecret)
+	api := app.NewApp(cfg, logger, database, authClient, twitchClient)
 	server := api.Server
 
 	// Start the server in a goroutine
