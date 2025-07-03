@@ -1,0 +1,67 @@
+package layout
+
+import "github.com/MaT1g3R/stats-tracker/internal/ui/components/navbar"
+
+templ BaseLayout(currentPath ...string) {
+	{{ var path string }}
+	if len(currentPath) > 0 {
+		{{ path = currentPath[0] }}
+	}
+	<!DOCTYPE html>
+	<html lang="en" class="h-full dark">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<!-- Tailwind CSS (output) -->
+			<link href="/assets/css/output.css" rel="stylesheet"/>
+		</head>
+		<body class="h-full bg-gray-50 dark:bg-gray-900">
+			<!-- Navigation -->
+			@navbar.Navbar() {
+				@navbar.Item(navbar.ItemProps{
+					Href:     "/app/players",
+					Text:     "Players",
+					IsActive: path == "/app/players",
+				})
+				@navbar.Item(navbar.ItemProps{
+					Href:     "/app/leaderboards",
+					Text:     "Leaderboards",
+					IsActive: path == "/app/leaderboards",
+				})
+			}
+			<!-- Main Content -->
+			<main class="min-h-full">
+				{ children... }
+			</main>
+		</body>
+		<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js"></script>
+		<script>
+          // Re-initialize templUI components after HTMX swaps
+          document.body.addEventListener("htmx:afterSwap", (e) => {
+            if (window.templUI) {
+              Object.values(window.templUI).forEach(comp => {
+                comp.init?.(e.detail.elt);
+              });
+            }
+          });
+
+          // Re-initialize components after out-of-band swaps
+          document.body.addEventListener("htmx:oobAfterSwap", (e) => {
+            if (window.templUI) {
+              Object.values(window.templUI).forEach(comp => {
+                comp.init?.(e.detail.target);
+              });
+            }
+          });
+
+          // Cleanup before swap (for components with event listeners)
+          document.body.addEventListener("htmx:beforeSwap", (e) => {
+            if (window.templUI) {
+              Object.values(window.templUI).forEach(comp => {
+                comp.cleanup?.(e.detail.target);
+              });
+            }
+          });
+        </script>
+	</html>
+}

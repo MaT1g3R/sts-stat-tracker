@@ -1,0 +1,94 @@
+package navbar
+
+import (
+	"github.com/MaT1g3R/stats-tracker/components/button"
+	"github.com/MaT1g3R/stats-tracker/utils"
+)
+
+type Props struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+}
+
+type ItemProps struct {
+	Href       string
+	Text       string
+	IsActive   bool
+	Class      string
+	Attributes templ.Attributes
+}
+
+templ Navbar(props ...Props) {
+	{{ var p Props }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<nav
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={
+			utils.TwMerge(
+				"bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700",
+				p.Class,
+			),
+		}
+		{ p.Attributes... }
+	>
+		<div class="container mx-auto px-4">
+			<div class="flex justify-between items-center h-16">
+				<!-- Logo/Brand -->
+				<div class="flex items-center">
+					<a href="/" class="text-xl font-bold text-gray-900 dark:text-white">
+						Stats Tracker
+					</a>
+				</div>
+				<!-- Navigation Links -->
+				<div class="flex items-center space-x-4">
+					{ children... }
+				</div>
+			</div>
+		</div>
+	</nav>
+}
+
+templ Item(props ...ItemProps) {
+	{{ var p ItemProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<a
+		href={ templ.SafeURL(p.Href) }
+		class={
+			utils.TwMerge(
+				"px-3 py-2 rounded-md text-sm font-medium transition-colors",
+				utils.IfElse(p.IsActive,
+					"bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-100",
+					"text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white",
+				),
+				p.Class,
+			),
+		}
+		{ p.Attributes... }
+	>
+		{ p.Text }
+	</a>
+}
+
+templ Button(props ...ItemProps) {
+	{{ var p ItemProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	@button.Button(button.Props{
+		Variant: utils.IfElse(p.IsActive, button.VariantDefault, button.VariantGhost),
+		Size:    "sm",
+		Class:   p.Class,
+		Attributes: templ.Attributes{
+			"href": p.Href,
+		},
+	}) {
+		{ p.Text }
+	}
+}

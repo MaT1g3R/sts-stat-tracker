@@ -1,4 +1,4 @@
-package api
+package app
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ import (
 	"github.com/MaT1g3R/stats-tracker/internal/db"
 )
 
-type API struct {
+type App struct {
 	Server *http.Server
 
 	cfg    *config.Config
@@ -21,8 +21,8 @@ type API struct {
 	authClient *clients.AuthClient
 }
 
-func NewAPI(cfg *config.Config, logger *slog.Logger, db *db.DB, authClient *clients.AuthClient) *API {
-	api := &API{
+func NewApp(cfg *config.Config, logger *slog.Logger, db *db.DB, authClient *clients.AuthClient) *App {
+	app := &App{
 		cfg:        cfg,
 		logger:     logger,
 		db:         db,
@@ -31,7 +31,7 @@ func NewAPI(cfg *config.Config, logger *slog.Logger, db *db.DB, authClient *clie
 
 	// Setup HTTP server
 	mux := http.NewServeMux()
-	// Register API routes
+	// Healthcheck
 	mux.HandleFunc("GET /api/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
@@ -40,11 +40,15 @@ func NewAPI(cfg *config.Config, logger *slog.Logger, db *db.DB, authClient *clie
 			slog.Error("Failed to write health check response", "error", err)
 		}
 	})
-	mux.HandleFunc("/api/v1/upload-all", api.UploadAll)
-
 	// Setup static file server
 	fs := http.FileServer(http.Dir(cfg.StaticFilesDir))
 	mux.Handle("GET /assets/", http.StripPrefix("/assets/", fs))
+
+	// API routes
+	mux.HandleFunc("POST /api/v1/upload-all", app.UploadAll)
+
+	// App routes
+	mux.HandleFunc("GET /app/players/{name}", app.handlePlayer)
 
 	// Create server with timeouts
 	server := &http.Server{
@@ -53,6 +57,6 @@ func NewAPI(cfg *config.Config, logger *slog.Logger, db *db.DB, authClient *clie
 		ReadTimeout:  cfg.ReadTimeout,
 		WriteTimeout: cfg.WriteTimeout,
 	}
-	api.Server = server
-	return api
+	app.Server = server
+	return app
 }

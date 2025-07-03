@@ -1,4 +1,4 @@
-package api
+package app
 
 import (
 	"fmt"
@@ -20,7 +20,7 @@ func extractBearerToken(header string) (string, error) {
 	return strings.TrimPrefix(header, bearerPrefix), nil
 }
 
-func (a *API) Authenticate(w http.ResponseWriter, r *http.Request) (model.User, error) {
+func (a *App) Authenticate(w http.ResponseWriter, r *http.Request) (model.User, error) {
 	token, err := extractBearerToken(r.Header.Get("Authorization"))
 	if err != nil {
 		err := fmt.Errorf("cannot extract bearer token: %w", err)

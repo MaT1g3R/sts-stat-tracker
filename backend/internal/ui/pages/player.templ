@@ -1,0 +1,41 @@
+package pages
+
+import (
+    "time"
+    "github.com/MaT1g3R/stats-tracker/components/card"
+    "github.com/MaT1g3R/stats-tracker/components/avatar"
+    "github.com/MaT1g3R/stats-tracker/internal/ui/components/localtime"
+    "github.com/MaT1g3R/stats-tracker/internal/ui/layout"
+)
+
+templ Player(name string, lastSeen time.Time) {
+    @layout.BaseLayout("/app/players") {
+        <div class="container mx-auto px-4 py-8">
+            <div class="max-w-4xl mx-auto">
+                <!-- Player Header -->
+                <div class="mb-8">
+                    @card.Card() {
+                        <div class="flex items-center gap-4 p-6">
+                            @avatar.Avatar(avatar.Props{
+                                Size: "lg",
+                            })
+                            <div>
+                                <h1 class="text-3xl font-bold">{name}</h1>
+                                <p class="text-gray-600">
+                                    Last seen:
+                                    @localtime.LocalTime(localtime.Props{
+                                        Time: lastSeen,
+                                    })
+                                </p>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <!-- Rest of your content -->
+            </div>
+        </div>
+        
+        <!-- Include the local time script -->
+        @localtime.Script()
+    }
+}
