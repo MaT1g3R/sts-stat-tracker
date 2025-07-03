@@ -8,6 +8,8 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/MaT1g3R/stats-tracker/internal/clients"
+
 	api2 "github.com/MaT1g3R/stats-tracker/internal/api"
 
 	"github.com/MaT1g3R/stats-tracker/internal/config"
@@ -38,7 +40,7 @@ func main() {
 
 	// Initialize database
 	ctx := context.Background()
-	database, err := db.NewWithConfig(ctx, cfg)
+	database, err := db.NewWithConfig(ctx, cfg, logger)
 	if err != nil {
 		slog.Error("Failed to connect to database", "error", err)
 		os.Exit(1)
@@ -51,7 +53,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	api := api2.NewAPI(cfg, logger, database)
+	authClient := clients.NewAuthClient(cfg.AuthAPIURL)
+	api := api2.NewAPI(cfg, logger, database, authClient)
 	server := api.Server
 
 	// Start the server in a goroutine

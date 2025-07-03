@@ -18,8 +18,9 @@ import static basemod.BaseMod.gson;
 import static basemod.BaseMod.logger;
 
 public class Run implements Comparable<Run> {
-    private transient int portalFloor = -1;
     private transient final RunData runData;
+
+    public int portalFloor = -1;
 
     public final AbstractPlayer.PlayerClass playerClass;
 
@@ -221,7 +222,6 @@ public class Run implements Comparable<Run> {
         }
 
         if (neowPicked == null) {
-            logger.info("Skipped neow == null {}", this.timestamp);
             return false;
         }
 

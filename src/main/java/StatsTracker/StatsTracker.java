@@ -22,7 +22,7 @@ public class StatsTracker implements PostInitializeSubscriber {
     public static RunHistoryManager runHistoryManager;
 
     private final Config config;
-    private final HTTPClient httpClient;
+    private RunUploader runUploader;
 
     public StatsTracker() {
         try {
@@ -30,7 +30,7 @@ public class StatsTracker implements PostInitializeSubscriber {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        httpClient = new HTTPClient(config.getEndpoint(), config.userID, config.token);
+
         BaseMod.subscribe(this);
     }
 
@@ -42,10 +42,13 @@ public class StatsTracker implements PostInitializeSubscriber {
     public void receivePostInitialize() {
         nobbers = ImageMaster.loadImage("StatsTracker/img/nob-1.png");
         runHistoryManager = new RunHistoryManager();
+        HTTPClient httpClient = new HTTPClient(config.getEndpoint(), config.userID, config.token);
+        runUploader = new RunUploader(httpClient, runHistoryManager);
 
         ModPanel settingsPanel = new ModPanel();
-        ModLabeledButton syncButton = new ModLabeledButton("Sync all runs", 400f, 600f, settingsPanel, (btn -> {
-        }));
+        ModLabeledButton
+                syncButton =
+                new ModLabeledButton("Sync all runs", 400f, 600f, settingsPanel, (this::uploadAllRuns));
         ModLabeledToggleButton
                 shareButton =
                 new ModLabeledToggleButton("Auto share runs",
@@ -73,5 +76,23 @@ public class StatsTracker implements PostInitializeSubscriber {
                 "vmService",
                 "track and share your run statistics",
                 settingsPanel);
+    }
+
+    private class UploadTask implements Runnable {
+        private final ModLabeledButton btn;
+
+        public UploadTask(ModLabeledButton btn) {
+            this.btn = btn;
+        }
+
+        @Override
+        public void run() {
+            runUploader.uploadAllRuns(btn);
+        }
+    }
+
+    private void uploadAllRuns(ModLabeledButton btn) {
+        Thread uploadThread = new Thread(new UploadTask(btn));
+        uploadThread.start();
     }
 }
