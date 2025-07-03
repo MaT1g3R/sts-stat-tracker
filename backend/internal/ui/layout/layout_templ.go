@@ -6,6 +6,7 @@ package layout
 //lint:file-ignore SA4006 This context is only used if a nested component is present.
 
 import (
+	"github.com/MaT1g3R/stats-tracker/components/avatar"
 	"github.com/MaT1g3R/stats-tracker/internal/ui/components/navbar"
 	"github.com/a-h/templ"
 	templruntime "github.com/a-h/templ/runtime"
@@ -36,7 +37,15 @@ func BaseLayout(currentPath ...string) templ.Component {
 		if len(currentPath) > 0 {
 			path = currentPath[0]
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" class=\"h-full dark\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><!-- Tailwind CSS (output) --><link href=\"/assets/css/output.css\" rel=\"stylesheet\"></head><body class=\"h-full bg-gray-50 dark:bg-gray-900\"><!-- Navigation -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" class=\"h-full dark\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><!-- Tailwind CSS (output) --><link href=\"/assets/css/output.css\" rel=\"stylesheet\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = avatar.Script().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</head><body class=\"h-full bg-gray-50 dark:bg-gray-900\"><!-- Navigation -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -60,7 +69,7 @@ func BaseLayout(currentPath ...string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -78,7 +87,7 @@ func BaseLayout(currentPath ...string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<!-- Main Content --><main class=\"min-h-full\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<!-- Main Content --><main class=\"min-h-full\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -86,7 +95,7 @@ func BaseLayout(currentPath ...string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</main></body><script src=\"https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js\"></script><script>\n          // Re-initialize templUI components after HTMX swaps\n          document.body.addEventListener(\"htmx:afterSwap\", (e) => {\n            if (window.templUI) {\n              Object.values(window.templUI).forEach(comp => {\n                comp.init?.(e.detail.elt);\n              });\n            }\n          });\n\n          // Re-initialize components after out-of-band swaps\n          document.body.addEventListener(\"htmx:oobAfterSwap\", (e) => {\n            if (window.templUI) {\n              Object.values(window.templUI).forEach(comp => {\n                comp.init?.(e.detail.target);\n              });\n            }\n          });\n\n          // Cleanup before swap (for components with event listeners)\n          document.body.addEventListener(\"htmx:beforeSwap\", (e) => {\n            if (window.templUI) {\n              Object.values(window.templUI).forEach(comp => {\n                comp.cleanup?.(e.detail.target);\n              });\n            }\n          });\n        </script></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</main></body><script src=\"https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js\"></script><script>\n          // Re-initialize templUI components after HTMX swaps\n          document.body.addEventListener(\"htmx:afterSwap\", (e) => {\n            if (window.templUI) {\n              Object.values(window.templUI).forEach(comp => {\n                comp.init?.(e.detail.elt);\n              });\n            }\n          });\n\n          // Re-initialize components after out-of-band swaps\n          document.body.addEventListener(\"htmx:oobAfterSwap\", (e) => {\n            if (window.templUI) {\n              Object.values(window.templUI).forEach(comp => {\n                comp.init?.(e.detail.target);\n              });\n            }\n          });\n\n          // Cleanup before swap (for components with event listeners)\n          document.body.addEventListener(\"htmx:beforeSwap\", (e) => {\n            if (window.templUI) {\n              Object.values(window.templUI).forEach(comp => {\n                comp.cleanup?.(e.detail.target);\n              });\n            }\n          });\n        </script></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

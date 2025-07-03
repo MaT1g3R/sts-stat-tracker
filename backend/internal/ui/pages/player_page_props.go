@@ -3,7 +3,9 @@ package pages
 import "time"
 
 type PlayerPageProps struct {
-	Name             string
+	Name      string
+	AvatarURL string
+
 	LastSeen         time.Time
 	StartDate        time.Time
 	EndDate          time.Time
