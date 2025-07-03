@@ -50,6 +50,7 @@ func (app *App) handlePlayer(w http.ResponseWriter, r *http.Request) {
 	// Create player page props
 	props := pages.PlayerPageProps{
 		Name:             name,
+		AvatarURL:        user.GetProfilePictureUrl(),
 		LastSeen:         user.LastSeenAt,
 		StartDate:        firstRun.RunTimestamp,
 		EndDate:          lastRun.RunTimestamp,

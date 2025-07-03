@@ -1,268 +1,260 @@
 package pages
 
 import (
-    "time"
-    "github.com/MaT1g3R/stats-tracker/components/card"
-    "github.com/MaT1g3R/stats-tracker/components/avatar"
-    "github.com/MaT1g3R/stats-tracker/internal/ui/components/localtime"
-    "github.com/MaT1g3R/stats-tracker/internal/ui/layout"
+	"github.com/MaT1g3R/stats-tracker/components/avatar"
+	"github.com/MaT1g3R/stats-tracker/components/card"
+	"github.com/MaT1g3R/stats-tracker/internal/ui/components/localtime"
+	"github.com/MaT1g3R/stats-tracker/internal/ui/layout"
+	"time"
 )
 
 templ Player(name string, lastSeen time.Time) {
-    @PlayerPage(PlayerPageProps{
-        Name: name,
-        LastSeen: lastSeen,
-        GameVersion: "sts1",
-        Character: "all",
-        IncludeAbandoned: false,
-        StatType: "Overview",
-    })
+	@PlayerPage(PlayerPageProps{
+		Name:             name,
+		LastSeen:         lastSeen,
+		GameVersion:      "sts1",
+		Character:        "all",
+		IncludeAbandoned: false,
+		StatType:         "Overview",
+	})
 }
 
 templ PlayerPage(props PlayerPageProps) {
-    @layout.BaseLayout("/app/players") {
-        <div class="container mx-auto px-4 py-8">
-            <div class="max-w-4xl mx-auto">
-                <!-- Player Header -->
-                <div class="mb-8">
-                    @card.Card() {
-                        <div class="flex items-center gap-4 p-6">
-                            @avatar.Avatar(avatar.Props{
-                                Size: "lg",
-                            })
-                            <div>
-                                <h1 class="text-3xl font-bold">{props.Name}</h1>
-                                <p class="text-gray-600">
-                                    Last seen:
-                                    @localtime.LocalTime(localtime.Props{
-                                        Time: props.LastSeen,
-                                    })
-                                </p>
-                            </div>
-                        </div>
-                    }
-                </div>
-
-                <!-- Filter Controls -->
-                <div class="mb-8">
-                    @card.Card() {
-                        <div class="p-6">
-                            <h2 class="text-xl font-semibold mb-4">Filters</h2>
-                            <form id="player-filters" class="space-y-6">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <!-- Profile Dropdown -->
-                                    <div>
-                                        <label for="profile-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                            Profile
-                                        </label>
-                                        <select 
-                                            id="profile-name" 
-                                            name="profile-name" 
-                                            class="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm"
-                                            hx-get={ "/api/v1/players/" + props.Name + "/stats" }
-                                            hx-trigger="change"
-                                            hx-target="#player-stats-content"
-                                            hx-include="#player-filters"
-                                            hx-indicator="#loading-indicator"
-                                            hx-swap="innerHTML"
-                                        >
-                                            for _, item := range props.Profiles {
-                                                <option value={ item } selected?={ props.SelectedProfile == item }>{ item }</option>
-                                            }
-                                        </select>
-                                    </div>
-
-                                    <!-- Game Version Dropdown -->
-                                    <div>
-                                        <label for="game-version" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                            Game Version
-                                        </label>
-                                        <select 
-                                            id="game-version" 
-                                            name="game-version" 
-                                            class="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm"
-                                            hx-get={ "/api/v1/players/" + props.Name + "/stats" }
-                                            hx-trigger="change"
-                                            hx-target="#player-stats-content"
-                                            hx-include="#player-filters"
-                                            hx-indicator="#loading-indicator"
-                                        >
-                                            for _, item := range props.GameVersions {
-                                                <option value={ item } selected?={ props.GameVersion == item }>{ GameVersionDisplay(item) }</option>
-                                            }
-                                        </select>
-                                    </div>
-
-                                    <!-- Character Dropdown -->
-                                    <div>
-                                        <label for="character" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                            Character
-                                        </label>
-                                        <select 
-                                            id="character" 
-                                            name="character" 
-                                            class="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm"
-                                            hx-get={ "/api/v1/players/" + props.Name + "/stats" }
-                                            hx-trigger="change"
-                                            hx-target="#player-stats-content"
-                                            hx-include="#player-filters"
-                                            hx-indicator="#loading-indicator"
-                                        >
-                                            for _, item := range props.Characters {
-                                                <option value={ item } selected?={ props.Character == item }>{ CharacterDisplay(item) }</option>
-                                            }
-                                        </select>
-                                    </div>
-
-                                    <!-- Date Range: Start Date -->
-                                    <div>
-                                        <label for="start-date" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                            Start Date
-                                        </label>
-                                        <input 
-                                            type="date" 
-                                            id="start-date" 
-                                            name="start-date" 
-                                            value={ DateToString(props.StartDate) }
-                                            class="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm"
-                                            hx-get={ "/api/v1/players/" + props.Name + "/stats" }
-                                            hx-trigger="change"
-                                            hx-target="#player-stats-content"
-                                            hx-include="#player-filters"
-                                            hx-indicator="#loading-indicator"
-                                        />
-                                    </div>
-
-                                    <!-- Date Range: End Date -->
-                                    <div>
-                                        <label for="end-date" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                            End Date
-                                        </label>
-                                        <input 
-                                            type="date" 
-                                            id="end-date" 
-                                            name="end-date" 
-                                            value={ DateToString(props.EndDate) }
-                                            class="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm"
-                                            hx-get={ "/api/v1/players/" + props.Name + "/stats" }
-                                            hx-trigger="change"
-                                            hx-target="#player-stats-content"
-                                            hx-include="#player-filters"
-                                            hx-indicator="#loading-indicator"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div class="flex flex-wrap items-center justify-between gap-4">
-                                    <!-- Include Abandoned Runs Checkbox -->
-                                    <div class="flex items-center">
-                                        <input 
-                                            type="checkbox" 
-                                            id="include-abandoned" 
-                                            name="include-abandoned" 
-                                            checked?={ props.IncludeAbandoned }
-                                            class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                            hx-get={ "/api/v1/players/" + props.Name + "/stats" }
-                                            hx-trigger="change"
-                                            hx-target="#player-stats-content"
-                                            hx-include="#player-filters"
-                                            hx-indicator="#loading-indicator"
-                                        />
-                                        <label for="include-abandoned" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">
-                                            Include abandoned runs
-                                        </label>
-                                    </div>
-
-                                    <!-- Stats Type Dropdown -->
-                                    <div class="flex items-center space-x-2">
-                                        <label for="stat-type" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                            Stats Type:
-                                        </label>
-                                        <select 
-                                            id="stat-type" 
-                                            name="stat-type" 
-                                            class="rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm"
-                                            hx-get={ "/api/v1/players/" + props.Name + "/stats" }
-                                            hx-trigger="change"
-                                            hx-target="#player-stats-content"
-                                            hx-include="#player-filters"
-                                            hx-indicator="#loading-indicator"
-                                        >
-                                            for _, item := range props.StatTypeOptions {
-                                                <option value={ item } selected?={ props.StatType == item }>{ item }</option>
-                                            }
-                                        </select>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    }
-                </div>
-
-                <!-- Loading Indicator -->
-                <div id="loading-indicator" class="htmx-indicator flex justify-center my-4">
-                    <div class="inline-flex items-center px-4 py-2 font-semibold leading-6 text-sm rounded-md text-white bg-blue-500 shadow">
-                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Loading stats...
-                    </div>
-                </div>
-
-                <!-- Stats Content -->
-                <div id="player-stats-content" class="space-y-6">
-                    @PlayerStats(props)
-                </div>
-            </div>
-        </div>
-
-        <!-- Include the local time script -->
-        @localtime.Script()
-    }
+	@layout.BaseLayout("/app/players") {
+		<div class="container mx-auto px-4 py-8">
+			<div class="max-w-4xl mx-auto">
+				<!-- Player Header -->
+				<div class="mb-8">
+					@card.Card() {
+						<div class="flex items-center gap-4 p-6">
+							@avatar.Avatar(avatar.Props{
+								Size: "lg",
+							}) {
+								@avatar.Image(avatar.ImageProps{
+									Src: props.AvatarURL,
+								})
+							}
+							<div>
+								<h1 class="text-3xl font-bold">{ props.Name }</h1>
+								<p class="text-gray-600">
+									Last seen:
+									@localtime.LocalTime(localtime.Props{
+										Time: props.LastSeen,
+									})
+								</p>
+							</div>
+						</div>
+					}
+				</div>
+				<!-- Filter Controls -->
+				<div class="mb-8">
+					@card.Card() {
+						<div class="p-6">
+							<h2 class="text-xl font-semibold mb-4">Filters</h2>
+							<form id="player-filters" class="space-y-6">
+								<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+									<!-- Profile Dropdown -->
+									<div>
+										<label for="profile-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+											Profile
+										</label>
+										<select
+											id="profile-name"
+											name="profile-name"
+											class="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm"
+											hx-get={ "/api/v1/players/" + props.Name + "/stats" }
+											hx-trigger="change"
+											hx-target="#player-stats-content"
+											hx-include="#player-filters"
+											hx-indicator="#loading-indicator"
+											hx-swap="innerHTML"
+										>
+											for _, item := range props.Profiles {
+												<option value={ item } selected?={ props.SelectedProfile == item }>{ item }</option>
+											}
+										</select>
+									</div>
+									<!-- Game Version Dropdown -->
+									<div>
+										<label for="game-version" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+											Game Version
+										</label>
+										<select
+											id="game-version"
+											name="game-version"
+											class="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm"
+											hx-get={ "/api/v1/players/" + props.Name + "/stats" }
+											hx-trigger="change"
+											hx-target="#player-stats-content"
+											hx-include="#player-filters"
+											hx-indicator="#loading-indicator"
+										>
+											for _, item := range props.GameVersions {
+												<option value={ item } selected?={ props.GameVersion == item }>{ GameVersionDisplay(item) }</option>
+											}
+										</select>
+									</div>
+									<!-- Character Dropdown -->
+									<div>
+										<label for="character" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+											Character
+										</label>
+										<select
+											id="character"
+											name="character"
+											class="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm"
+											hx-get={ "/api/v1/players/" + props.Name + "/stats" }
+											hx-trigger="change"
+											hx-target="#player-stats-content"
+											hx-include="#player-filters"
+											hx-indicator="#loading-indicator"
+										>
+											for _, item := range props.Characters {
+												<option value={ item } selected?={ props.Character == item }>{ CharacterDisplay(item) }</option>
+											}
+										</select>
+									</div>
+									<!-- Date Range: Start Date -->
+									<div>
+										<label for="start-date" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+											Start Date
+										</label>
+										<input
+											type="date"
+											id="start-date"
+											name="start-date"
+											value={ DateToString(props.StartDate) }
+											class="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm"
+											hx-get={ "/api/v1/players/" + props.Name + "/stats" }
+											hx-trigger="change"
+											hx-target="#player-stats-content"
+											hx-include="#player-filters"
+											hx-indicator="#loading-indicator"
+										/>
+									</div>
+									<!-- Date Range: End Date -->
+									<div>
+										<label for="end-date" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+											End Date
+										</label>
+										<input
+											type="date"
+											id="end-date"
+											name="end-date"
+											value={ DateToString(props.EndDate) }
+											class="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm"
+											hx-get={ "/api/v1/players/" + props.Name + "/stats" }
+											hx-trigger="change"
+											hx-target="#player-stats-content"
+											hx-include="#player-filters"
+											hx-indicator="#loading-indicator"
+										/>
+									</div>
+								</div>
+								<div class="flex flex-wrap items-center justify-between gap-4">
+									<!-- Include Abandoned Runs Checkbox -->
+									<div class="flex items-center">
+										<input
+											type="checkbox"
+											id="include-abandoned"
+											name="include-abandoned"
+											checked?={ props.IncludeAbandoned }
+											class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+											hx-get={ "/api/v1/players/" + props.Name + "/stats" }
+											hx-trigger="change"
+											hx-target="#player-stats-content"
+											hx-include="#player-filters"
+											hx-indicator="#loading-indicator"
+										/>
+										<label for="include-abandoned" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+											Include abandoned runs
+										</label>
+									</div>
+									<!-- Stats Type Dropdown -->
+									<div class="flex items-center space-x-2">
+										<label for="stat-type" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+											Stats Type:
+										</label>
+										<select
+											id="stat-type"
+											name="stat-type"
+											class="rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm"
+											hx-get={ "/api/v1/players/" + props.Name + "/stats" }
+											hx-trigger="change"
+											hx-target="#player-stats-content"
+											hx-include="#player-filters"
+											hx-indicator="#loading-indicator"
+										>
+											for _, item := range props.StatTypeOptions {
+												<option value={ item } selected?={ props.StatType == item }>{ item }</option>
+											}
+										</select>
+									</div>
+								</div>
+							</form>
+						</div>
+					}
+				</div>
+				<!-- Loading Indicator -->
+				<div id="loading-indicator" class="htmx-indicator flex justify-center my-4">
+					<div class="inline-flex items-center px-4 py-2 font-semibold leading-6 text-sm rounded-md text-white bg-blue-500 shadow">
+						<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+							<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+							<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+						</svg>
+						Loading stats...
+					</div>
+				</div>
+				<!-- Stats Content -->
+				<div id="player-stats-content" class="space-y-6">
+					@PlayerStats(props)
+				</div>
+			</div>
+		</div>
+		<!-- Include the local time script -->
+		@localtime.Script()
+	}
 }
 
 // PlayerStats renders the player statistics based on the current filters
 templ PlayerStats(props PlayerPageProps) {
-    <!-- Overview stats card -->
-    @card.Card() {
-        <div class="p-6">
-            <h2 class="text-xl font-semibold mb-4">Player Statistics</h2>
-            <div class="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                <p>Profile: { props.SelectedProfile }</p>
-                <p>Character: { CharacterDisplay(props.Character) }</p>
-                <p>
-                    Date range:
-                    { DateToString(props.StartDate) }
-                    { " to " }
-                    { DateToString(props.EndDate) }
-                </p>
-                if props.IncludeAbandoned {
-                    <p>Including abandoned runs: Yes</p>
-                } else {
-                    <p>Including abandoned runs: No</p>
-                }
-            </div>
-
-            <!-- Placeholder for actual stats - would be populated with real data -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                    <div class="text-sm text-gray-500 dark:text-gray-400">Total Runs</div>
-                    <div class="text-2xl font-bold">42</div>
-                </div>
-                <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                    <div class="text-sm text-gray-500 dark:text-gray-400">Win Rate</div>
-                    <div class="text-2xl font-bold">38%</div>
-                </div>
-                <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                    <div class="text-sm text-gray-500 dark:text-gray-400">Average Score</div>
-                    <div class="text-2xl font-bold">1,254</div>
-                </div>
-            </div>
-
-            <div class="text-center text-sm text-gray-500 dark:text-gray-400">
-                <p>Note: This is placeholder data. Real statistics will be shown here.</p>
-            </div>
-        </div>
-    }
+	<!-- Overview stats card -->
+	@card.Card() {
+		<div class="p-6">
+			<h2 class="text-xl font-semibold mb-4">Player Statistics</h2>
+			<div class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+				<p>Profile: { props.SelectedProfile }</p>
+				<p>Character: { CharacterDisplay(props.Character) }</p>
+				<p>
+					Date range:
+					{ DateToString(props.StartDate) }
+					{ " to " }
+					{ DateToString(props.EndDate) }
+				</p>
+				if props.IncludeAbandoned {
+					<p>Including abandoned runs: Yes</p>
+				} else {
+					<p>Including abandoned runs: No</p>
+				}
+			</div>
+			<!-- Placeholder for actual stats - would be populated with real data -->
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+				<div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+					<div class="text-sm text-gray-500 dark:text-gray-400">Total Runs</div>
+					<div class="text-2xl font-bold">42</div>
+				</div>
+				<div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+					<div class="text-sm text-gray-500 dark:text-gray-400">Win Rate</div>
+					<div class="text-2xl font-bold">38%</div>
+				</div>
+				<div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+					<div class="text-sm text-gray-500 dark:text-gray-400">Average Score</div>
+					<div class="text-2xl font-bold">1,254</div>
+				</div>
+			</div>
+			<div class="text-center text-sm text-gray-500 dark:text-gray-400">
+				<p>Note: This is placeholder data. Real statistics will be shown here.</p>
+			</div>
+		</div>
+	}
 }

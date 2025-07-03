@@ -113,10 +113,10 @@ func (db *DB) Health(ctx context.Context) error {
 func (db *DB) GetUser(ctx context.Context, name string) (model.User, error) {
 	var user model.User
 	err := db.Pool.QueryRow(ctx, `
-		SELECT username, created_at, last_seen
+		SELECT username, created_at, last_seen, profile_picture_url
 		FROM users
 		WHERE username = $1
-	`, name).Scan(&user.Username, &user.CreatedAt, &user.LastSeenAt)
+	`, name).Scan(&user.Username, &user.CreatedAt, &user.LastSeenAt, &user.ProfilePictureUrl)
 
 	if errors.Is(err, pgx.ErrNoRows) {
 		return model.User{}, fmt.Errorf("%w: user not found: %s", err, name)
@@ -211,7 +211,7 @@ func (db *DB) SearchUsersByPrefix(ctx context.Context, prefix string, limit int)
 	}
 
 	rows, err := db.Pool.Query(ctx, `
-		SELECT username, created_at, last_seen
+		SELECT username, created_at, last_seen, profile_picture_url
 		FROM users
 		WHERE username ILIKE $1 || '%'
 		ORDER BY last_seen DESC, username ASC
@@ -225,7 +225,7 @@ func (db *DB) SearchUsersByPrefix(ctx context.Context, prefix string, limit int)
 	var users []model.User
 	for rows.Next() {
 		var user model.User
-		if err := rows.Scan(&user.Username, &user.CreatedAt, &user.LastSeenAt); err != nil {
+		if err := rows.Scan(&user.Username, &user.CreatedAt, &user.LastSeenAt, &user.ProfilePictureUrl); err != nil {
 			return nil, fmt.Errorf("failed to scan user row: %w", err)
 		}
 		users = append(users, user)
@@ -255,6 +255,20 @@ func (db *DB) CreateOrGetUser(ctx context.Context, username string) (model.User,
 	}
 
 	return user, nil
+}
+
+func (db *DB) SetUserProfilePicture(ctx context.Context, username string, profilePictureUrl string) error {
+	_, err := db.Pool.Exec(ctx, `
+		UPDATE users
+		SET profile_picture_url = $1
+		WHERE username = $2
+	`, profilePictureUrl, username)
+
+	if err != nil {
+		return fmt.Errorf("failed to update user profile picture: %w", err)
+	}
+
+	return nil
 }
 
 //nolint:funlen

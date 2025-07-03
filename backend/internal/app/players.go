@@ -58,6 +58,7 @@ func (app *App) searchPlayers(ctx context.Context, query string) ([]search.Playe
 		results = append(results, search.PlayerResult{
 			Name:     user.Username,
 			LastSeen: lastSeen,
+			Avatar:   user.GetProfilePictureUrl(),
 		})
 	}
 

@@ -1,85 +1,80 @@
 package pages
 
 import (
-    "github.com/MaT1g3R/stats-tracker/components/input"
-    "github.com/MaT1g3R/stats-tracker/components/card"
-    "github.com/MaT1g3R/stats-tracker/internal/ui/layout"
+	"github.com/MaT1g3R/stats-tracker/components/card"
+	"github.com/MaT1g3R/stats-tracker/components/input"
+	"github.com/MaT1g3R/stats-tracker/internal/ui/layout"
 )
 
 type ProfileOption struct {
-    Name string
+	Name string
 }
 
 templ Players() {
-    @layout.BaseLayout("/app/players") {
-        <div class="container mx-auto px-4 py-8">
-            <div class="max-w-2xl mx-auto">
-                <!-- Page Header -->
-                <div class="mb-8 text-center">
-                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                        Player Search
-                    </h1>
-                    <p class="text-gray-600 dark:text-gray-400">
-                        Search for players to view their statistics
-                    </p>
-                </div>
-
-                <!-- Search Card -->
-                <div class="mb-8">
-                    @card.Card() {
-                        <div class="p-6">
-                            <form id="player-search-form" class="space-y-4">
-                                <div>
-                                    <label for="player-search" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Player Name
-                                    </label>
-                                    @input.Input(input.Props{
-                                        ID: "player-search",
-                                        Name: "player-search",
-                                        Type: "text",
-                                        Placeholder: "Enter player name...",
-                                        Class: "w-full",
-                                        Attributes: templ.Attributes{
-                                            "autocomplete": "off",
-                                            "hx-get": "/api/v1/players/search",
-                                            "hx-trigger": "keyup changed delay:300ms",
-                                            "hx-target": "#search-results",
-                                            "hx-indicator": "#search-loading",
-                                        },
-                                    })
-                                </div>
-
-                                <!-- Loading indicator -->
-                                <div id="search-loading" class="htmx-indicator">
-                                    <div class="flex items-center space-x-2 text-sm text-gray-500">
-                                        <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                                        <span>Searching...</span>
-                                    </div>
-                                </div>
-
-                                <!-- Search Results -->
-                                <div id="search-results" class="space-y-2">
-                                    <!-- Results will be populated here -->
-                                </div>
-                            </form>
-                        </div>
-                    }
-                </div>
-
-                <!-- Instructions -->
-                <div class="text-center text-sm text-gray-500 dark:text-gray-400">
-                    <p>Start typing to search for players. Click on a result to view their profile.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Add search functionality script -->
-        @PlayerSearchScript()
-    }
+	@layout.BaseLayout("/app/players") {
+		<div class="container mx-auto px-4 py-8">
+			<div class="max-w-2xl mx-auto">
+				<!-- Page Header -->
+				<div class="mb-8 text-center">
+					<h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+						Player Search
+					</h1>
+					<p class="text-gray-600 dark:text-gray-400">
+						Search for players to view their statistics
+					</p>
+				</div>
+				<!-- Search Card -->
+				<div class="mb-8">
+					@card.Card() {
+						<div class="p-6">
+							<form id="player-search-form" class="space-y-4">
+								<div>
+									<label for="player-search" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+										Player Name
+									</label>
+									@input.Input(input.Props{
+										ID:          "player-search",
+										Name:        "player-search",
+										Type:        "text",
+										Placeholder: "Enter player name...",
+										Class:       "w-full",
+										Attributes: templ.Attributes{
+											"autocomplete": "off",
+											"hx-get":       "/api/v1/players/search",
+											"hx-trigger":   "keyup changed delay:300ms",
+											"hx-target":    "#search-results",
+											"hx-indicator": "#search-loading",
+										},
+									})
+								</div>
+								<!-- Loading indicator -->
+								<div id="search-loading" class="htmx-indicator">
+									<div class="flex items-center space-x-2 text-sm text-gray-500">
+										<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+										<span>Searching...</span>
+									</div>
+								</div>
+								<!-- Search Results -->
+								<div id="search-results" class="space-y-2">
+									<!-- Results will be populated here -->
+								</div>
+							</form>
+						</div>
+					}
+				</div>
+				<!-- Instructions -->
+				<div class="text-center text-sm text-gray-500 dark:text-gray-400">
+					<p>Start typing to search for players. Click on a result to view their profile.</p>
+				</div>
+			</div>
+		</div>
+		<!-- Add search functionality script -->
+		@PlayerSearchScript()
+	}
 }
 
 templ PlayerSearchScript() {
-    <script>
+	<script>
         document.addEventListener('DOMContentLoaded', function() {
             const searchForm = document.getElementById('player-search-form');
             const searchInput = document.getElementById('player-search');

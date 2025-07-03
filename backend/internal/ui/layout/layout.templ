@@ -1,6 +1,7 @@
 package layout
 
 import "github.com/MaT1g3R/stats-tracker/internal/ui/components/navbar"
+import "github.com/MaT1g3R/stats-tracker/components/avatar"
 
 templ BaseLayout(currentPath ...string) {
 	{{ var path string }}
@@ -14,6 +15,7 @@ templ BaseLayout(currentPath ...string) {
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<!-- Tailwind CSS (output) -->
 			<link href="/assets/css/output.css" rel="stylesheet"/>
+			@avatar.Script()
 		</head>
 		<body class="h-full bg-gray-50 dark:bg-gray-900">
 			<!-- Navigation -->
