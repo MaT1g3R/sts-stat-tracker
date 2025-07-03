@@ -55,5 +55,19 @@ func (a *App) Authenticate(w http.ResponseWriter, r *http.Request) (model.User, 
 		return model.User{}, err
 	}
 
+	if dbUser.ProfilePictureUrl == nil {
+		pic, err := a.twitchClient.GetUserProfileImage(r.Context(), userID)
+		if err != nil {
+			a.logger.Warn("failed to get user profile image from twitch client", "error", err)
+		} else {
+			err = a.db.SetUserProfilePicture(r.Context(), dbUser.Username, pic)
+			if err != nil {
+				a.logger.Warn("failed to set user profile picture", "error", err)
+			} else {
+				dbUser.ProfilePictureUrl = &pic
+			}
+		}
+	}
+
 	return dbUser, nil
 }

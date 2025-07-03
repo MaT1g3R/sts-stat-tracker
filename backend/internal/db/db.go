@@ -247,8 +247,8 @@ func (db *DB) CreateOrGetUser(ctx context.Context, username string) (model.User,
 		VALUES ($1, $2, $2)
 		ON CONFLICT (username) DO UPDATE
 		SET last_seen = $2
-		RETURNING username, created_at, last_seen
-	`, username, now).Scan(&user.Username, &user.CreatedAt, &user.LastSeenAt)
+		RETURNING username, created_at, last_seen, profile_picture_url
+	`, username, now).Scan(&user.Username, &user.CreatedAt, &user.LastSeenAt, &user.ProfilePictureUrl)
 
 	if err != nil {
 		return model.User{}, fmt.Errorf("failed to create or get user: %w", err)

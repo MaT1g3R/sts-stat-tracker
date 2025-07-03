@@ -35,7 +35,9 @@ type Config struct {
 	TemplatesCacheDir string
 
 	// Auth settings
-	AuthAPIURL string
+	AuthAPIURL         string
+	TwitchClientID     string
+	TwitchClientSecret string
 }
 
 // Load reads configuration from environment variables
@@ -71,6 +73,8 @@ func Load() (*Config, error) {
 
 	// Auth settings
 	config.AuthAPIURL = getEnvAsString("AUTH_API_URL", "https://slay-the-relics.baalorlord.tv")
+	config.TwitchClientID = getEnvAsString("TWITCH_CLIENT_ID", "")
+	config.TwitchClientSecret = getEnvAsString("TWITCH_CLIENT_SECRET", "")
 
 	return &config, nil
 }
