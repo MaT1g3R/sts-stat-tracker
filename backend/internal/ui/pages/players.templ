@@ -6,6 +6,10 @@ import (
     "github.com/MaT1g3R/stats-tracker/internal/ui/layout"
 )
 
+type ProfileOption struct {
+    Name string
+}
+
 templ Players() {
     @layout.BaseLayout("/app/players") {
         <div class="container mx-auto px-4 py-8">
@@ -37,7 +41,7 @@ templ Players() {
                                         Class: "w-full",
                                         Attributes: templ.Attributes{
                                             "autocomplete": "off",
-                                            "hx-get": "/api/players/search",
+                                            "hx-get": "/api/v1/players/search",
                                             "hx-trigger": "keyup changed delay:300ms",
                                             "hx-target": "#search-results",
                                             "hx-indicator": "#search-loading",

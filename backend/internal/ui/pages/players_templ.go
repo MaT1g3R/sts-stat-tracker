@@ -13,6 +13,10 @@ import (
 	templruntime "github.com/a-h/templ/runtime"
 )
 
+type ProfileOption struct {
+	Name string
+}
+
 func Players() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -74,7 +78,7 @@ func Players() templ.Component {
 					Class:       "w-full",
 					Attributes: templ.Attributes{
 						"autocomplete": "off",
-						"hx-get":       "/api/players/search",
+						"hx-get":       "/api/v1/players/search",
 						"hx-trigger":   "keyup changed delay:300ms",
 						"hx-target":    "#search-results",
 						"hx-indicator": "#search-loading",

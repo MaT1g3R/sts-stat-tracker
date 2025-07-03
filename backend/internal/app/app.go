@@ -22,6 +22,11 @@ type App struct {
 }
 
 func NewApp(cfg *config.Config, logger *slog.Logger, db *db.DB, authClient *clients.AuthClient) *App {
+	// If authClient is nil, create a new one
+	if authClient == nil {
+		authClient = clients.NewAuthClient(cfg.AuthAPIURL)
+	}
+
 	app := &App{
 		cfg:        cfg,
 		logger:     logger,
@@ -46,7 +51,8 @@ func NewApp(cfg *config.Config, logger *slog.Logger, db *db.DB, authClient *clie
 
 	// API routes
 	mux.HandleFunc("POST /api/v1/upload-all", app.UploadAll)
-	mux.HandleFunc("GET /api/players/search", app.handlePlayerSearch)
+	mux.HandleFunc("GET /api/v1/players/search", app.handlePlayerSearch)
+	mux.HandleFunc("GET /api/v1/players/{name}/stats", app.handlePlayerStats)
 
 	// App routes
 	mux.HandleFunc("GET /app/players/{name}", app.handlePlayer)
