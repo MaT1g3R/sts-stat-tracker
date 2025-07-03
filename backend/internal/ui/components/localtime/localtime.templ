@@ -1,0 +1,81 @@
+package localtime
+
+import (
+	"github.com/MaT1g3R/stats-tracker/utils"
+	"time"
+)
+
+type Props struct {
+	Time       time.Time
+	Class      string
+	Attributes templ.Attributes
+	Format     string // Optional custom format
+}
+
+templ LocalTime(props ...Props) {
+	{{ var p Props }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	{{ format := p.Format }}
+	if format == "" {
+		{{ format = "Jan 2, 2006 at 3:04 PM" }}
+	}
+	<span
+		data-timestamp={ p.Time.Format("2006-01-02T15:04:05Z07:00") }
+		class={
+			utils.TwMerge(
+				"local-time",
+				p.Class,
+			),
+		}
+		{ p.Attributes... }
+	>
+		{ p.Time.Format(format) }
+	</span>
+}
+
+templ Script() {
+	<script>
+        if (!window.localTimeInitialized) {
+            window.localTimeInitialized = true;
+
+            function updateLocalTimes(container = document) {
+                const timeElements = container.querySelectorAll('.local-time');
+
+                timeElements.forEach(element => {
+                    const timestamp = element.getAttribute('data-timestamp');
+                    if (timestamp && !element.dataset.processed) {
+                        const date = new Date(timestamp);
+
+                        const options = {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            hour12: true
+                        };
+
+                        const localTime = date.toLocaleString('en-US', options);
+                        element.textContent = localTime;
+                        element.dataset.processed = 'true';
+                    }
+                });
+            }
+
+            // Initialize on load
+            document.addEventListener('DOMContentLoaded', () => updateLocalTimes());
+
+            // Handle HTMX updates
+            document.body.addEventListener('htmx:afterSwap', (event) => {
+                updateLocalTimes(event.detail.elt);
+            });
+
+            // Handle out-of-band updates
+            document.body.addEventListener('htmx:oobAfterSwap', (event) => {
+                updateLocalTimes(event.detail.target);
+            });
+        }
+    </script>
+}

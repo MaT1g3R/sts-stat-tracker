@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log/slog"
 	"time"
@@ -107,6 +108,24 @@ func (db *DB) Close() {
 // Health check using pgx
 func (db *DB) Health(ctx context.Context) error {
 	return db.Pool.Ping(ctx)
+}
+
+func (db *DB) GetUser(ctx context.Context, name string) (model.User, error) {
+	var user model.User
+	err := db.Pool.QueryRow(ctx, `
+		SELECT username, created_at, last_seen
+		FROM users
+		WHERE username = $1
+	`, name).Scan(&user.Username, &user.CreatedAt, &user.LastSeenAt)
+
+	if errors.Is(err, pgx.ErrNoRows) {
+		return model.User{}, fmt.Errorf("%w: user not found: %s", err, name)
+	}
+	if err != nil {
+		return model.User{}, fmt.Errorf("failed to get user: %w", err)
+	}
+
+	return user, nil
 }
 
 func (db *DB) CreateOrGetUser(ctx context.Context, username string) (model.User, error) {

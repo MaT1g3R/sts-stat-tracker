@@ -1,4 +1,4 @@
-package api
+package app
 
 import (
 	"encoding/json"
@@ -15,7 +15,7 @@ type UploadAllRequest struct {
 	SchemaVersion int         `json:"schemaVersion"`
 }
 
-func (a *API) UploadAll(w http.ResponseWriter, r *http.Request) {
+func (a *App) UploadAll(w http.ResponseWriter, r *http.Request) {
 	user, err := a.Authenticate(w, r)
 	if err != nil {
 		return

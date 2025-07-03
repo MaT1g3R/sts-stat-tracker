@@ -10,7 +10,7 @@ import (
 
 	"github.com/MaT1g3R/stats-tracker/internal/clients"
 
-	api2 "github.com/MaT1g3R/stats-tracker/internal/api"
+	api2 "github.com/MaT1g3R/stats-tracker/internal/app"
 
 	"github.com/MaT1g3R/stats-tracker/internal/config"
 	"github.com/MaT1g3R/stats-tracker/internal/db"
@@ -54,7 +54,7 @@ func main() {
 	}
 
 	authClient := clients.NewAuthClient(cfg.AuthAPIURL)
-	api := api2.NewAPI(cfg, logger, database, authClient)
+	api := api2.NewApp(cfg, logger, database, authClient)
 	server := api.Server
 
 	// Start the server in a goroutine
