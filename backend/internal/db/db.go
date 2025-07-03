@@ -128,6 +128,83 @@ func (db *DB) GetUser(ctx context.Context, name string) (model.User, error) {
 	return user, nil
 }
 
+func (db *DB) GetProfiles(ctx context.Context, user string) ([]string, error) {
+	rows, err := db.Pool.Query(ctx, `
+		SELECT profile_name
+		FROM profiles
+		WHERE username = $1
+		ORDER BY profile_name ASC
+	`, user)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get profiles: %w", err)
+	}
+	defer rows.Close()
+
+	var profiles []string
+	for rows.Next() {
+		var profile string
+		if err := rows.Scan(&profile); err != nil {
+			return nil, fmt.Errorf("failed to scan profile row: %w", err)
+		}
+		profiles = append(profiles, profile)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating profile rows: %w", err)
+	}
+
+	return profiles, nil
+}
+
+func (db *DB) GetFirstAndLastRun(ctx context.Context, user string, gameVersion string) (RunRow, RunRow, error) {
+	var firstRun, lastRun RunRow
+
+	// Get first run (earliest timestamp)
+	err := db.Pool.QueryRow(ctx, `
+		SELECT username, profile_name, run_timestamp, character_name,
+			victory, abandoned, score, floor_reached, playtime_minutes,
+			game_version, data_schema_version, run_data
+		FROM runs
+		WHERE username = $1 AND game_version = $2
+		ORDER BY run_timestamp ASC
+		LIMIT 1
+	`, user, gameVersion).Scan(
+		&firstRun.Username, &firstRun.ProfileName, &firstRun.RunTimestamp,
+		&firstRun.CharacterName, &firstRun.Victory, &firstRun.Abandoned,
+		&firstRun.Score, &firstRun.FloorReached, &firstRun.PlaytimeMinutes,
+		&firstRun.GameVersion, &firstRun.DataSchemaVersion, &firstRun.RunData,
+	)
+
+	if errors.Is(err, pgx.ErrNoRows) {
+		return RunRow{}, RunRow{}, fmt.Errorf("no runs found for user %s", user)
+	}
+	if err != nil {
+		return RunRow{}, RunRow{}, fmt.Errorf("failed to get first run: %w", err)
+	}
+
+	// Get last run (latest timestamp)
+	err = db.Pool.QueryRow(ctx, `
+		SELECT username, profile_name, run_timestamp, character_name,
+			victory, abandoned, score, floor_reached, playtime_minutes,
+			game_version, data_schema_version, run_data
+		FROM runs
+		WHERE username = $1 AND game_version = $2
+		ORDER BY run_timestamp DESC
+		LIMIT 1
+	`, user, gameVersion).Scan(
+		&lastRun.Username, &lastRun.ProfileName, &lastRun.RunTimestamp,
+		&lastRun.CharacterName, &lastRun.Victory, &lastRun.Abandoned,
+		&lastRun.Score, &lastRun.FloorReached, &lastRun.PlaytimeMinutes,
+		&lastRun.GameVersion, &lastRun.DataSchemaVersion, &lastRun.RunData,
+	)
+
+	if err != nil {
+		return RunRow{}, RunRow{}, fmt.Errorf("failed to get last run: %w", err)
+	}
+
+	return firstRun, lastRun, nil
+}
+
 func (db *DB) SearchUsersByPrefix(ctx context.Context, prefix string, limit int) ([]model.User, error) {
 	if limit <= 0 {
 		limit = 10 // Default limit if not specified or invalid
