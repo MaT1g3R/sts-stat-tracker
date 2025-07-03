@@ -5,6 +5,8 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/MaT1g3R/stats-tracker/internal/clients"
+
 	"github.com/MaT1g3R/stats-tracker/internal/config"
 	"github.com/MaT1g3R/stats-tracker/internal/db"
 )
@@ -12,15 +14,23 @@ import (
 type API struct {
 	Server *http.Server
 
-	db     *db.DB
 	cfg    *config.Config
 	logger *slog.Logger
+
+	db         *db.DB
+	authClient *clients.AuthClient
 }
 
-func NewAPI(cfg *config.Config, logger *slog.Logger, db *db.DB) *API {
+func NewAPI(cfg *config.Config, logger *slog.Logger, db *db.DB, authClient *clients.AuthClient) *API {
+	api := &API{
+		cfg:        cfg,
+		logger:     logger,
+		db:         db,
+		authClient: authClient,
+	}
+
 	// Setup HTTP server
 	mux := http.NewServeMux()
-
 	// Register API routes
 	mux.HandleFunc("GET /api/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -30,6 +40,7 @@ func NewAPI(cfg *config.Config, logger *slog.Logger, db *db.DB) *API {
 			slog.Error("Failed to write health check response", "error", err)
 		}
 	})
+	mux.HandleFunc("/api/v1/upload-all", api.UploadAll)
 
 	// Setup static file server
 	fs := http.FileServer(http.Dir(cfg.StaticFilesDir))
@@ -42,11 +53,6 @@ func NewAPI(cfg *config.Config, logger *slog.Logger, db *db.DB) *API {
 		ReadTimeout:  cfg.ReadTimeout,
 		WriteTimeout: cfg.WriteTimeout,
 	}
-
-	return &API{
-		Server: server,
-		db:     db,
-		cfg:    cfg,
-		logger: logger,
-	}
+	api.Server = server
+	return api
 }

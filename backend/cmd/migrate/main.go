@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"log/slog"
 	"os"
 	"strconv"
 
@@ -24,7 +25,9 @@ func main() {
 	}
 
 	ctx := context.Background()
-	database, err := db.New(ctx, *databaseURL)
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+	slog.SetDefault(logger)
+	database, err := db.New(ctx, *databaseURL, logger)
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}

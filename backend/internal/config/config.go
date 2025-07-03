@@ -33,6 +33,9 @@ type Config struct {
 	MaxRequestSize    int64
 	StaticFilesDir    string
 	TemplatesCacheDir string
+
+	// Auth settings
+	AuthAPIURL string
 }
 
 // Load reads configuration from environment variables
@@ -65,6 +68,9 @@ func Load() (*Config, error) {
 	config.MaxRequestSize = getEnvAsInt64("MAX_REQUEST_SIZE", 10<<20) // 10 MB
 	config.StaticFilesDir = getEnvAsString("STATIC_FILES_DIR", "./assets")
 	config.TemplatesCacheDir = getEnvAsString("TEMPLATES_CACHE_DIR", "./tmp/templates")
+
+	// Auth settings
+	config.AuthAPIURL = getEnvAsString("AUTH_API_URL", "https://slay-the-relics.baalorlord.tv")
 
 	return &config, nil
 }
