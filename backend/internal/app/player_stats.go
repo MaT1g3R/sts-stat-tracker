@@ -3,7 +3,7 @@ package app
 import (
 	"net/http"
 
-	"github.com/MaT1g3R/stats-tracker/internal/app/stats"
+	"github.com/MaT1g3R/stats-tracker/internal/db"
 
 	"github.com/MaT1g3R/stats-tracker/internal/ui/pages"
 )
@@ -57,26 +57,19 @@ func (app *App) handlePlayerStats(w http.ResponseWriter, r *http.Request) {
 		StatType:         statType,
 		SelectedProfile:  profile,
 	}
-
-	runs, err := app.db.QueryRuns(r.Context(), name, gameVersion, character, profile, startDate, endDate, includeAbandoned)
+	stat, err := app.db.QueryStats(r.Context(), statType, db.StatQuery{
+		Player:           name,
+		GameVersion:      gameVersion,
+		Character:        character,
+		Profile:          profile,
+		StartDate:        startDate,
+		EndDate:          endDate,
+		IncludeAbandoned: includeAbandoned,
+	})
 	if err != nil {
-		app.logger.Error("Failed to query runs", "error", err)
+		app.logger.Error("Failed to query stats", "error", err)
 		w.WriteHeader(http.StatusInternalServerError)
-	}
-
-	var stat stats.Stat
-	switch statType {
-	case "Overview":
-		stat = stats.NewOverview(character)
-	}
-	if stat == nil {
-		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	for _, run := range runs {
-		stat.CollectRun(&run)
-	}
-	stat.Finalize()
-	// Render just the stats component for HTMX
 	_ = pages.PlayerStats(props, stat.Render()).Render(r.Context(), w)
 }
