@@ -63,6 +63,7 @@ type Run struct {
 	PlayTimeMinutes int    `json:"playtime"`
 	FloorsReached   int    `json:"floorsReached"`
 	PortalFloor     int    `json:"portalFloor"`
+	KilledBy        string `json:"killedBy"`
 
 	// Neow
 	NeowPicked    Neow      `json:"neowPicked"`
@@ -93,4 +94,24 @@ type Run struct {
 	MaxHP          int `json:"maxHP"`
 	MaxSearingBlow int `json:"maxSearingBlow"`
 	PotionsCreated int `json:"potionsCreated"`
+}
+
+func (r *Run) GetAct(floor int) int {
+	if floor <= 17 {
+		return 1
+	}
+	if floor <= 34 {
+		return 2
+	}
+	if r.PortalFloor > 0 {
+		if floor <= r.PortalFloor+3 {
+			return 3
+		} else {
+			return 4
+		}
+	}
+	if floor <= 52 {
+		return 3
+	}
+	return 4
 }

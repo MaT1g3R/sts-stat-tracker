@@ -20,7 +20,7 @@ func extractBearerToken(header string) (string, error) {
 	return strings.TrimPrefix(header, bearerPrefix), nil
 }
 
-func (a *App) Authenticate(w http.ResponseWriter, r *http.Request) (model.User, error) {
+func (app *App) Authenticate(w http.ResponseWriter, r *http.Request) (model.User, error) {
 	token, err := extractBearerToken(r.Header.Get("Authorization"))
 	if err != nil {
 		err := fmt.Errorf("cannot extract bearer token: %w", err)
@@ -41,14 +41,14 @@ func (a *App) Authenticate(w http.ResponseWriter, r *http.Request) (model.User, 
 		return model.User{}, err
 	}
 
-	user, err := a.authClient.Authenticate(r.Context(), userID, token)
+	user, err := app.authClient.Authenticate(r.Context(), userID, token)
 	if err != nil {
 		err := fmt.Errorf("failed to authenticate user: %w", err)
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return model.User{}, err
 	}
 
-	dbUser, err := a.db.CreateOrGetUser(r.Context(), user)
+	dbUser, err := app.db.CreateOrGetUser(r.Context(), user)
 	if err != nil {
 		err := fmt.Errorf("failed to get or create user in database: %w", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -56,13 +56,13 @@ func (a *App) Authenticate(w http.ResponseWriter, r *http.Request) (model.User, 
 	}
 
 	if dbUser.ProfilePictureUrl == nil {
-		pic, err := a.twitchClient.GetUserProfileImage(r.Context(), userID)
+		pic, err := app.twitchClient.GetUserProfileImage(r.Context(), userID)
 		if err != nil {
-			a.logger.Warn("failed to get user profile image from twitch client", "error", err)
+			app.logger.Warn("failed to get user profile image from twitch client", "error", err)
 		} else {
-			err = a.db.SetUserProfilePicture(r.Context(), dbUser.Username, pic)
+			err = app.db.SetUserProfilePicture(r.Context(), dbUser.Username, pic)
 			if err != nil {
-				a.logger.Warn("failed to set user profile picture", "error", err)
+				app.logger.Warn("failed to set user profile picture", "error", err)
 			} else {
 				dbUser.ProfilePictureUrl = &pic
 			}

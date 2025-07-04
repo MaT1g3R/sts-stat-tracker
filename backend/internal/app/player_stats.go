@@ -3,10 +3,14 @@ package app
 import (
 	"net/http"
 
+	"github.com/MaT1g3R/stats-tracker/internal/app/stats"
+
 	"github.com/MaT1g3R/stats-tracker/internal/ui/pages"
 )
 
 // handlePlayerStats handles HTMX requests for player statistics with filters
+//
+//nolint:funlen
 func (app *App) handlePlayerStats(w http.ResponseWriter, r *http.Request) {
 	name := r.PathValue("name")
 	if name == "" {
@@ -54,6 +58,25 @@ func (app *App) handlePlayerStats(w http.ResponseWriter, r *http.Request) {
 		SelectedProfile:  profile,
 	}
 
+	runs, err := app.db.QueryRuns(r.Context(), name, gameVersion, character, profile, startDate, endDate, includeAbandoned)
+	if err != nil {
+		app.logger.Error("Failed to query runs", "error", err)
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+
+	var stat stats.Stat
+	switch statType {
+	case "Overview":
+		stat = stats.NewOverview(character)
+	}
+	if stat == nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	for _, run := range runs {
+		stat.CollectRun(&run)
+	}
+	stat.Finalize()
 	// Render just the stats component for HTMX
-	_ = pages.PlayerStats(props).Render(r.Context(), w)
+	_ = pages.PlayerStats(props, stat.Render()).Render(r.Context(), w)
 }

@@ -63,7 +63,7 @@ templ PlayerPage(props PlayerPageProps) {
 											name="profile-name"
 											class="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm"
 											hx-get={ "/api/v1/players/" + props.Name + "/stats" }
-											hx-trigger="change"
+											hx-trigger="load,change"
 											hx-target="#player-stats-content"
 											hx-include="#player-filters"
 											hx-indicator="#loading-indicator"
@@ -206,9 +206,8 @@ templ PlayerPage(props PlayerPageProps) {
 					</div>
 				</div>
 				<!-- Stats Content -->
-				<div id="player-stats-content" class="space-y-6">
-					@PlayerStats(props)
-				</div>
+                <div id="player-stats-content" class="space-y-6">
+                </div>
 			</div>
 		</div>
 		<!-- Include the local time script -->
@@ -217,11 +216,10 @@ templ PlayerPage(props PlayerPageProps) {
 }
 
 // PlayerStats renders the player statistics based on the current filters
-templ PlayerStats(props PlayerPageProps) {
-	<!-- Overview stats card -->
+templ PlayerStats(props PlayerPageProps, child templ.Component) {
 	@card.Card() {
 		<div class="p-6">
-			<h2 class="text-xl font-semibold mb-4">Player Statistics</h2>
+			<h2 class="text-xl font-semibold mb-4">{ props.StatType }</h2>
 			<div class="text-sm text-gray-500 dark:text-gray-400 mb-4">
 				<p>Profile: { props.SelectedProfile }</p>
 				<p>Character: { CharacterDisplay(props.Character) }</p>
@@ -237,24 +235,7 @@ templ PlayerStats(props PlayerPageProps) {
 					<p>Including abandoned runs: No</p>
 				}
 			</div>
-			<!-- Placeholder for actual stats - would be populated with real data -->
-			<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-				<div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-					<div class="text-sm text-gray-500 dark:text-gray-400">Total Runs</div>
-					<div class="text-2xl font-bold">42</div>
-				</div>
-				<div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-					<div class="text-sm text-gray-500 dark:text-gray-400">Win Rate</div>
-					<div class="text-2xl font-bold">38%</div>
-				</div>
-				<div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-					<div class="text-sm text-gray-500 dark:text-gray-400">Average Score</div>
-					<div class="text-2xl font-bold">1,254</div>
-				</div>
-			</div>
-			<div class="text-center text-sm text-gray-500 dark:text-gray-400">
-				<p>Note: This is placeholder data. Real statistics will be shown here.</p>
-			</div>
+			@child
 		</div>
 	}
 }
