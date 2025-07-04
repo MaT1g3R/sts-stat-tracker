@@ -24,12 +24,14 @@ type StatQuery struct {
 func (db *DB) QueryStats(ctx context.Context, kind string, query StatQuery) (stats.Stat, error) {
 	var stat stats.Stat
 	switch kind {
-	case "Overview":
+	case stats.StatTypes[0]:
 		stat = stats.NewOverview(query.Character)
 	default:
 		return stat, fmt.Errorf("unknown stat kind %s", kind)
 	}
-	statQuery := `
+
+	// Using a constant query for better performance with prepared statements
+	const statQuery = `
 UPDATE run_statistics SET
 last_accessed = now()
 WHERE username = $1
@@ -42,9 +44,13 @@ AND period_start = $7
 AND period_end = $8
 RETURNING stats;
 `
+	// Create a timeout context for the database query
+	queryCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
 	var bs []byte
 	err := db.Pool.QueryRow(
-		ctx,
+		queryCtx,
 		statQuery,
 		query.Player,
 		query.Profile,
@@ -70,7 +76,11 @@ RETURNING stats;
 
 //nolint:funlen
 func (db *DB) calculateStats(ctx context.Context, query StatQuery, stat stats.Stat) (stats.Stat, error) {
-	tx, err := db.Pool.Begin(ctx)
+	// Create a timeout context for the database operation
+	txCtx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+
+	tx, err := db.Pool.Begin(txCtx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to start transaction: %w", err)
 	}
@@ -94,7 +104,7 @@ func (db *DB) calculateStats(ctx context.Context, query StatQuery, stat stats.St
 	}
 	stat.Finalize()
 
-	insertQuery := `
+	const insertQuery = `
 INSERT INTO run_statistics (
 	username,
 	profile_name,
@@ -107,8 +117,19 @@ INSERT INTO run_statistics (
 	stats,
 	last_calculated,
 	last_accessed
-) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, now(), now())
-ON CONFLICT (
+) VALUES (
+	$1::text,
+	$2::text,
+	$3::text,
+	$4::text,
+	$5::boolean,
+	$6::text,
+	$7::timestamp,
+	$8::timestamp,
+	$9::jsonb,
+	now(),
+	now()
+) ON CONFLICT (
 	username,
 	profile_name,
 	character_name,
@@ -122,9 +143,12 @@ ON CONFLICT (
 	last_calculated = EXCLUDED.last_calculated,
 	last_accessed = EXCLUDED.last_accessed
 `
-	fmt.Println(query.Character)
+	// Use prepared statement with timeout context
+	execCtx, execCancel := context.WithTimeout(ctx, 10*time.Second)
+	defer execCancel()
+
 	_, err = tx.Exec(
-		ctx,
+		execCtx,
 		insertQuery,
 		query.Player,
 		query.Profile,
@@ -143,6 +167,7 @@ ON CONFLICT (
 	if err != nil {
 		return nil, fmt.Errorf("failed to commit transaction: %w", err)
 	}
+
 	db.logger.Info("querying stats", "query", query, "cache_hit", false)
 	return stat, nil
 }
