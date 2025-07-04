@@ -33,7 +33,7 @@ tailwind:
 
 # Start development server with all watchers
 dev:
-	make -j3 tailwind templ server
+	trap 'kill 0' INT; make -j3 tailwind templ server
 
 # Run linters
 lint:
