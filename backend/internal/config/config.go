@@ -67,7 +67,7 @@ func Load() (*Config, error) {
 	config.EnableProfiler = getEnvAsBool("ENABLE_PROFILER", false)
 	config.EnableCORS = getEnvAsBool("ENABLE_CORS", true)
 	config.AllowedOrigins = getEnvAsStringSlice("ALLOWED_ORIGINS", []string{"http://localhost:8090"})
-	config.MaxRequestSize = getEnvAsInt64("MAX_REQUEST_SIZE", 10<<20) // 10 MB
+	config.MaxRequestSize = getEnvAsInt64("MAX_REQUEST_SIZE", 100<<20) // 100 MB
 	config.StaticFilesDir = getEnvAsString("STATIC_FILES_DIR", "./assets")
 	config.TemplatesCacheDir = getEnvAsString("TEMPLATES_CACHE_DIR", "./tmp/templates")
 
