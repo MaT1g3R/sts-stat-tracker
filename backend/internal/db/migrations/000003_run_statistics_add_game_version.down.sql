@@ -1,0 +1,1 @@
+ALTER TABLE run_statistics DROP COLUMN game_version;

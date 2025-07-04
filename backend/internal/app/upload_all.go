@@ -15,8 +15,8 @@ type UploadAllRequest struct {
 	SchemaVersion int         `json:"schemaVersion"`
 }
 
-func (a *App) UploadAll(w http.ResponseWriter, r *http.Request) {
-	user, err := a.Authenticate(w, r)
+func (app *App) UploadAll(w http.ResponseWriter, r *http.Request) {
+	user, err := app.Authenticate(w, r)
 	if err != nil {
 		return
 	}
@@ -24,7 +24,7 @@ func (a *App) UploadAll(w http.ResponseWriter, r *http.Request) {
 	// Parse request body
 	var req UploadAllRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		a.logger.Warn("Failed to decode upload all request", "error", err)
+		app.logger.Warn("Failed to decode upload all request", "error", err)
 		http.Error(w, "Invalid JSON in request body", http.StatusBadRequest)
 		return
 	}
@@ -44,9 +44,9 @@ func (a *App) UploadAll(w http.ResponseWriter, r *http.Request) {
 	encodedProfile := url.QueryEscape(req.Profile)
 
 	// Import runs to database
-	err = a.db.ImportRuns(r.Context(), user.Username, encodedProfile, req.GameVersion, req.SchemaVersion, req.Runs)
+	err = app.db.ImportRuns(r.Context(), user.Username, encodedProfile, req.GameVersion, req.SchemaVersion, req.Runs)
 	if err != nil {
-		a.logger.Error("failed to import runs", "error", err, "user", user.Username, "profile", req.Profile)
+		app.logger.Error("failed to import runs", "error", err, "user", user.Username, "profile", req.Profile)
 		http.Error(w, "Failed to import runs", http.StatusInternalServerError)
 		return
 	}
@@ -60,6 +60,6 @@ func (a *App) UploadAll(w http.ResponseWriter, r *http.Request) {
 		"count":   len(req.Runs),
 	})
 	if err != nil {
-		a.logger.Error("failed to write response", "error", err)
+		app.logger.Error("failed to write response", "error", err)
 	}
 }

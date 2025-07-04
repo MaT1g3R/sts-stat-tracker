@@ -3,6 +3,7 @@ package app
 import (
 	"net/http"
 
+	"github.com/MaT1g3R/stats-tracker/internal/app/stats"
 	"github.com/MaT1g3R/stats-tracker/internal/ui/pages"
 )
 
@@ -13,8 +14,7 @@ var (
 	GameVersions       = []string{"sts1"}
 	DefaultGameVersion = GameVersions[0]
 
-	StatTypes       = []string{"Overview"}
-	DefaultStatType = StatTypes[0]
+	DefaultStatType = stats.StatTypes[0]
 )
 
 func (app *App) handlePlayer(w http.ResponseWriter, r *http.Request) {
@@ -59,7 +59,7 @@ func (app *App) handlePlayer(w http.ResponseWriter, r *http.Request) {
 		Character:        DefaultCharacter,
 		GameVersions:     GameVersions,
 		GameVersion:      DefaultGameVersion,
-		StatTypeOptions:  StatTypes,
+		StatTypeOptions:  stats.StatTypes,
 		StatType:         DefaultStatType,
 		Profiles:         profiles,
 		SelectedProfile:  lastRun.ProfileName,

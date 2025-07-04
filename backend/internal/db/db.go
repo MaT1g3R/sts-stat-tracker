@@ -377,6 +377,19 @@ func (db *DB) ImportRuns(ctx context.Context,
 	rowsAffected := result.RowsAffected()
 	db.logger.Info("upserted runs", "rows_affected", rowsAffected)
 
+	// Delete cached run statistics for the user
+	deleteResult, err := tx.Exec(ctx, `
+	DELETE FROM run_statistics
+	WHERE username = $1
+	AND profile_name = $2
+	AND game_version = $3
+`, user, profile, gameVersion)
+	if err != nil {
+		return fmt.Errorf("failed to delete cached run statistics: %w", err)
+	}
+	deletedRows := deleteResult.RowsAffected()
+	db.logger.Info("deleted cached run statistics", "rows_affected", deletedRows)
+
 	// Commit the transaction
 	if err := tx.Commit(ctx); err != nil {
 		return fmt.Errorf("failed to commit transaction: %w", err)
@@ -426,6 +439,65 @@ func (db *DB) convertRunsToRows(user, profile, gameVersion string, schemaVersion
 	}
 
 	return runRows
+}
+
+func (db *DB) QueryRuns(ctx context.Context,
+	user, gameVersion, character, profile string,
+	startDate, endDate time.Time, includeAbandoned bool) ([]model.Run, error) {
+	query := `
+		SELECT run_data
+		FROM runs
+		WHERE username = $1
+		AND game_version = $2
+		AND run_timestamp BETWEEN $3 AND $4
+	`
+	args := []interface{}{user, gameVersion, startDate, endDate}
+	argCount := 4
+
+	if character != "all" {
+		argCount++
+		query += fmt.Sprintf(" AND character_name = $%d", argCount)
+		args = append(args, character)
+	}
+
+	if profile != "" {
+		argCount++
+		query += fmt.Sprintf(" AND profile_name = $%d", argCount)
+		args = append(args, profile)
+	}
+
+	if !includeAbandoned {
+		query += " AND NOT abandoned"
+	}
+
+	query += " ORDER BY run_timestamp ASC"
+
+	rows, err := db.Pool.Query(ctx, query, args...)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query runs: %w", err)
+	}
+	defer rows.Close()
+
+	var runs []model.Run
+	for rows.Next() {
+		var runData string
+		if err := rows.Scan(&runData); err != nil {
+			return nil, fmt.Errorf("failed to scan run row: %w", err)
+		}
+
+		var run model.Run
+		if err := json.Unmarshal([]byte(runData), &run); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal run data: %w", err)
+		}
+
+		runs = append(runs, run)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating run rows: %w", err)
+	}
+
+	return runs, nil
 }
 
 // mapPlayerClassToCharacter maps the player class from the run data to database character names
