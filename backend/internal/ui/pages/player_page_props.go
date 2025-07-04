@@ -51,9 +51,13 @@ func CharacterDisplay(v string) string {
 }
 
 func DateToString(date time.Time) string {
-	return date.Format("2006-01-02")
+	return date.UTC().Format("2006-01-02")
 }
 
 func StringToDate(date string) (time.Time, error) {
-	return time.Parse("2006-01-02", date)
+	t, err := time.Parse("2006-01-02", date)
+	if err != nil {
+		return t, err
+	}
+	return t.UTC(), nil
 }

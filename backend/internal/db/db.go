@@ -44,7 +44,7 @@ func (r RunRow) ToSlice() []any {
 	return []any{
 		r.Username,
 		r.ProfileName,
-		r.RunTimestamp,
+		r.RunTimestamp.UTC(),
 		r.CharacterName,
 		r.Victory,
 		r.Abandoned,
@@ -404,7 +404,7 @@ func (db *DB) convertRunsToRows(user, profile, gameVersion string, schemaVersion
 
 	for _, run := range runs {
 		// Convert timestamp to time.Time
-		runTime := time.Unix(int64(run.Timestamp), 0)
+		runTime := time.Unix(int64(run.Timestamp), 0).UTC()
 
 		// Determine character name from player class
 		characterName, err := mapPlayerClassToCharacter(run.PlayerClass)
@@ -451,6 +451,10 @@ func (db *DB) QueryRuns(ctx context.Context,
 		AND game_version = $2
 		AND run_timestamp BETWEEN $3 AND $4
 	`
+
+	startDate = time.Date(startDate.Year(), startDate.Month(), startDate.Day(), 0, 0, 0, 0, time.UTC)
+	endDate = time.Date(endDate.Year(), endDate.Month(), endDate.Day(), 23, 59, 59, 0, time.UTC)
+
 	args := []interface{}{user, gameVersion, startDate, endDate}
 	argCount := 4
 
