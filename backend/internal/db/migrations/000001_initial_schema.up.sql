@@ -30,7 +30,8 @@ INSERT INTO characters (name, display_name)
 VALUES ('ironclad', 'The Ironclad'),
        ('silent', 'The Silent'),
        ('defect', 'The Defect'),
-       ('watcher', 'The Watcher');
+       ('watcher', 'The Watcher'),
+       ('all', 'All Characters');
 
 -- Main runs table (using timestamp as part of primary key)
 CREATE TABLE runs

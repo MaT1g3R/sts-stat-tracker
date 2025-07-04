@@ -441,9 +441,10 @@ func (db *DB) convertRunsToRows(user, profile, gameVersion string, schemaVersion
 	return runRows
 }
 
-func (db *DB) QueryRuns(ctx context.Context,
+//nolint:funlen
+func (db *DB) QueryRuns(ctx context.Context, tx pgx.Tx,
 	user, gameVersion, character, profile string,
-	startDate, endDate time.Time, includeAbandoned bool) ([]model.Run, error) {
+	startDate, endDate time.Time, includeAbandoned bool) (_ []model.Run, err error) {
 	query := `
 		SELECT run_data
 		FROM runs
@@ -476,7 +477,12 @@ func (db *DB) QueryRuns(ctx context.Context,
 
 	query += " ORDER BY run_timestamp ASC"
 
-	rows, err := db.Pool.Query(ctx, query, args...)
+	var rows pgx.Rows
+	if tx != nil {
+		rows, err = tx.Query(ctx, query, args...)
+	} else {
+		rows, err = db.Pool.Query(ctx, query, args...)
+	}
 	if err != nil {
 		return nil, fmt.Errorf("failed to query runs: %w", err)
 	}
