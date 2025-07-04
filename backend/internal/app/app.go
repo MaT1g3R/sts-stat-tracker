@@ -60,6 +60,15 @@ func NewApp(
 	mux.HandleFunc("GET /app/players/{name}", app.handlePlayer)
 	mux.HandleFunc("GET /app/players", app.handlePlayers)
 
+	// Redirect
+	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/" {
+			http.NotFound(w, r)
+			return
+		}
+		http.Redirect(w, r, "/app/players", http.StatusFound)
+	})
+
 	// Create server with timeouts
 	server := &http.Server{
 		Addr:         fmt.Sprintf("%s:%d", cfg.Host, cfg.Port),
