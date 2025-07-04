@@ -1,1 +1,0 @@
-ALTER TABLE run_statistics ADD COLUMN game_version VARCHAR(50) NOT NULL DEFAULT '';
