@@ -8,6 +8,8 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/go-co-op/gocron/v2"
+
 	"github.com/MaT1g3R/stats-tracker/internal/clients"
 
 	"github.com/MaT1g3R/stats-tracker/internal/app"
@@ -17,6 +19,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
+//nolint:funlen
 func main() {
 	// Load .env file if it exists
 	_ = godotenv.Load()
@@ -53,6 +56,18 @@ func main() {
 		os.Exit(1)
 	}
 
+	scheduler, err := gocron.NewScheduler()
+	if err != nil {
+		slog.Error("Failed to start scheduler", "error", err)
+		os.Exit(1)
+	}
+	_, err = database.RemoveOldStatsCache(scheduler)
+	if err != nil {
+		slog.Error("Failed to add cron job", "error", err)
+		os.Exit(1)
+	}
+	scheduler.Start()
+
 	authClient := clients.NewAuthClient(cfg.AuthAPIURL)
 	twitchClient := clients.NewTwitchClient(cfg.TwitchClientID, cfg.TwitchClientSecret)
 	api := app.NewApp(cfg, logger, database, authClient, twitchClient)
@@ -79,6 +94,9 @@ func main() {
 
 	if err := server.Shutdown(shutdownCtx); err != nil {
 		slog.Error("Server shutdown failed", "error", err)
+	}
+	if err := scheduler.Shutdown(); err != nil {
+		slog.Error("Scheduler shutdown failed", "error", err)
 	}
 
 	slog.Info("Server stopped gracefully")
