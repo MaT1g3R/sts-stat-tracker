@@ -1,0 +1,102 @@
+package stats
+
+templ CardWinRateDisplay(c *CardWinRate) {
+	<table id="card-win-rate-table" class="order-column min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+		<thead class="bg-gray-50 dark:bg-gray-800">
+			<tr>
+				<th>Card</th>
+				<th>Win Rate %</th>
+				<th>Wins</th>
+				<th>Losses</th>
+				<th>Times Appeared</th>
+			</tr>
+		</thead>
+		<tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800">
+			for name, rate := range c.WinRates {
+				<tr>
+					<td>
+						{ name }
+					</td>
+					<td>
+						{ 100 * rate.GetRate() }
+					</td>
+					<td>
+						{ rate.Yes }
+					</td>
+					<td>
+						{ rate.No }
+					</td>
+					<td>
+						{ rate.Yes + rate.No }
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+	@tableHandle.Once() {
+		<script>
+        let cardWinRateTable = null;
+        function initCardWinRateTable() {
+            if (!document.getElementById('card-win-rate-table')) {
+                return
+            }
+            cardWinRateTable = $('#card-win-rate-table').DataTable({
+                responsive: true,
+                layout: {
+                    top1: {
+                        searchBuilder: {
+                            columns: [0, 1, 4],
+                            conditions: {
+                                num: {
+                                  '!null': null,
+                                  'not': null,
+                                  '>=': null,
+                                  '<=': null,
+                                  'null': null,
+                                  'between': null,
+                                  '!between': null,
+                                  '=': null,
+                                  '!=': null,
+                                },
+                                'string': {
+                                  '!null': null,
+                                  'not': null,
+                                  '>=': null,
+                                  '<=': null,
+                                  'null': null,
+                                  'between': null,
+                                  '!between': null,
+                                  '=': null,
+                                  '!=': null,
+                                  'starts': null,
+                                  '!starts': null,
+                                  'ends': null,
+                                  '!ends': null,
+                                }
+                            }
+                        }
+                    }
+                },
+                order: [
+                    [1, 'desc']
+                ],
+                columns: [
+                    { type: 'string' },
+                    {
+                        type: 'num',
+                        render: DataTable.render.number(null, null, 2, null, null)
+                    },
+                    { type: 'num' },
+                    { type: 'num' },
+                    { type: 'num' }
+                ],
+            });
+        }
+        document.body.addEventListener("htmx:afterSettle", (e) => {
+          if (e.detail.target.id == "player-stats-content") {
+              initCardWinRateTable();
+          }
+        })
+    </script>
+	}
+}

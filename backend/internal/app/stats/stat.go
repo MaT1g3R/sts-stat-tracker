@@ -5,7 +5,7 @@ import (
 	"github.com/a-h/templ"
 )
 
-var StatTypes = []string{"Overview", "Card Picks"}
+var StatTypes = []string{"Overview", "Card Picks", "Card Win Rate"}
 
 type Stat interface {
 	Name() string
