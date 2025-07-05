@@ -16,6 +16,10 @@ DATABASE_URL = postgres://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_N
 templ:
 	go tool templ generate --watch --proxy="http://localhost:8090" --open-browser=false
 
+generate:
+	go tool templ generate
+	make lint-fix
+
 # Run air for Go hot reload
 server:
 	go tool air \

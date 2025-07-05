@@ -26,6 +26,8 @@ func (db *DB) QueryStats(ctx context.Context, kind string, query StatQuery) (sta
 	switch kind {
 	case stats.StatTypes[0]:
 		stat = stats.NewOverview(query.Character)
+	case stats.StatTypes[1]:
+		stat = stats.NewCardPicks()
 	default:
 		return stat, fmt.Errorf("unknown stat kind %s", kind)
 	}

@@ -1,0 +1,218 @@
+package stats
+
+import (
+	"github.com/MaT1g3R/stats-tracker/components/card"
+)
+
+var tableHandle = templ.NewOnceHandle()
+
+templ CardPicksDisplay(c *CardPicks) {
+	@card.Card() {
+		<div class="p-6">
+			<div class="mb-4">
+				<!-- Act selection -->
+				<div class="mb-4">
+					<label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Filter by Act</label>
+					<div class="flex flex-wrap gap-2">
+						<div class="flex items-center">
+							<input 
+								type="checkbox" 
+								id="act-1" 
+								name="act-1" 
+								checked 
+								class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+								onchange="filterTableByActs()"
+							/>
+							<label for="act-1" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Act 1</label>
+						</div>
+						<div class="flex items-center">
+							<input 
+								type="checkbox" 
+								id="act-2" 
+								name="act-2" 
+								checked 
+								class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+								onchange="filterTableByActs()"
+							/>
+							<label for="act-2" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Act 2</label>
+						</div>
+						<div class="flex items-center">
+							<input 
+								type="checkbox" 
+								id="act-3" 
+								name="act-3" 
+								checked 
+								class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+								onchange="filterTableByActs()"
+							/>
+							<label for="act-3" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Act 3</label>
+						</div>
+						<div class="flex items-center">
+							<input 
+								type="checkbox" 
+								id="act-4" 
+								name="act-4" 
+								checked 
+								class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+								onchange="filterTableByActs()"
+							/>
+							<label for="act-4" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Act 4</label>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Card picks table -->
+            <div class="overflow-x-auto">
+                <table id="card-picks-table" class="order-column min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead class="bg-gray-50 dark:bg-gray-800">
+                        <tr>
+                            <th>Card</th>
+                            <th>Pick Rate %</th>
+                            <th>Times Picked</th>
+                            <th>Times Skipped</th>
+                            <th>Times Offered</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <script>
+          let cardPicksRawData = {};
+          function setCardPicksRawData(data) {
+              cardPicksRawData = data;
+          }
+        </script>
+        @templ.JSFuncCall("setCardPicksRawData", c.CardPickPerAct)
+        @tableHandle.Once() {
+            <script>
+              let cardPicksTable = null;
+              let cardPicksTableOpts = {
+                "responsive": true,
+                layout: {
+                    top1: {
+                        searchBuilder: {
+                            columns: [0, 1, 4],
+                            conditions: {
+                                num: {
+                                  '!null': null,
+                                  'not': null,
+                                  '>=': null,
+                                  '<=': null,
+                                  'null': null,
+                                  'between': null,
+                                  '!between': null,
+                                  '=': null,
+                                  '!=': null,
+                                },
+                                'string': {
+                                  '!null': null,
+                                  'not': null,
+                                  '>=': null,
+                                  '<=': null,
+                                  'null': null,
+                                  'between': null,
+                                  '!between': null,
+                                  '=': null,
+                                  '!=': null,
+                                  'starts': null,
+                                  '!starts': null,
+                                  'ends': null,
+                                  '!ends': null,
+                                }
+                            }
+                        }
+                    }
+                },
+                order: [
+                    [1, 'desc']
+                ],
+                columns: [
+                    { type: 'string' },
+                    {
+                        type: 'num',
+                        render: DataTable.render.number(null, null, 2, null, null)
+                    },
+                    { type: 'num' },
+                    { type: 'num' },
+                    { type: 'num' }
+                ],
+              };
+              
+              function calculateTableData(selectedActs) {
+                const combinedData = {};
+                
+                selectedActs.forEach(act => {
+                    const actData = cardPicksRawData[act];
+                    if (!actData) return;
+                    
+                    Object.entries(actData).forEach(([name, data]) => {
+                        if (combinedData[name]) {
+                            combinedData[name].timesPicked += data.yes;
+                            combinedData[name].timesSkipped += data.no;
+                            combinedData[name].timesOffered += data.yes + data.no;
+                        } else {
+                            combinedData[name] = {
+                                name: name,
+                                timesPicked: data.yes,
+                                timesSkipped: data.no,
+                                timesOffered: data.yes + data.no
+                            };
+                        }
+                    });
+                });
+                
+                return Object.values(combinedData).map(row => {
+                    row.pickRate = row.timesOffered > 0 ? (100 * row.timesPicked / row.timesOffered) : 0;
+                    res = [
+                        row.name,
+                        row.pickRate,
+                        row.timesPicked,
+                        row.timesSkipped,
+                        row.timesOffered
+                    ];
+                    return res;
+                });
+              }
+              
+              function getSelectedActs() {
+                const selected = [];
+                for (let i = 1; i <= 4; i++) {
+                    if (document.getElementById(`act-${i}`).checked) {
+                        selected.push(i);
+                    }
+                }
+                return selected;
+              }
+              
+              function filterTableByActs() {
+                if (!cardPicksTable) return;
+                
+                const selectedActs = getSelectedActs();
+                const newData = calculateTableData(selectedActs);
+                
+                cardPicksTable.clear();
+                cardPicksTable.rows.add(newData);
+                cardPicksTable.draw();
+              }
+              
+              function initDataTables() {
+                const selectedActs = getSelectedActs();
+                const initialData = calculateTableData(selectedActs);
+                
+                cardPicksTable = $('#card-picks-table').DataTable({
+                    ...cardPicksTableOpts,
+                    data: initialData
+                });
+              }
+              
+              document.body.addEventListener("htmx:afterSettle", (e) => {
+                if (e.detail.target.id == "player-stats-content") {
+                    initDataTables();
+                }
+              })
+            </script>
+        }
+	}
+}
