@@ -10,6 +10,7 @@ import (
 	"github.com/MaT1g3R/stats-tracker/components/dropdown"
 	"github.com/MaT1g3R/stats-tracker/components/popover"
 	"github.com/MaT1g3R/stats-tracker/components/selectbox"
+	"github.com/MaT1g3R/stats-tracker/internal/ui/components/datatable"
 	"github.com/MaT1g3R/stats-tracker/internal/ui/components/localtime"
 	"github.com/MaT1g3R/stats-tracker/internal/ui/components/navbar"
 	"github.com/a-h/templ"
@@ -58,6 +59,10 @@ func BaseLayout(currentPath ...string) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = selectbox.Script().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = datatable.DefaultSearchConditions().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
