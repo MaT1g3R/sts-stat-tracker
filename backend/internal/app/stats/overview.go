@@ -7,7 +7,6 @@ import (
 	"strconv"
 
 	"github.com/MaT1g3R/stats-tracker/internal/model"
-	"github.com/MaT1g3R/stats-tracker/internal/ui/pages"
 	"github.com/a-h/templ"
 )
 
@@ -203,7 +202,7 @@ func (o *Overview) Render() templ.Component {
 		nobRate := FormatPercentage(o.NobSurvivalRate.GetRate())
 
 		// Render the template
-		return pages.PlayerOverview(
+		return PlayerOverview(
 			totalPlayTime,
 			fastestWin,
 			averageWinTime,
