@@ -7,6 +7,8 @@ package stats
 
 import (
 	"github.com/MaT1g3R/stats-tracker/components/card"
+	"github.com/MaT1g3R/stats-tracker/components/checkbox"
+	"github.com/MaT1g3R/stats-tracker/components/form"
 	"github.com/a-h/templ"
 	templruntime "github.com/a-h/templ/runtime"
 )
@@ -46,15 +48,7 @@ func CardPicksDisplay(c *CardPicks) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"p-6\"><div class=\"mb-4\"><!-- Act selection --><div class=\"mb-4\"><label class=\"block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1\">Filter by Act</label><div class=\"flex flex-wrap gap-2\"><div class=\"flex items-center\"><input type=\"checkbox\" id=\"act-1\" name=\"act-1\" checked class=\"h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500\" onchange=\"filterTableByActs()\"> <label for=\"act-1\" class=\"ml-2 block text-sm text-gray-700 dark:text-gray-300\">Act 1</label></div><div class=\"flex items-center\"><input type=\"checkbox\" id=\"act-2\" name=\"act-2\" checked class=\"h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500\" onchange=\"filterTableByActs()\"> <label for=\"act-2\" class=\"ml-2 block text-sm text-gray-700 dark:text-gray-300\">Act 2</label></div><div class=\"flex items-center\"><input type=\"checkbox\" id=\"act-3\" name=\"act-3\" checked class=\"h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500\" onchange=\"filterTableByActs()\"> <label for=\"act-3\" class=\"ml-2 block text-sm text-gray-700 dark:text-gray-300\">Act 3</label></div><div class=\"flex items-center\"><input type=\"checkbox\" id=\"act-4\" name=\"act-4\" checked class=\"h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500\" onchange=\"filterTableByActs()\"> <label for=\"act-4\" class=\"ml-2 block text-sm text-gray-700 dark:text-gray-300\">Act 4</label></div></div></div></div><!-- Card picks table --><div class=\"overflow-x-auto\"><table id=\"card-picks-table\" class=\"order-column min-w-full divide-y divide-gray-200 dark:divide-gray-700\"><thead class=\"bg-gray-50 dark:bg-gray-800\"><tr><th>Card</th><th>Pick Rate %</th><th>Times Picked</th><th>Times Skipped</th><th>Times Offered</th></tr></thead> <tbody class=\"bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800\"></tbody></table></div></div><script>\n          let cardPicksRawData = {};\n          function setCardPicksRawData(data) {\n              cardPicksRawData = data;\n          }\n        </script> ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templ.JSFuncCall("setCardPicksRawData", c.CardPickPerAct).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"p-6\"><div class=\"mb-4\"><!-- Act selection --><div class=\"mb-4\"><label class=\"block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1\">Filter by Act</label><div class=\"flex flex-wrap gap-2\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -70,13 +64,257 @@ func CardPicksDisplay(c *CardPicks) templ.Component {
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<script>\n              let cardPicksTable = null;\n              let cardPicksTableOpts = {\n                \"responsive\": true,\n                layout: {\n                    top1: {\n                        searchBuilder: {\n                            columns: [0, 1, 4],\n                            conditions: {\n                                num: {\n                                  '!null': null,\n                                  'not': null,\n                                  '>=': null,\n                                  '<=': null,\n                                  'null': null,\n                                  'between': null,\n                                  '!between': null,\n                                  '=': null,\n                                  '!=': null,\n                                },\n                                'string': {\n                                  '!null': null,\n                                  'not': null,\n                                  '>=': null,\n                                  '<=': null,\n                                  'null': null,\n                                  'between': null,\n                                  '!between': null,\n                                  '=': null,\n                                  '!=': null,\n                                  'starts': null,\n                                  '!starts': null,\n                                  'ends': null,\n                                  '!ends': null,\n                                }\n                            }\n                        }\n                    }\n                },\n                order: [\n                    [1, 'desc']\n                ],\n                columns: [\n                    { type: 'string' },\n                    {\n                        type: 'num',\n                        render: DataTable.render.number(null, null, 2, null, null)\n                    },\n                    { type: 'num' },\n                    { type: 'num' },\n                    { type: 'num' }\n                ],\n              };\n              \n              function calculateTableData(selectedActs) {\n                const combinedData = {};\n                \n                selectedActs.forEach(act => {\n                    const actData = cardPicksRawData[act];\n                    if (!actData) return;\n                    \n                    Object.entries(actData).forEach(([name, data]) => {\n                        if (combinedData[name]) {\n                            combinedData[name].timesPicked += data.yes;\n                            combinedData[name].timesSkipped += data.no;\n                            combinedData[name].timesOffered += data.yes + data.no;\n                        } else {\n                            combinedData[name] = {\n                                name: name,\n                                timesPicked: data.yes,\n                                timesSkipped: data.no,\n                                timesOffered: data.yes + data.no\n                            };\n                        }\n                    });\n                });\n                \n                return Object.values(combinedData).map(row => {\n                    row.pickRate = row.timesOffered > 0 ? (100 * row.timesPicked / row.timesOffered) : 0;\n                    res = [\n                        row.name,\n                        row.pickRate,\n                        row.timesPicked,\n                        row.timesSkipped,\n                        row.timesOffered\n                    ];\n                    return res;\n                });\n              }\n              \n              function getSelectedActs() {\n                const selected = [];\n                for (let i = 1; i <= 4; i++) {\n                    if (document.getElementById(`act-${i}`).checked) {\n                        selected.push(i);\n                    }\n                }\n                return selected;\n              }\n              \n              function filterTableByActs() {\n                if (!cardPicksTable) return;\n                \n                const selectedActs = getSelectedActs();\n                const newData = calculateTableData(selectedActs);\n                \n                cardPicksTable.clear();\n                cardPicksTable.rows.add(newData);\n                cardPicksTable.draw();\n              }\n              \n              function initDataTables() {\n                const selectedActs = getSelectedActs();\n                const initialData = calculateTableData(selectedActs);\n                \n                cardPicksTable = $('#card-picks-table').DataTable({\n                    ...cardPicksTableOpts,\n                    data: initialData\n                });\n              }\n              \n              document.body.addEventListener(\"htmx:afterSettle\", (e) => {\n                if (e.detail.target.id == \"player-stats-content\") {\n                    initDataTables();\n                }\n              })\n            </script>")
+				templ_7745c5c3_Err = checkbox.Checkbox(checkbox.Props{
+					ID:      "act-1",
+					Name:    "act-1",
+					Checked: true,
+					Attributes: templ.Attributes{
+						"onchange": "filterTableByActs()",
+					},
+				}).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Var4 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+					templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+					templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+					if !templ_7745c5c3_IsBuffer {
+						defer func() {
+							templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+							if templ_7745c5c3_Err == nil {
+								templ_7745c5c3_Err = templ_7745c5c3_BufErr
+							}
+						}()
+					}
+					ctx = templ.InitializeContext(ctx)
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "Act 1")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					return nil
+				})
+				templ_7745c5c3_Err = form.Label(form.LabelProps{
+					For:   "act-1",
+					Class: "ml-2",
+				}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = tableHandle.Once().Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = form.ItemFlex().Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Var5 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+				if !templ_7745c5c3_IsBuffer {
+					defer func() {
+						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+						if templ_7745c5c3_Err == nil {
+							templ_7745c5c3_Err = templ_7745c5c3_BufErr
+						}
+					}()
+				}
+				ctx = templ.InitializeContext(ctx)
+				templ_7745c5c3_Err = checkbox.Checkbox(checkbox.Props{
+					ID:      "act-2",
+					Name:    "act-2",
+					Checked: true,
+					Attributes: templ.Attributes{
+						"onchange": "filterTableByActs()",
+					},
+				}).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Var6 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+					templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+					templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+					if !templ_7745c5c3_IsBuffer {
+						defer func() {
+							templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+							if templ_7745c5c3_Err == nil {
+								templ_7745c5c3_Err = templ_7745c5c3_BufErr
+							}
+						}()
+					}
+					ctx = templ.InitializeContext(ctx)
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "Act 2")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					return nil
+				})
+				templ_7745c5c3_Err = form.Label(form.LabelProps{
+					For:   "act-2",
+					Class: "ml-2",
+				}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				return nil
+			})
+			templ_7745c5c3_Err = form.ItemFlex().Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Var7 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+				if !templ_7745c5c3_IsBuffer {
+					defer func() {
+						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+						if templ_7745c5c3_Err == nil {
+							templ_7745c5c3_Err = templ_7745c5c3_BufErr
+						}
+					}()
+				}
+				ctx = templ.InitializeContext(ctx)
+				templ_7745c5c3_Err = checkbox.Checkbox(checkbox.Props{
+					ID:      "act-3",
+					Name:    "act-3",
+					Checked: true,
+					Attributes: templ.Attributes{
+						"onchange": "filterTableByActs()",
+					},
+				}).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, " ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Var8 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+					templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+					templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+					if !templ_7745c5c3_IsBuffer {
+						defer func() {
+							templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+							if templ_7745c5c3_Err == nil {
+								templ_7745c5c3_Err = templ_7745c5c3_BufErr
+							}
+						}()
+					}
+					ctx = templ.InitializeContext(ctx)
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "Act 3")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					return nil
+				})
+				templ_7745c5c3_Err = form.Label(form.LabelProps{
+					For:   "act-3",
+					Class: "ml-2",
+				}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				return nil
+			})
+			templ_7745c5c3_Err = form.ItemFlex().Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Var9 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+				if !templ_7745c5c3_IsBuffer {
+					defer func() {
+						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+						if templ_7745c5c3_Err == nil {
+							templ_7745c5c3_Err = templ_7745c5c3_BufErr
+						}
+					}()
+				}
+				ctx = templ.InitializeContext(ctx)
+				templ_7745c5c3_Err = checkbox.Checkbox(checkbox.Props{
+					ID:      "act-4",
+					Name:    "act-4",
+					Checked: true,
+					Attributes: templ.Attributes{
+						"onchange": "filterTableByActs()",
+					},
+				}).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, " ")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Var10 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+					templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+					templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+					if !templ_7745c5c3_IsBuffer {
+						defer func() {
+							templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+							if templ_7745c5c3_Err == nil {
+								templ_7745c5c3_Err = templ_7745c5c3_BufErr
+							}
+						}()
+					}
+					ctx = templ.InitializeContext(ctx)
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "Act 4")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					return nil
+				})
+				templ_7745c5c3_Err = form.Label(form.LabelProps{
+					For:   "act-4",
+					Class: "ml-2",
+				}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				return nil
+			})
+			templ_7745c5c3_Err = form.ItemFlex().Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div></div></div><!-- Card picks table --><div class=\"overflow-x-auto\"><table id=\"card-picks-table\" class=\"order-column min-w-full divide-y divide-gray-200 dark:divide-gray-700\"><thead class=\"bg-gray-50 dark:bg-gray-800\"><tr><th>Card</th><th>Pick Rate %</th><th>Times Picked</th><th>Times Skipped</th><th>Times Offered</th></tr></thead> <tbody class=\"bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800\"></tbody></table></div></div><script>\n          let cardPicksRawData = {};\n          function setCardPicksRawData(data) {\n              cardPicksRawData = data;\n          }\n        </script> ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templ.JSFuncCall("setCardPicksRawData", c.CardPickPerAct).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, " ")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Var11 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+				if !templ_7745c5c3_IsBuffer {
+					defer func() {
+						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+						if templ_7745c5c3_Err == nil {
+							templ_7745c5c3_Err = templ_7745c5c3_BufErr
+						}
+					}()
+				}
+				ctx = templ.InitializeContext(ctx)
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<script>\n              let cardPicksTable = null;\n              let cardPicksTableOpts = {\n                \"responsive\": true,\n                layout: {\n                    top1: {\n                        searchBuilder: {\n                            columns: [0, 1, 4],\n                            conditions: {\n                                num: {\n                                  '!null': null,\n                                  'not': null,\n                                  '>=': null,\n                                  '<=': null,\n                                  'null': null,\n                                  'between': null,\n                                  '!between': null,\n                                  '=': null,\n                                  '!=': null,\n                                },\n                                'string': {\n                                  '!null': null,\n                                  'not': null,\n                                  '>=': null,\n                                  '<=': null,\n                                  'null': null,\n                                  'between': null,\n                                  '!between': null,\n                                  '=': null,\n                                  '!=': null,\n                                  'starts': null,\n                                  '!starts': null,\n                                  'ends': null,\n                                  '!ends': null,\n                                }\n                            }\n                        }\n                    }\n                },\n                order: [\n                    [1, 'desc']\n                ],\n                columns: [\n                    { type: 'string' },\n                    {\n                        type: 'num',\n                        render: DataTable.render.number(null, null, 2, null, null)\n                    },\n                    { type: 'num' },\n                    { type: 'num' },\n                    { type: 'num' }\n                ],\n              };\n\n              function calculateTableData(selectedActs) {\n                const combinedData = {};\n\n                selectedActs.forEach(act => {\n                    const actData = cardPicksRawData[act];\n                    if (!actData) return;\n\n                    Object.entries(actData).forEach(([name, data]) => {\n                        if (combinedData[name]) {\n                            combinedData[name].timesPicked += data.yes;\n                            combinedData[name].timesSkipped += data.no;\n                            combinedData[name].timesOffered += data.yes + data.no;\n                        } else {\n                            combinedData[name] = {\n                                name: name,\n                                timesPicked: data.yes,\n                                timesSkipped: data.no,\n                                timesOffered: data.yes + data.no\n                            };\n                        }\n                    });\n                });\n\n                return Object.values(combinedData).map(row => {\n                    row.pickRate = row.timesOffered > 0 ? (100 * row.timesPicked / row.timesOffered) : 0;\n                    res = [\n                        row.name,\n                        row.pickRate,\n                        row.timesPicked,\n                        row.timesSkipped,\n                        row.timesOffered\n                    ];\n                    return res;\n                });\n              }\n\n              function getSelectedActs() {\n                const selected = [];\n                for (let i = 1; i <= 4; i++) {\n                    if (document.getElementById(`act-${i}`).checked) {\n                        selected.push(i);\n                    }\n                }\n                return selected;\n              }\n\n              function filterTableByActs() {\n                if (!cardPicksTable) return;\n\n                const selectedActs = getSelectedActs();\n                const newData = calculateTableData(selectedActs);\n\n                cardPicksTable.clear();\n                cardPicksTable.rows.add(newData);\n                cardPicksTable.draw();\n              }\n\n              function initDataTables() {\n                const selectedActs = getSelectedActs();\n                const initialData = calculateTableData(selectedActs);\n\n                cardPicksTable = $('#card-picks-table').DataTable({\n                    ...cardPicksTableOpts,\n                    data: initialData\n                });\n              }\n\n              document.body.addEventListener(\"htmx:afterSettle\", (e) => {\n                if (e.detail.target.id == \"player-stats-content\") {\n                    initDataTables();\n                }\n              })\n            </script>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				return nil
+			})
+			templ_7745c5c3_Err = tableHandle.Once().Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
