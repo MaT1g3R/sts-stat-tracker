@@ -1,8 +1,6 @@
 package stats
 
-import (
-	"github.com/MaT1g3R/stats-tracker/components/card"
-)
+import "github.com/MaT1g3R/stats-tracker/components/card"
 
 var tableHandle = templ.NewOnceHandle()
 
@@ -15,44 +13,44 @@ templ CardPicksDisplay(c *CardPicks) {
 					<label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Filter by Act</label>
 					<div class="flex flex-wrap gap-2">
 						<div class="flex items-center">
-							<input 
-								type="checkbox" 
-								id="act-1" 
-								name="act-1" 
-								checked 
+							<input
+								type="checkbox"
+								id="act-1"
+								name="act-1"
+								checked
 								class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
 								onchange="filterTableByActs()"
 							/>
 							<label for="act-1" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Act 1</label>
 						</div>
 						<div class="flex items-center">
-							<input 
-								type="checkbox" 
-								id="act-2" 
-								name="act-2" 
-								checked 
+							<input
+								type="checkbox"
+								id="act-2"
+								name="act-2"
+								checked
 								class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
 								onchange="filterTableByActs()"
 							/>
 							<label for="act-2" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Act 2</label>
 						</div>
 						<div class="flex items-center">
-							<input 
-								type="checkbox" 
-								id="act-3" 
-								name="act-3" 
-								checked 
+							<input
+								type="checkbox"
+								id="act-3"
+								name="act-3"
+								checked
 								class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
 								onchange="filterTableByActs()"
 							/>
 							<label for="act-3" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Act 3</label>
 						</div>
 						<div class="flex items-center">
-							<input 
-								type="checkbox" 
-								id="act-4" 
-								name="act-4" 
-								checked 
+							<input
+								type="checkbox"
+								id="act-4"
+								name="act-4"
+								checked
 								class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
 								onchange="filterTableByActs()"
 							/>
@@ -62,31 +60,30 @@ templ CardPicksDisplay(c *CardPicks) {
 				</div>
 			</div>
 			<!-- Card picks table -->
-            <div class="overflow-x-auto">
-                <table id="card-picks-table" class="order-column min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                    <thead class="bg-gray-50 dark:bg-gray-800">
-                        <tr>
-                            <th>Card</th>
-                            <th>Pick Rate %</th>
-                            <th>Times Picked</th>
-                            <th>Times Skipped</th>
-                            <th>Times Offered</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800">
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <script>
+			<div class="overflow-x-auto">
+				<table id="card-picks-table" class="order-column min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+					<thead class="bg-gray-50 dark:bg-gray-800">
+						<tr>
+							<th>Card</th>
+							<th>Pick Rate %</th>
+							<th>Times Picked</th>
+							<th>Times Skipped</th>
+							<th>Times Offered</th>
+						</tr>
+					</thead>
+					<tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800"></tbody>
+				</table>
+			</div>
+		</div>
+		<script>
           let cardPicksRawData = {};
           function setCardPicksRawData(data) {
               cardPicksRawData = data;
           }
         </script>
-        @templ.JSFuncCall("setCardPicksRawData", c.CardPickPerAct)
-        @tableHandle.Once() {
-            <script>
+		@templ.JSFuncCall("setCardPicksRawData", c.CardPickPerAct)
+		@tableHandle.Once() {
+			<script>
               let cardPicksTable = null;
               let cardPicksTableOpts = {
                 "responsive": true,
@@ -213,6 +210,6 @@ templ CardPicksDisplay(c *CardPicks) {
                 }
               })
             </script>
-        }
+		}
 	}
 }

@@ -3,6 +3,7 @@ package search
 import (
 	"fmt"
 	"github.com/MaT1g3R/stats-tracker/components/avatar"
+	"github.com/MaT1g3R/stats-tracker/components/card"
 	"github.com/MaT1g3R/stats-tracker/utils"
 )
 
@@ -23,57 +24,61 @@ templ PlayerResults(props ...ResultsProps) {
 	if len(props) > 0 {
 		{{ p = props[0] }}
 	}
-	<div class={ utils.TwMerge("space-y-2", p.Class) }>
+	<div class={ utils.TwMerge("space-y-3", p.Class) }>
 		if len(p.Players) == 0 && p.Query != "" {
-			<div class="text-center py-4 text-gray-500 dark:text-gray-400">
-				<p>No players found matching "{ p.Query }"</p>
-			</div>
+			@card.Card() {
+				<div class="text-center p-6 text-gray-500 dark:text-gray-400">
+					<p>No players found matching "{ p.Query }"</p>
+				</div>
+			}
 		} else if len(p.Players) > 0 {
-			<div class="text-xs text-gray-500 dark:text-gray-400 mb-2">
+			<div class="text-sm text-gray-500 dark:text-gray-400 px-1">
 				Found { fmt.Sprintf("%d", len(p.Players)) } player(s)
 			</div>
-			for _, player := range p.Players {
-				@PlayerResultItem(player)
-			}
+			<div class="space-y-2">
+				for _, player := range p.Players {
+					@PlayerResultItem(player)
+				}
+			</div>
 		}
 	</div>
 }
 
 templ PlayerResultItem(player PlayerResult) {
-	<div
-		class="search-result-item flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors"
-		data-player-name={ player.Name }
-		role="button"
-		tabindex="0"
-	>
-		<!-- Avatar placeholder -->
-		<div class="w-10 h-10 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center">
-			<span class="text-sm font-medium text-gray-700 dark:text-gray-300">
-				@avatar.Avatar(avatar.Props{
-					Size: "m",
-				}) {
-					@avatar.Image(avatar.ImageProps{
-						Src: player.Avatar,
-					})
-				}
-			</span>
-		</div>
-		<!-- Player info -->
-		<div class="flex-1 min-w-0">
-			<div class="text-sm font-medium text-gray-900 dark:text-white truncate">
-				{ player.Name }
-			</div>
-			if player.LastSeen != "" {
-				<div class="text-xs text-gray-500 dark:text-gray-400">
-					Last seen: { player.LastSeen }
-				</div>
+	@card.Card(card.Props{
+		Class: "search-result-item cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors",
+		Attributes: templ.Attributes{
+			"data-player-name": player.Name,
+			"role":             "button",
+			"tabindex":         "0",
+		},
+	}) {
+		<div class="flex items-center space-x-3 p-4">
+			<!-- Avatar -->
+			@avatar.Avatar(avatar.Props{
+				Size: "m",
+			}) {
+				@avatar.Image(avatar.ImageProps{
+					Src: player.Avatar,
+				})
 			}
+			<!-- Player info -->
+			<div class="flex-1 min-w-0">
+				<div class="text-sm font-medium text-gray-900 dark:text-white truncate">
+					{ player.Name }
+				</div>
+				if player.LastSeen != "" {
+					<div class="text-xs text-gray-500 dark:text-gray-400">
+						Last seen: { player.LastSeen }
+					</div>
+				}
+			</div>
+			<!-- Arrow indicator -->
+			<div class="text-gray-400 dark:text-gray-500">
+				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+				</svg>
+			</div>
 		</div>
-		<!-- Arrow indicator -->
-		<div class="text-gray-400 dark:text-gray-500">
-			<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-			</svg>
-		</div>
-	</div>
+	}
 }

@@ -3,6 +3,9 @@ package pages
 import (
 	"github.com/MaT1g3R/stats-tracker/components/avatar"
 	"github.com/MaT1g3R/stats-tracker/components/card"
+	"github.com/MaT1g3R/stats-tracker/components/checkbox"
+	"github.com/MaT1g3R/stats-tracker/components/form"
+	"github.com/MaT1g3R/stats-tracker/components/selectbox"
 	"github.com/MaT1g3R/stats-tracker/internal/ui/components/localtime"
 	"github.com/MaT1g3R/stats-tracker/internal/ui/layout"
 	"time"
@@ -54,142 +57,217 @@ templ PlayerPage(props PlayerPageProps) {
 							<form id="player-filters" class="space-y-6">
 								<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 									<!-- Profile Dropdown -->
-									<div>
-										<label for="profile-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+									@form.Item() {
+										@form.Label(form.LabelProps{For: "profile-name"}) {
 											Profile
-										</label>
-										<select
-											id="profile-name"
-											name="profile-name"
-											class="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm"
-											hx-get={ "/api/v1/players/" + props.Name + "/stats" }
-											hx-trigger="load,change"
-											hx-target="#player-stats-content"
-											hx-include="#player-filters"
-											hx-indicator="#loading-indicator"
-											hx-swap="innerHTML"
-										>
-											for _, item := range props.Profiles {
-												<option value={ item } selected?={ props.SelectedProfile == item }>{ item }</option>
+										}
+										@selectbox.SelectBox() {
+											@selectbox.Trigger(selectbox.TriggerProps{
+												ID:   "profile-name",
+												Name: "profile-name",
+												Attributes: templ.Attributes{
+													"hx-get":       "/api/v1/players/" + props.Name + "/stats",
+													"hx-trigger":   "load,change",
+													"hx-target":    "#player-stats-content",
+													"hx-include":   "#player-filters",
+													"hx-indicator": "#loading-indicator",
+													"hx-swap":      "innerHTML",
+												},
+											}) {
+												@selectbox.Value() {
+													for _, item := range props.Profiles {
+														if props.SelectedProfile == item {
+															{ item }
+														}
+													}
+												}
 											}
-										</select>
-									</div>
+											@selectbox.Content() {
+												for _, item := range props.Profiles {
+													@selectbox.Item(selectbox.ItemProps{
+														Value:    item,
+														Selected: props.SelectedProfile == item,
+													}) {
+														{ item }
+													}
+												}
+											}
+										}
+									}
 									<!-- Game Version Dropdown -->
-									<div>
-										<label for="game-version" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+									@form.Item() {
+										@form.Label(form.LabelProps{For: "game-version"}) {
 											Game Version
-										</label>
-										<select
-											id="game-version"
-											name="game-version"
-											class="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm"
-											hx-get={ "/api/v1/players/" + props.Name + "/stats" }
-											hx-trigger="change"
-											hx-target="#player-stats-content"
-											hx-include="#player-filters"
-											hx-indicator="#loading-indicator"
-										>
-											for _, item := range props.GameVersions {
-												<option value={ item } selected?={ props.GameVersion == item }>{ GameVersionDisplay(item) }</option>
+										}
+										@selectbox.SelectBox() {
+											@selectbox.Trigger(selectbox.TriggerProps{
+												ID:   "game-version",
+												Name: "game-version",
+												Attributes: templ.Attributes{
+													"hx-get":       "/api/v1/players/" + props.Name + "/stats",
+													"hx-trigger":   "change",
+													"hx-target":    "#player-stats-content",
+													"hx-include":   "#player-filters",
+													"hx-indicator": "#loading-indicator",
+												},
+											}) {
+												@selectbox.Value() {
+													for _, item := range props.GameVersions {
+														if props.GameVersion == item {
+															{ GameVersionDisplay(item) }
+														}
+													}
+												}
 											}
-										</select>
-									</div>
-									<!-- Character Dropdown -->
-									<div>
-										<label for="character" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-											Character
-										</label>
-										<select
-											id="character"
-											name="character"
-											class="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm"
-											hx-get={ "/api/v1/players/" + props.Name + "/stats" }
-											hx-trigger="change"
-											hx-target="#player-stats-content"
-											hx-include="#player-filters"
-											hx-indicator="#loading-indicator"
-										>
-											for _, item := range props.Characters {
-												<option value={ item } selected?={ props.Character == item }>{ CharacterDisplay(item) }</option>
+											@selectbox.Content() {
+												for _, item := range props.GameVersions {
+													@selectbox.Item(selectbox.ItemProps{
+														Value:    item,
+														Selected: props.GameVersion == item,
+													}) {
+														{ GameVersionDisplay(item) }
+													}
+												}
 											}
-										</select>
-									</div>
+										}
+									}
 									<!-- Date Range: Start Date -->
-									<div>
-										<label for="start-date" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+									@form.Item() {
+										@form.Label(form.LabelProps{For: "start-date"}) {
 											Start Date
-										</label>
-										<input
-											type="date"
-											id="start-date"
-											name="start-date"
-											value={ DateToString(props.StartDate) }
-											class="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm"
-											hx-get={ "/api/v1/players/" + props.Name + "/stats" }
-											hx-trigger="change"
-											hx-target="#player-stats-content"
-											hx-include="#player-filters"
-											hx-indicator="#loading-indicator"
-										/>
-									</div>
+										}
+										<div class="relative">
+											<input
+												type="date"
+												id="start-date"
+												name="start-date"
+												class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+												value={ DateToString(props.StartDate) }
+												hx-get={ "/api/v1/players/" + props.Name + "/stats" }
+												hx-trigger="change"
+												hx-target="#player-stats-content"
+												hx-include="#player-filters"
+												hx-indicator="#loading-indicator"
+											/>
+										</div>
+									}
 									<!-- Date Range: End Date -->
-									<div>
-										<label for="end-date" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+									@form.Item() {
+										@form.Label(form.LabelProps{For: "end-date"}) {
 											End Date
-										</label>
-										<input
-											type="date"
-											id="end-date"
-											name="end-date"
-											value={ DateToString(props.EndDate) }
-											class="w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm"
-											hx-get={ "/api/v1/players/" + props.Name + "/stats" }
-											hx-trigger="change"
-											hx-target="#player-stats-content"
-											hx-include="#player-filters"
-											hx-indicator="#loading-indicator"
-										/>
-									</div>
+										}
+										<div class="relative">
+											<input
+												type="date"
+												id="end-date"
+												name="end-date"
+												class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+												value={ DateToString(props.EndDate) }
+												hx-get={ "/api/v1/players/" + props.Name + "/stats" }
+												hx-trigger="change"
+												hx-target="#player-stats-content"
+												hx-include="#player-filters"
+												hx-indicator="#loading-indicator"
+											/>
+										</div>
+									}
 								</div>
+								<!-- Character Dropdown -->
+								@form.Item() {
+									@form.Label(form.LabelProps{For: "character"}) {
+										Character
+									}
+									@selectbox.SelectBox() {
+										@selectbox.Trigger(selectbox.TriggerProps{
+											ID:   "character",
+											Name: "character",
+											Attributes: templ.Attributes{
+												"hx-get":       "/api/v1/players/" + props.Name + "/stats",
+												"hx-trigger":   "change",
+												"hx-target":    "#player-stats-content",
+												"hx-include":   "#player-filters",
+												"hx-indicator": "#loading-indicator",
+											},
+										}) {
+											@selectbox.Value() {
+												for _, item := range props.Characters {
+													if props.Character == item {
+														{ CharacterDisplay(item) }
+													}
+												}
+											}
+										}
+										@selectbox.Content() {
+											for _, item := range props.Characters {
+												@selectbox.Item(selectbox.ItemProps{
+													Value:    item,
+													Selected: props.Character == item,
+												}) {
+													{ CharacterDisplay(item) }
+												}
+											}
+										}
+									}
+								}
 								<div class="flex flex-wrap items-center justify-between gap-4">
 									<!-- Include Abandoned Runs Checkbox -->
-									<div class="flex items-center">
-										<input
-											type="checkbox"
-											id="include-abandoned"
-											name="include-abandoned"
-											checked?={ props.IncludeAbandoned }
-											class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-											hx-get={ "/api/v1/players/" + props.Name + "/stats" }
-											hx-trigger="change"
-											hx-target="#player-stats-content"
-											hx-include="#player-filters"
-											hx-indicator="#loading-indicator"
-										/>
-										<label for="include-abandoned" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+									@form.ItemFlex() {
+										@checkbox.Checkbox(checkbox.Props{
+											ID:      "include-abandoned",
+											Name:    "include-abandoned",
+											Checked: props.IncludeAbandoned,
+											Attributes: templ.Attributes{
+												"hx-get":       "/api/v1/players/" + props.Name + "/stats",
+												"hx-trigger":   "change",
+												"hx-target":    "#player-stats-content",
+												"hx-include":   "#player-filters",
+												"hx-indicator": "#loading-indicator",
+											},
+										})
+										@form.Label(form.LabelProps{
+											For:   "include-abandoned",
+											Class: "ml-2",
+										}) {
 											Include abandoned runs
-										</label>
-									</div>
+										}
+									}
 									<!-- Stats Type Dropdown -->
-									<div class="flex items-center space-x-2">
-										<label for="stat-type" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+									@form.ItemFlex() {
+										@form.Label(form.LabelProps{For: "stat-type"}) {
 											Stats Type:
-										</label>
-										<select
-											id="stat-type"
-											name="stat-type"
-											class="rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm"
-											hx-get={ "/api/v1/players/" + props.Name + "/stats" }
-											hx-trigger="change"
-											hx-target="#player-stats-content"
-											hx-include="#player-filters"
-											hx-indicator="#loading-indicator"
-										>
-											for _, item := range props.StatTypeOptions {
-												<option value={ item } selected?={ props.StatType == item }>{ item }</option>
+										}
+										@selectbox.SelectBox(selectbox.Props{Class: "ml-2"}) {
+											@selectbox.Trigger(selectbox.TriggerProps{
+												ID:   "stat-type",
+												Name: "stat-type",
+												Attributes: templ.Attributes{
+													"hx-get":       "/api/v1/players/" + props.Name + "/stats",
+													"hx-trigger":   "change",
+													"hx-target":    "#player-stats-content",
+													"hx-include":   "#player-filters",
+													"hx-indicator": "#loading-indicator",
+												},
+											}) {
+												@selectbox.Value() {
+													for _, item := range props.StatTypeOptions {
+														if props.StatType == item {
+															{ item }
+														}
+													}
+												}
 											}
-										</select>
-									</div>
+											@selectbox.Content() {
+												for _, item := range props.StatTypeOptions {
+													@selectbox.Item(selectbox.ItemProps{
+														Value:    item,
+														Selected: props.StatType == item,
+													}) {
+														{ item }
+													}
+												}
+											}
+										}
+									}
 								</div>
 							</form>
 						</div>
@@ -206,12 +284,10 @@ templ PlayerPage(props PlayerPageProps) {
 					</div>
 				</div>
 				<!-- Stats Content -->
-                <div id="player-stats-content" class="space-y-6">
-                </div>
+				<div id="player-stats-content" class="space-y-6"></div>
 			</div>
 		</div>
-		<!-- Include the local time script -->
-		@localtime.Script()
+		<!-- Include the component scripts -->
 	}
 }
 
