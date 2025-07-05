@@ -22,7 +22,7 @@ templ CardPicksDisplay(c *CardPicks) {
 								Name:    "act-1",
 								Checked: true,
 								Attributes: templ.Attributes{
-									"onchange": "filterTableByActs()",
+									"onchange": "filterCardPicksTableByActs()",
 								},
 							})
 							@form.Label(form.LabelProps{
@@ -38,7 +38,7 @@ templ CardPicksDisplay(c *CardPicks) {
 								Name:    "act-2",
 								Checked: true,
 								Attributes: templ.Attributes{
-									"onchange": "filterTableByActs()",
+									"onchange": "filterCardPicksTableByActs()",
 								},
 							})
 							@form.Label(form.LabelProps{
@@ -54,7 +54,7 @@ templ CardPicksDisplay(c *CardPicks) {
 								Name:    "act-3",
 								Checked: true,
 								Attributes: templ.Attributes{
-									"onchange": "filterTableByActs()",
+									"onchange": "filterCardPicksTableByActs()",
 								},
 							})
 							@form.Label(form.LabelProps{
@@ -70,7 +70,7 @@ templ CardPicksDisplay(c *CardPicks) {
 								Name:    "act-4",
 								Checked: true,
 								Attributes: templ.Attributes{
-									"onchange": "filterTableByActs()",
+									"onchange": "filterCardPicksTableByActs()",
 								},
 							})
 							@form.Label(form.LabelProps{
@@ -131,7 +131,7 @@ templ CardPicksDisplay(c *CardPicks) {
                 ],
               };
 
-              function calculateTableData(selectedActs) {
+              function calculateCardPicksTableData(selectedActs) {
                 const combinedData = {};
 
                 selectedActs.forEach(act => {
@@ -167,7 +167,7 @@ templ CardPicksDisplay(c *CardPicks) {
                 });
               }
 
-              function getSelectedActs() {
+              function getCardPicksTableSelectedActs() {
                 const selected = [];
                 for (let i = 1; i <= 4; i++) {
                     if (document.getElementById(`act-${i}`).checked) {
@@ -177,20 +177,20 @@ templ CardPicksDisplay(c *CardPicks) {
                 return selected;
               }
 
-              function filterTableByActs() {
+              function filterCardPicksTableByActs() {
                 if (!cardPicksTable) return;
 
-                const selectedActs = getSelectedActs();
-                const newData = calculateTableData(selectedActs);
+                const selectedActs = getCardPicksTableSelectedActs();
+                const newData = calculateCardPicksTableData(selectedActs);
 
                 cardPicksTable.clear();
                 cardPicksTable.rows.add(newData);
                 cardPicksTable.draw();
               }
 
-              function initDataTables() {
-                const selectedActs = getSelectedActs();
-                const initialData = calculateTableData(selectedActs);
+              function initCardPicksTable() {
+                const selectedActs = getCardPicksTableSelectedActs();
+                const initialData = calculateCardPicksTableData(selectedActs);
 
                 cardPicksTable = $('#card-picks-table').DataTable({
                     ...cardPicksTableOpts,
@@ -200,7 +200,7 @@ templ CardPicksDisplay(c *CardPicks) {
 
               document.body.addEventListener("htmx:afterSettle", (e) => {
                 if (e.detail.target.id == "player-stats-content") {
-                    initDataTables();
+                    initCardPicksTable();
                 }
               })
             </script>
