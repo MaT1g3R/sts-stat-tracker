@@ -112,34 +112,7 @@ templ CardPicksDisplay(c *CardPicks) {
                     top1: {
                         searchBuilder: {
                             columns: [0, 1, 4],
-                            conditions: {
-                                num: {
-                                  '!null': null,
-                                  'not': null,
-                                  '>=': null,
-                                  '<=': null,
-                                  'null': null,
-                                  'between': null,
-                                  '!between': null,
-                                  '=': null,
-                                  '!=': null,
-                                },
-                                'string': {
-                                  '!null': null,
-                                  'not': null,
-                                  '>=': null,
-                                  '<=': null,
-                                  'null': null,
-                                  'between': null,
-                                  '!between': null,
-                                  '=': null,
-                                  '!=': null,
-                                  'starts': null,
-                                  '!starts': null,
-                                  'ends': null,
-                                  '!ends': null,
-                                }
-                            }
+                            conditions: defaultDataTableSearchConditions
                         }
                     }
                 },

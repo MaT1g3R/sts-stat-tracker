@@ -6,6 +6,7 @@ import "github.com/MaT1g3R/stats-tracker/components/dropdown"
 import "github.com/MaT1g3R/stats-tracker/components/popover"
 import "github.com/MaT1g3R/stats-tracker/components/selectbox"
 import "github.com/MaT1g3R/stats-tracker/internal/ui/components/localtime"
+import "github.com/MaT1g3R/stats-tracker/internal/ui/components/datatable"
 
 templ BaseLayout(currentPath ...string) {
 	{{ var path string }}
@@ -26,6 +27,7 @@ templ BaseLayout(currentPath ...string) {
 			@dropdown.Script()
 			@popover.Script()
 			@selectbox.Script()
+			@datatable.DefaultSearchConditions()
 		</head>
 		<body class="h-full bg-gray-50 dark:bg-gray-900">
 			<!-- Navigation -->
