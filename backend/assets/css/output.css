@@ -32,7 +32,6 @@
     --color-black: #000;
     --color-white: #fff;
     --spacing: 0.25rem;
-    --container-4xl: 56rem;
     --container-6xl: 72rem;
     --text-xs: 0.75rem;
     --text-xs--line-height: calc(1 / 0.75);
@@ -550,9 +549,6 @@
   }
   .max-w-2xl {
     max-width: 1400px;
-  }
-  .max-w-4xl {
-    max-width: var(--container-4xl);
   }
   .max-w-6xl {
     max-width: var(--container-6xl);
@@ -1195,7 +1191,7 @@
     white-space: nowrap;
   }
   .text-accent-foreground {
-    color: var(---accent-foreground);
+    color: var(--accent-foreground);
   }
   .text-background {
     color: var(--background);
@@ -1749,7 +1745,7 @@
   .hover\:text-accent-foreground {
     &:hover {
       @media (hover: hover) {
-        color: var(---accent-foreground);
+        color: var(--accent-foreground);
       }
     }
   }
@@ -1795,7 +1791,7 @@
   }
   .focus\:text-accent-foreground {
     &:focus {
-      color: var(---accent-foreground);
+      color: var(--accent-foreground);
     }
   }
   .focus\:ring-1 {
