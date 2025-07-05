@@ -33,43 +33,4 @@ templ CardWinRateDisplay(c *CardWinRate) {
 			}
 		</tbody>
 	</table>
-	@tableHandle.Once() {
-		<script>
-        let cardWinRateTable = null;
-        function initCardWinRateTable() {
-            if (!document.getElementById('card-win-rate-table')) {
-                return
-            }
-            cardWinRateTable = $('#card-win-rate-table').DataTable({
-                responsive: true,
-                layout: {
-                    top1: {
-                        searchBuilder: {
-                            columns: [0, 1, 4],
-                            conditions: defaultDataTableSearchConditions
-                        }
-                    }
-                },
-                order: [
-                    [1, 'desc']
-                ],
-                columns: [
-                    { type: 'string' },
-                    {
-                        type: 'num',
-                        render: DataTable.render.number(null, null, 2, null, null)
-                    },
-                    { type: 'num' },
-                    { type: 'num' },
-                    { type: 'num' }
-                ],
-            });
-        }
-        document.body.addEventListener("htmx:afterSettle", (e) => {
-          if (e.detail.target.id == "player-stats-content") {
-              initCardWinRateTable();
-          }
-        })
-    </script>
-	}
 }
