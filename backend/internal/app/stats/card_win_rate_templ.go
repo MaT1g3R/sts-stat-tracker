@@ -110,28 +110,6 @@ func CardWinRateDisplay(c *CardWinRate) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var7 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-			if !templ_7745c5c3_IsBuffer {
-				defer func() {
-					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-					if templ_7745c5c3_Err == nil {
-						templ_7745c5c3_Err = templ_7745c5c3_BufErr
-					}
-				}()
-			}
-			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<script>\n        let cardWinRateTable = null;\n        function initCardWinRateTable() {\n            if (!document.getElementById('card-win-rate-table')) {\n                return\n            }\n            cardWinRateTable = $('#card-win-rate-table').DataTable({\n                responsive: true,\n                layout: {\n                    top1: {\n                        searchBuilder: {\n                            columns: [0, 1, 4],\n                            conditions: defaultDataTableSearchConditions\n                        }\n                    }\n                },\n                order: [\n                    [1, 'desc']\n                ],\n                columns: [\n                    { type: 'string' },\n                    {\n                        type: 'num',\n                        render: DataTable.render.number(null, null, 2, null, null)\n                    },\n                    { type: 'num' },\n                    { type: 'num' },\n                    { type: 'num' }\n                ],\n            });\n        }\n        document.body.addEventListener(\"htmx:afterSettle\", (e) => {\n          if (e.detail.target.id == \"player-stats-content\") {\n              initCardWinRateTable();\n          }\n        })\n    </script>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			return nil
-		})
-		templ_7745c5c3_Err = tableHandle.Once().Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
 		return nil
 	})
 }

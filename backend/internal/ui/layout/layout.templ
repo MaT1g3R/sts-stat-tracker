@@ -6,7 +6,6 @@ import "github.com/MaT1g3R/stats-tracker/components/dropdown"
 import "github.com/MaT1g3R/stats-tracker/components/popover"
 import "github.com/MaT1g3R/stats-tracker/components/selectbox"
 import "github.com/MaT1g3R/stats-tracker/internal/ui/components/localtime"
-import "github.com/MaT1g3R/stats-tracker/internal/ui/components/datatable"
 
 templ BaseLayout(currentPath ...string) {
 	{{ var path string }}
@@ -27,7 +26,6 @@ templ BaseLayout(currentPath ...string) {
 			@dropdown.Script()
 			@popover.Script()
 			@selectbox.Script()
-			@datatable.DefaultSearchConditions()
 		</head>
 		<body class="h-full bg-gray-50 dark:bg-gray-900">
 			<!-- Navigation -->
@@ -49,6 +47,9 @@ templ BaseLayout(currentPath ...string) {
 			</main>
 		</body>
 		@localtime.Script()
+		<script src="/assets/js/src/datatable.js"></script>
+		<script src="/assets/js/src/card_picks.js"></script>
+		<script src="/assets/js/src/card_win_rate.js"></script>
 		<script>
           // Re-initialize templUI components after HTMX swaps
           document.body.addEventListener("htmx:afterSwap", (e) => {
