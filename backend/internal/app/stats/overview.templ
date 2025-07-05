@@ -1,8 +1,6 @@
 package stats
 
-import (
-	"github.com/MaT1g3R/stats-tracker/components/card"
-)
+import "github.com/MaT1g3R/stats-tracker/components/card"
 
 templ PlayerOverview(
 	totalPlayTime, fastestWin, averageWinTime, highestScore, bestWinStreak,
@@ -10,119 +8,119 @@ templ PlayerOverview(
 	totalFloors, bossesKilled, enemiesKilled, nobRate string,
 ) {
 	<div class="container mx-auto p-6">
-        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            <!-- Game Performance -->
-            @card.Card() {
-                @card.Header() {
-                    @card.Title() {
-                        Game Performance
-                    }
-                }
-                @card.Content() {
-                    <div class="space-y-3">
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm font-medium">Wins</span>
-                            <span class="text-sm text-green-600">{ wins }</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm font-medium">Losses</span>
-                            <span class="text-sm text-red-600">{ losses }</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm font-medium">Win Rate</span>
-                            <span class="text-sm font-semibold">{ winRate }</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm font-medium">Best Win Streak</span>
-                            <span class="text-sm">{ bestWinStreak }</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm font-medium">Highest Score</span>
-                            <span class="text-sm">{ highestScore }</span>
-                        </div>
-                    </div>
-                }
-            }
-            <!-- Time Stats -->
-            @card.Card() {
-                @card.Header() {
-                    @card.Title() {
-                        Time Statistics
-                    }
-                }
-                @card.Content() {
-                    <div class="space-y-3">
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm font-medium">Total Play Time</span>
-                            <span class="text-sm">{ totalPlayTime }</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm font-medium">Fastest Win</span>
-                            <span class="text-sm">{ fastestWin }</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm font-medium">Average Win Time</span>
-                            <span class="text-sm">{ averageWinTime }</span>
-                        </div>
-                    </div>
-                }
-            }
-            <!-- Survival Rates -->
-            @card.Card() {
-                @card.Header() {
-                    @card.Title() {
-                        Survival Rates
-                    }
-                }
-                @card.Content() {
-                    <div class="space-y-3">
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm font-medium">Act 1</span>
-                            <span class="text-sm">{ act1Rate }</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm font-medium">Act 2</span>
-                            <span class="text-sm">{ act2Rate }</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm font-medium">Act 3</span>
-                            <span class="text-sm">{ act3Rate }</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm font-medium">Act 4</span>
-                            <span class="text-sm">{ act4Rate }</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm font-medium">vs Gremlin Nob</span>
-                            <span class="text-sm">{ nobRate }</span>
-                        </div>
-                    </div>
-                }
-            }
-            <!-- Combat Stats -->
-            @card.Card() {
-                @card.Header() {
-                    @card.Title() {
-                        Combat Statistics
-                    }
-                }
-                @card.Content() {
-                    <div class="space-y-3">
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm font-medium">Total Floors Climbed</span>
-                            <span class="text-sm">{ totalFloors }</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm font-medium">Bosses Killed</span>
-                            <span class="text-sm">{ bossesKilled }</span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-sm font-medium">Enemies Killed</span>
-                            <span class="text-sm">{ enemiesKilled }</span>
-                        </div>
-                    </div>
-                }
-            }
-        </div>
+		<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+			<!-- Game Performance -->
+			@card.Card() {
+				@card.Header() {
+					@card.Title() {
+						Game Performance
+					}
+				}
+				@card.Content() {
+					<div class="space-y-3">
+						<div class="flex justify-between items-center">
+							<span class="text-sm font-medium">Wins</span>
+							<span class="text-sm text-green-600">{ wins }</span>
+						</div>
+						<div class="flex justify-between items-center">
+							<span class="text-sm font-medium">Losses</span>
+							<span class="text-sm text-red-600">{ losses }</span>
+						</div>
+						<div class="flex justify-between items-center">
+							<span class="text-sm font-medium">Win Rate</span>
+							<span class="text-sm font-semibold">{ winRate }</span>
+						</div>
+						<div class="flex justify-between items-center">
+							<span class="text-sm font-medium">Best Win Streak</span>
+							<span class="text-sm">{ bestWinStreak }</span>
+						</div>
+						<div class="flex justify-between items-center">
+							<span class="text-sm font-medium">Highest Score</span>
+							<span class="text-sm">{ highestScore }</span>
+						</div>
+					</div>
+				}
+			}
+			<!-- Time Stats -->
+			@card.Card() {
+				@card.Header() {
+					@card.Title() {
+						Time Statistics
+					}
+				}
+				@card.Content() {
+					<div class="space-y-3">
+						<div class="flex justify-between items-center">
+							<span class="text-sm font-medium">Total Play Time</span>
+							<span class="text-sm">{ totalPlayTime }</span>
+						</div>
+						<div class="flex justify-between items-center">
+							<span class="text-sm font-medium">Fastest Win</span>
+							<span class="text-sm">{ fastestWin }</span>
+						</div>
+						<div class="flex justify-between items-center">
+							<span class="text-sm font-medium">Average Win Time</span>
+							<span class="text-sm">{ averageWinTime }</span>
+						</div>
+					</div>
+				}
+			}
+			<!-- Survival Rates -->
+			@card.Card() {
+				@card.Header() {
+					@card.Title() {
+						Survival Rates
+					}
+				}
+				@card.Content() {
+					<div class="space-y-3">
+						<div class="flex justify-between items-center">
+							<span class="text-sm font-medium">Act 1</span>
+							<span class="text-sm">{ act1Rate }</span>
+						</div>
+						<div class="flex justify-between items-center">
+							<span class="text-sm font-medium">Act 2</span>
+							<span class="text-sm">{ act2Rate }</span>
+						</div>
+						<div class="flex justify-between items-center">
+							<span class="text-sm font-medium">Act 3</span>
+							<span class="text-sm">{ act3Rate }</span>
+						</div>
+						<div class="flex justify-between items-center">
+							<span class="text-sm font-medium">Act 4</span>
+							<span class="text-sm">{ act4Rate }</span>
+						</div>
+						<div class="flex justify-between items-center">
+							<span class="text-sm font-medium">vs Gremlin Nob</span>
+							<span class="text-sm">{ nobRate }</span>
+						</div>
+					</div>
+				}
+			}
+			<!-- Combat Stats -->
+			@card.Card() {
+				@card.Header() {
+					@card.Title() {
+						Combat Statistics
+					}
+				}
+				@card.Content() {
+					<div class="space-y-3">
+						<div class="flex justify-between items-center">
+							<span class="text-sm font-medium">Total Floors Climbed</span>
+							<span class="text-sm">{ totalFloors }</span>
+						</div>
+						<div class="flex justify-between items-center">
+							<span class="text-sm font-medium">Bosses Killed</span>
+							<span class="text-sm">{ bossesKilled }</span>
+						</div>
+						<div class="flex justify-between items-center">
+							<span class="text-sm font-medium">Enemies Killed</span>
+							<span class="text-sm">{ enemiesKilled }</span>
+						</div>
+					</div>
+				}
+			}
+		</div>
 	</div>
 }

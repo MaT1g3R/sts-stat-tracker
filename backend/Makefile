@@ -17,6 +17,7 @@ templ:
 	go tool templ generate --watch --proxy="http://localhost:8090" --open-browser=false
 
 generate:
+	go tool templ fmt .
 	go tool templ generate
 	make lint-fix
 

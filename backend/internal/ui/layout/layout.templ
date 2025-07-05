@@ -2,6 +2,10 @@ package layout
 
 import "github.com/MaT1g3R/stats-tracker/internal/ui/components/navbar"
 import "github.com/MaT1g3R/stats-tracker/components/avatar"
+import "github.com/MaT1g3R/stats-tracker/components/dropdown"
+import "github.com/MaT1g3R/stats-tracker/components/popover"
+import "github.com/MaT1g3R/stats-tracker/components/selectbox"
+import "github.com/MaT1g3R/stats-tracker/internal/ui/components/localtime"
 
 templ BaseLayout(currentPath ...string) {
 	{{ var path string }}
@@ -15,11 +19,13 @@ templ BaseLayout(currentPath ...string) {
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<!-- Tailwind CSS (output) -->
 			<link href="/assets/css/output.css" rel="stylesheet"/>
-
-		    <link href="https://cdn.datatables.net/v/dt/jq-3.7.0/dt-2.3.2/b-3.2.4/sb-1.8.3/sp-2.3.3/sl-3.0.1/datatables.min.css" rel="stylesheet" integrity="sha384-4ZAa8uqNhbDCUR/tHCGmIK5n4Nyr1ZIvO+MTMc+2K31fhTPgPdZYRyBxXI/sV9kQ" crossorigin="anonymous">
-            <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js"></script>
-            <script src="https://cdn.datatables.net/v/dt/jq-3.7.0/dt-2.3.2/b-3.2.4/sb-1.8.3/sp-2.3.3/sl-3.0.1/datatables.min.js" integrity="sha384-d97rqlT6/jgjAXWPO+aauK1JKyHmXfY0vfFUWsJn/+rOV9/xP3cv5JOe8HEXnkMj" crossorigin="anonymous"></script>
+			<link href="https://cdn.datatables.net/v/dt/jq-3.7.0/dt-2.3.2/b-3.2.4/sb-1.8.3/sp-2.3.3/sl-3.0.1/datatables.min.css" rel="stylesheet" integrity="sha384-4ZAa8uqNhbDCUR/tHCGmIK5n4Nyr1ZIvO+MTMc+2K31fhTPgPdZYRyBxXI/sV9kQ" crossorigin="anonymous"/>
+			<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js"></script>
+			<script src="https://cdn.datatables.net/v/dt/jq-3.7.0/dt-2.3.2/b-3.2.4/sb-1.8.3/sp-2.3.3/sl-3.0.1/datatables.min.js" integrity="sha384-d97rqlT6/jgjAXWPO+aauK1JKyHmXfY0vfFUWsJn/+rOV9/xP3cv5JOe8HEXnkMj" crossorigin="anonymous"></script>
 			@avatar.Script()
+			@dropdown.Script()
+			@popover.Script()
+			@selectbox.Script()
 		</head>
 		<body class="h-full bg-gray-50 dark:bg-gray-900">
 			<!-- Navigation -->
@@ -40,6 +46,7 @@ templ BaseLayout(currentPath ...string) {
 				{ children... }
 			</main>
 		</body>
+		@localtime.Script()
 		<script>
           // Re-initialize templUI components after HTMX swaps
           document.body.addEventListener("htmx:afterSwap", (e) => {
