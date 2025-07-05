@@ -99,15 +99,12 @@ templ CardPicksDisplay(c *CardPicks) {
 				</table>
 			</div>
 		</div>
-		<script>
-          let cardPicksRawData = {};
-          function setCardPicksRawData(data) {
-              cardPicksRawData = data;
-          }
-        </script>
-		@templ.JSFuncCall("setCardPicksRawData", c.CardPickPerAct)
+		<div style="display: none" id="card-picks-raw-data">
+			{ templ.JSONString(c.CardPickPerAct) }
+		</div>
 		@tableHandle.Once() {
 			<script>
+			  let cardPicksRawData = JSON.parse(document.getElementById("card-picks-raw-data").innerHTML);
               let cardPicksTable = null;
               let cardPicksTableOpts = {
                 "responsive": true,
