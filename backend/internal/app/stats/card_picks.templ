@@ -1,6 +1,10 @@
 package stats
 
-import "github.com/MaT1g3R/stats-tracker/components/card"
+import (
+	"github.com/MaT1g3R/stats-tracker/components/card"
+	"github.com/MaT1g3R/stats-tracker/components/checkbox"
+	"github.com/MaT1g3R/stats-tracker/components/form"
+)
 
 var tableHandle = templ.NewOnceHandle()
 
@@ -12,50 +16,70 @@ templ CardPicksDisplay(c *CardPicks) {
 				<div class="mb-4">
 					<label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Filter by Act</label>
 					<div class="flex flex-wrap gap-2">
-						<div class="flex items-center">
-							<input
-								type="checkbox"
-								id="act-1"
-								name="act-1"
-								checked
-								class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-								onchange="filterTableByActs()"
-							/>
-							<label for="act-1" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Act 1</label>
-						</div>
-						<div class="flex items-center">
-							<input
-								type="checkbox"
-								id="act-2"
-								name="act-2"
-								checked
-								class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-								onchange="filterTableByActs()"
-							/>
-							<label for="act-2" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Act 2</label>
-						</div>
-						<div class="flex items-center">
-							<input
-								type="checkbox"
-								id="act-3"
-								name="act-3"
-								checked
-								class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-								onchange="filterTableByActs()"
-							/>
-							<label for="act-3" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Act 3</label>
-						</div>
-						<div class="flex items-center">
-							<input
-								type="checkbox"
-								id="act-4"
-								name="act-4"
-								checked
-								class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-								onchange="filterTableByActs()"
-							/>
-							<label for="act-4" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">Act 4</label>
-						</div>
+						@form.ItemFlex() {
+							@checkbox.Checkbox(checkbox.Props{
+								ID:      "act-1",
+								Name:    "act-1",
+								Checked: true,
+								Attributes: templ.Attributes{
+									"onchange": "filterTableByActs()",
+								},
+							})
+							@form.Label(form.LabelProps{
+								For:   "act-1",
+								Class: "ml-2",
+							}) {
+								Act 1
+							}
+						}
+						@form.ItemFlex() {
+							@checkbox.Checkbox(checkbox.Props{
+								ID:      "act-2",
+								Name:    "act-2",
+								Checked: true,
+								Attributes: templ.Attributes{
+									"onchange": "filterTableByActs()",
+								},
+							})
+							@form.Label(form.LabelProps{
+								For:   "act-2",
+								Class: "ml-2",
+							}) {
+								Act 2
+							}
+						}
+						@form.ItemFlex() {
+							@checkbox.Checkbox(checkbox.Props{
+								ID:      "act-3",
+								Name:    "act-3",
+								Checked: true,
+								Attributes: templ.Attributes{
+									"onchange": "filterTableByActs()",
+								},
+							})
+							@form.Label(form.LabelProps{
+								For:   "act-3",
+								Class: "ml-2",
+							}) {
+								Act 3
+							}
+						}
+						@form.ItemFlex() {
+							@checkbox.Checkbox(checkbox.Props{
+								ID:      "act-4",
+								Name:    "act-4",
+								Checked: true,
+								Attributes: templ.Attributes{
+									"onchange": "filterTableByActs()",
+								},
+							})
+							@form.Label(form.LabelProps{
+								For:   "act-4",
+								Class: "ml-2",
+							}) {
+								Act 4
+							}
+						}
 					</div>
 				</div>
 			</div>
@@ -136,14 +160,14 @@ templ CardPicksDisplay(c *CardPicks) {
                     { type: 'num' }
                 ],
               };
-              
+
               function calculateTableData(selectedActs) {
                 const combinedData = {};
-                
+
                 selectedActs.forEach(act => {
                     const actData = cardPicksRawData[act];
                     if (!actData) return;
-                    
+
                     Object.entries(actData).forEach(([name, data]) => {
                         if (combinedData[name]) {
                             combinedData[name].timesPicked += data.yes;
@@ -159,7 +183,7 @@ templ CardPicksDisplay(c *CardPicks) {
                         }
                     });
                 });
-                
+
                 return Object.values(combinedData).map(row => {
                     row.pickRate = row.timesOffered > 0 ? (100 * row.timesPicked / row.timesOffered) : 0;
                     res = [
@@ -172,7 +196,7 @@ templ CardPicksDisplay(c *CardPicks) {
                     return res;
                 });
               }
-              
+
               function getSelectedActs() {
                 const selected = [];
                 for (let i = 1; i <= 4; i++) {
@@ -182,28 +206,28 @@ templ CardPicksDisplay(c *CardPicks) {
                 }
                 return selected;
               }
-              
+
               function filterTableByActs() {
                 if (!cardPicksTable) return;
-                
+
                 const selectedActs = getSelectedActs();
                 const newData = calculateTableData(selectedActs);
-                
+
                 cardPicksTable.clear();
                 cardPicksTable.rows.add(newData);
                 cardPicksTable.draw();
               }
-              
+
               function initDataTables() {
                 const selectedActs = getSelectedActs();
                 const initialData = calculateTableData(selectedActs);
-                
+
                 cardPicksTable = $('#card-picks-table').DataTable({
                     ...cardPicksTableOpts,
                     data: initialData
                 });
               }
-              
+
               document.body.addEventListener("htmx:afterSettle", (e) => {
                 if (e.detail.target.id == "player-stats-content") {
                     initDataTables();
