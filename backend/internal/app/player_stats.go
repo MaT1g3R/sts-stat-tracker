@@ -30,6 +30,12 @@ func (app *App) handlePlayerStats(w http.ResponseWriter, r *http.Request) {
 	startDateStr := r.FormValue("start-date")
 	endDateStr := r.FormValue("end-date")
 	profile := r.FormValue("profile-name")
+	statType := r.FormValue("stat-type")
+
+	if gameVersion == "" || character == "" || startDateStr == "" || endDateStr == "" || profile == "" || statType == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
 	startDate, err := pages.StringToDate(startDateStr)
 	if err != nil {
@@ -44,7 +50,6 @@ func (app *App) handlePlayerStats(w http.ResponseWriter, r *http.Request) {
 
 	// Parse include abandoned runs checkbox
 	includeAbandoned := r.FormValue("include-abandoned") == "on"
-	statType := r.FormValue("stat-type")
 
 	// Create player page props with filter values
 	props := pages.PlayerPageProps{
