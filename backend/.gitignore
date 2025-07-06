@@ -24,3 +24,5 @@ bin/
 
 # Environment files
 .env
+
+assets/js/main.min.js

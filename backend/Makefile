@@ -10,13 +10,16 @@ DB_HOST = localhost
 DB_PORT = 5432
 DATABASE_URL = postgres://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=disable
 
-.PHONY: build clean run test migrate migrate-down db-start db-stop db-reset templ tailwind dev lint lint-fix
+.PHONY: build clean run test migrate migrate-down db-start db-stop db-reset templ tailwind dev lint lint-fix bundle-js generate
 
 # Run templ generation in watch mode
 templ:
 	go tool templ generate --watch --proxy="http://localhost:8090" --open-browser=false
 
-generate:
+bundle-js:
+	cat assets/js/src/* | esbuild --minify --bundle --outfile=assets/js/main.min.js
+
+generate: bundle-js
 	go tool templ fmt .
 	go tool templ generate
 	make lint-fix
@@ -53,7 +56,7 @@ lint-fix:
 	goimports -l -w $$(find . -type f -name '*.go' | grep -v /vendor/ | grep -v /third_party/)
 
 # Build the application
-build:
+build: bundle-js
 	go build -o $(BUILD_DIR)/$(APP_NAME) ./main.go
 
 # Clean build artifacts
