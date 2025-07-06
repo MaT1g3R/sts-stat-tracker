@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static basemod.BaseMod.gson;
-import static basemod.BaseMod.logger;
 
 public class Run implements Comparable<Run> {
     private transient final RunData runData;
@@ -178,7 +177,9 @@ public class Run implements Comparable<Run> {
                     "CHOOSE_OTHER_CHAR_RANDOM_COMMON_CARD",
                     "GAIN_POTION_SLOT",
                     "GAIN_TWO_POTION_SLOTS",
-                    "GAIN_TWO_RANDOM_COMMON_RELICS");
+                    "GAIN_TWO_RANDOM_COMMON_RELICS",
+                    "GAIN_UNCOMMON_RELIC"
+            );
 
 
     public boolean valid() {

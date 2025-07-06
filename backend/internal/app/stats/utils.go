@@ -26,3 +26,13 @@ func FormatPercentage(value float64) string {
 	}
 	return fmt.Sprintf("%.1f%%", value*100)
 }
+
+func PutIfAbsent[A comparable, B any](m map[A]B, key A, value B) B {
+	v, ok := m[key]
+	if ok {
+		return v
+	} else {
+		m[key] = value
+		return value
+	}
+}

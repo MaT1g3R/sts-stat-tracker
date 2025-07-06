@@ -1,11 +1,33 @@
 package stats
 
 import (
+	"fmt"
+
 	"github.com/MaT1g3R/stats-tracker/internal/model"
 	"github.com/a-h/templ"
 )
 
-var StatTypes = []string{"Overview", "Card Picks", "Card Win Rate"}
+var StatTypes = []string{
+	"Overview",
+	"Card Picks",
+	"Card Win Rate",
+	"Neow Bonus",
+}
+
+func GetStatByKind(kind, character string) (Stat, error) {
+	switch kind {
+	case StatTypes[0]:
+		return NewOverview(character), nil
+	case StatTypes[1]:
+		return NewCardPicks(), nil
+	case StatTypes[2]:
+		return NewCardWinRate(), nil
+	case StatTypes[3]:
+		return NewNeowStats(), nil
+	default:
+		return nil, fmt.Errorf("unknown stat type %s", kind)
+	}
+}
 
 type Stat interface {
 	Name() string
@@ -47,5 +69,8 @@ type Rate struct {
 }
 
 func (r *Rate) GetRate() float64 {
+	if (r.Yes + r.No) == 0 {
+		return 0
+	}
 	return float64(r.Yes) / float64(r.Yes+r.No)
 }
