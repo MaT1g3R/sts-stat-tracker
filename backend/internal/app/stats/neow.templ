@@ -1,0 +1,60 @@
+package stats
+
+func getCostString(cost string) string {
+	s, ok := costStrings[cost]
+	if !ok {
+		return cost
+	}
+	return s
+}
+
+func getBonusString(bonus string) string {
+	s, ok := bonusStrings[bonus]
+	if !ok {
+		return bonus
+	}
+	return s
+}
+
+templ NeowDisplay(rows []NeowRow) {
+	<table id="neow-table" class="display order-column min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+		<thead class="bg-gray-50 dark:bg-gray-800">
+			<tr>
+				<th>Bonus</th>
+				<th>Cost</th>
+				<th>Win Rate %</th>
+				<th></th>
+				<th>Pick Rate %</th>
+				<th></th>
+				<th>Seen</th>
+			</tr>
+		</thead>
+		<tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800">
+			for _, row := range rows {
+				<tr>
+					<td>
+						{ getBonusString(row.Bonus) }
+					</td>
+					<td>
+						{ getCostString(row.Cost) }
+					</td>
+					<td>
+						{ 100 * row.WinRate.GetRate() }
+					</td>
+					<td>
+						({ row.WinRate.Yes }/{ row.WinRate.Yes + row.WinRate.No })
+					</td>
+					<td>
+						{ 100 * row.PickRate.GetRate() }
+					</td>
+					<td>
+						({ row.PickRate.Yes }/{ row.PickRate.Yes + row.PickRate.No })
+					</td>
+					<td>
+						{ row.PickRate.Yes + row.PickRate.No }
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}

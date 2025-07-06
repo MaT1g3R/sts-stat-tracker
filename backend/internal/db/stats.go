@@ -22,16 +22,9 @@ type StatQuery struct {
 }
 
 func (db *DB) QueryStats(ctx context.Context, kind string, query StatQuery) (stats.Stat, error) {
-	var stat stats.Stat
-	switch kind {
-	case stats.StatTypes[0]:
-		stat = stats.NewOverview(query.Character)
-	case stats.StatTypes[1]:
-		stat = stats.NewCardPicks()
-	case stats.StatTypes[2]:
-		stat = stats.NewCardWinRate()
-	default:
-		return stat, fmt.Errorf("unknown stat kind %s", kind)
+	stat, err := stats.GetStatByKind(kind, query.Character)
+	if err != nil {
+		return stat, err
 	}
 
 	// Using a constant query for better performance with prepared statements
@@ -53,7 +46,7 @@ RETURNING stats;
 	defer cancel()
 
 	var bs []byte
-	err := db.Pool.QueryRow(
+	err = db.Pool.QueryRow(
 		queryCtx,
 		statQuery,
 		query.Player,
