@@ -82,7 +82,9 @@ func (db *DB) calculateStats(ctx context.Context, query StatQuery, stat stats.St
 		return nil, fmt.Errorf("failed to start transaction: %w", err)
 	}
 	defer func(tx pgx.Tx, ctx context.Context) {
-		_ = tx.Rollback(ctx)
+		if err := tx.Rollback(ctx); err != nil && !errors.Is(err, pgx.ErrTxClosed) {
+			db.logger.Warn("failed to rollback transaction", "error", err)
+		}
 	}(tx, ctx)
 	runs, err := db.QueryRuns(ctx, tx,
 		query.Player,
