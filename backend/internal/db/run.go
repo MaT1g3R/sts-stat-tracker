@@ -250,6 +250,28 @@ func (db *DB) BatchInsertRuns(ctx context.Context,
 	if err != nil {
 		return fmt.Errorf("failed to create profile: %w", err)
 	}
+
+	// Calculate the date range of all runs
+	runRows := db.convertRunsToRows(user, profile, gameVersion, schemaVersion, runs)
+	if len(runRows) == 0 {
+		return nil // No valid runs to insert
+	}
+
+	var minDate, maxDate time.Time
+	for i, row := range runRows {
+		if i == 0 {
+			minDate = row.RunTimestamp
+			maxDate = row.RunTimestamp
+		} else {
+			if row.RunTimestamp.Before(minDate) {
+				minDate = row.RunTimestamp
+			}
+			if row.RunTimestamp.After(maxDate) {
+				maxDate = row.RunTimestamp
+			}
+		}
+	}
+
 	batch := &pgx.Batch{}
 	const insertSQL = `
 INSERT INTO runs (
@@ -268,19 +290,22 @@ game_version = EXCLUDED.game_version,
 data_schema_version = EXCLUDED.data_schema_version,
 run_data = EXCLUDED.run_data
 `
+
+	// Queue all inserts
+	for _, row := range runRows {
+		batch.Queue(insertSQL, row.ToSlice()...)
+	}
+
+	// Single targeted cache deletion for the date range
 	const deleteCacheSQL = `
 DELETE FROM run_statistics
 WHERE username = $1
 AND profile_name = $2
 AND game_version = $3
-AND $4 BETWEEN period_start AND period_end
+AND (period_start <= $4 AND period_end >= $5)
 `
+	batch.Queue(deleteCacheSQL, user, profile, gameVersion, maxDate, minDate)
 
-	for _, run := range runs {
-		row := db.convertRunsToRows(user, profile, gameVersion, schemaVersion, []model.Run{run})[0]
-		batch.Queue(insertSQL, row.ToSlice()...)
-		batch.Queue(deleteCacheSQL, user, profile, gameVersion, row.RunTimestamp)
-	}
 	br := tx.SendBatch(ctx, batch)
 	ct, err := br.Exec()
 	if err != nil {
