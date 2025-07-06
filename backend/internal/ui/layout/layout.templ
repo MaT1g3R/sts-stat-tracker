@@ -47,10 +47,7 @@ templ BaseLayout(currentPath ...string) {
 			</main>
 		</body>
 		@localtime.Script()
-		<script src="/assets/js/src/datatable.js"></script>
-		<script src="/assets/js/src/card_picks.js"></script>
-		<script src="/assets/js/src/card_win_rate.js"></script>
-		<script src="/assets/js/src/neow.js"></script>
+		<script src="/assets/js/main.min.js"></script>
 		<script>
           // Re-initialize templUI components after HTMX swaps
           document.body.addEventListener("htmx:afterSwap", (e) => {
