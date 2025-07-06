@@ -53,6 +53,7 @@ func NewApp(
 
 	// API routes
 	mux.HandleFunc("POST /api/v1/upload-all", app.UploadAll)
+	mux.HandleFunc("GET /api/v1/increment", app.handleGetIncrement)
 	mux.HandleFunc("GET /api/v1/players/search", app.handlePlayerSearch)
 	mux.HandleFunc("GET /api/v1/players/{name}/stats", app.handlePlayerStats)
 

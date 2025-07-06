@@ -34,7 +34,14 @@ func (app *App) UploadAll(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Profile is required", http.StatusBadRequest)
 		return
 	}
-
+	if req.GameVersion == "" {
+		http.Error(w, "GameVersion is required", http.StatusBadRequest)
+		return
+	}
+	if req.SchemaVersion == 0 {
+		http.Error(w, "SchemaVersion is required", http.StatusBadRequest)
+		return
+	}
 	if len(req.Runs) == 0 {
 		http.Error(w, "No runs provided", http.StatusBadRequest)
 		return
@@ -43,11 +50,15 @@ func (app *App) UploadAll(w http.ResponseWriter, r *http.Request) {
 	// URL encode the profile
 	encodedProfile := url.QueryEscape(req.Profile)
 
-	// Import runs to database
-	err = app.db.ImportRuns(r.Context(), user.Username, encodedProfile, req.GameVersion, req.SchemaVersion, req.Runs)
+	insertRuns := app.db.BatchInsertRuns
+	if len(req.Runs) >= 100 {
+		insertRuns = app.db.ImportRuns
+	}
+
+	err = insertRuns(r.Context(), user.Username, encodedProfile, req.GameVersion, req.SchemaVersion, req.Runs)
 	if err != nil {
-		app.logger.Error("failed to import runs", "error", err, "user", user.Username, "profile", req.Profile)
-		http.Error(w, "Failed to import runs", http.StatusInternalServerError)
+		app.logger.Error("failed to insert runs", "error", err, "user", user.Username, "profile", req.Profile)
+		http.Error(w, "Failed to insert runs", http.StatusInternalServerError)
 		return
 	}
 

@@ -108,7 +108,9 @@ func (db *DB) ImportRuns(ctx context.Context,
 		return fmt.Errorf("failed to begin transaction: %w", err)
 	}
 	defer func() {
-		_ = tx.Rollback(ctx)
+		if err := tx.Rollback(ctx); err != nil && !errors.Is(err, pgx.ErrTxClosed) {
+			db.logger.Warn("failed to rollback transaction", "error", err)
+		}
 	}()
 
 	// Create or ensure profile exists
@@ -212,6 +214,79 @@ func (db *DB) ImportRuns(ctx context.Context,
 	}
 	deletedRows := deleteResult.RowsAffected()
 	db.logger.Info("deleted cached run statistics", "rows_affected", deletedRows)
+
+	// Commit the transaction
+	if err := tx.Commit(ctx); err != nil {
+		return fmt.Errorf("failed to commit transaction: %w", err)
+	}
+
+	return nil
+}
+
+//nolint:funlen
+func (db *DB) BatchInsertRuns(ctx context.Context,
+	user, profile, gameVersion string, schemaVersion int, runs []model.Run) error {
+	if len(runs) == 0 {
+		return nil
+	}
+
+	// Start transaction
+	tx, err := db.Pool.Begin(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer func() {
+		if err := tx.Rollback(ctx); err != nil && !errors.Is(err, pgx.ErrTxClosed) {
+			db.logger.Warn("failed to rollback transaction", "error", err)
+		}
+	}()
+
+	// Create or ensure profile exists
+	_, err = tx.Exec(ctx, `
+		INSERT INTO profiles (username, profile_name)
+		VALUES ($1, $2)
+		ON CONFLICT (username, profile_name) DO NOTHING
+	`, user, profile)
+	if err != nil {
+		return fmt.Errorf("failed to create profile: %w", err)
+	}
+	batch := &pgx.Batch{}
+	const insertSQL = `
+INSERT INTO runs (
+	username, profile_name, run_timestamp, character_name,
+	victory, abandoned, score, floor_reached, playtime_minutes,
+	game_version, data_schema_version, run_data
+) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+ON CONFLICT (username, profile_name, run_timestamp) DO UPDATE SET
+character_name = EXCLUDED.character_name,
+victory = EXCLUDED.victory,
+abandoned = EXCLUDED.abandoned,
+score = EXCLUDED.score,
+floor_reached = EXCLUDED.floor_reached,
+playtime_minutes = EXCLUDED.playtime_minutes,
+game_version = EXCLUDED.game_version,
+data_schema_version = EXCLUDED.data_schema_version,
+run_data = EXCLUDED.run_data
+`
+	const deleteCacheSQL = `
+DELETE FROM run_statistics
+WHERE username = $1
+AND profile_name = $2
+AND game_version = $3
+AND $4 BETWEEN period_start AND period_end
+`
+
+	for _, run := range runs {
+		row := db.convertRunsToRows(user, profile, gameVersion, schemaVersion, []model.Run{run})[0]
+		batch.Queue(insertSQL, row.ToSlice()...)
+		batch.Queue(deleteCacheSQL, user, profile, gameVersion, row.RunTimestamp)
+	}
+	br := tx.SendBatch(ctx, batch)
+	ct, err := br.Exec()
+	if err != nil {
+		return fmt.Errorf("failed to insert runs: %w", err)
+	}
+	db.logger.Info("inserted runs", "runs", len(runs), "rows_affected", ct.RowsAffected())
 
 	// Commit the transaction
 	if err := tx.Commit(ctx); err != nil {
@@ -331,4 +406,71 @@ func (db *DB) QueryRuns(ctx context.Context, tx pgx.Tx,
 	}
 
 	return runs, nil
+}
+
+func (db *DB) QueryIncrement(ctx context.Context,
+	user, profile, gameVersion string, schemaVersion int) (*time.Time, []time.Time, error) {
+	// Start transaction
+	tx, err := db.Pool.Begin(ctx)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer func() {
+		if err := tx.Rollback(ctx); err != nil && !errors.Is(err, pgx.ErrTxClosed) {
+			db.logger.Warn("failed to rollback transaction", "error", err)
+		}
+	}()
+
+	// Query for the timestamp of the last run matching the exact schemaVersion
+	var lastMatchingTimestamp *time.Time
+	err = tx.QueryRow(ctx, `
+		SELECT run_timestamp
+		FROM runs
+		WHERE username = $1 
+		AND profile_name = $2 
+		AND game_version = $3 
+		AND data_schema_version = $4
+		ORDER BY run_timestamp DESC
+		LIMIT 1
+	`, user, profile, gameVersion, schemaVersion).Scan(&lastMatchingTimestamp)
+
+	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+		return nil, nil, fmt.Errorf("failed to query last matching run: %w", err)
+	}
+
+	// Query for all timestamps of runs with schemaVersion less than the input
+	rows, err := tx.Query(ctx, `
+		SELECT run_timestamp
+		FROM runs
+		WHERE username = $1 
+		AND profile_name = $2 
+		AND game_version = $3 
+		AND data_schema_version < $4
+		ORDER BY run_timestamp ASC
+	`, user, profile, gameVersion, schemaVersion)
+
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to query runs with lesser schema version: %w", err)
+	}
+	defer rows.Close()
+
+	var lesserTimestamps []time.Time
+	for rows.Next() {
+		var timestamp time.Time
+		if err := rows.Scan(&timestamp); err != nil {
+			return nil, nil, fmt.Errorf("failed to scan timestamp: %w", err)
+		}
+		lesserTimestamps = append(lesserTimestamps, timestamp)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, nil, fmt.Errorf("error iterating timestamp rows: %w", err)
+	}
+
+	// Commit the transaction
+	if err := tx.Commit(ctx); err != nil {
+		return nil, nil, fmt.Errorf("failed to commit transaction: %w", err)
+	}
+
+	return lastMatchingTimestamp, lesserTimestamps, nil
 }
