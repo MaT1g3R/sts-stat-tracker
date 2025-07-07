@@ -69,7 +69,7 @@ func CardPicksDisplay(c *CardPicks) templ.Component {
 					Name:    "act-1",
 					Checked: true,
 					Attributes: templ.Attributes{
-						"onchange": "filterCardPicksTableByActs()",
+						"onchange": "document.filterCardPicksTableByActs()",
 					},
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
@@ -127,7 +127,7 @@ func CardPicksDisplay(c *CardPicks) templ.Component {
 					Name:    "act-2",
 					Checked: true,
 					Attributes: templ.Attributes{
-						"onchange": "filterCardPicksTableByActs()",
+						"onchange": "document.filterCardPicksTableByActs()",
 					},
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
@@ -185,7 +185,7 @@ func CardPicksDisplay(c *CardPicks) templ.Component {
 					Name:    "act-3",
 					Checked: true,
 					Attributes: templ.Attributes{
-						"onchange": "filterCardPicksTableByActs()",
+						"onchange": "document.filterCardPicksTableByActs()",
 					},
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
@@ -243,7 +243,7 @@ func CardPicksDisplay(c *CardPicks) templ.Component {
 					Name:    "act-4",
 					Checked: true,
 					Attributes: templ.Attributes{
-						"onchange": "filterCardPicksTableByActs()",
+						"onchange": "document.filterCardPicksTableByActs()",
 					},
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {

@@ -1,28 +1,4 @@
 let cardPicksTable = null;
-let cardPicksTableOpts = {
-    "responsive": true,
-    layout: {
-        top1: {
-            searchBuilder: {
-                columns: [0, 1, 4],
-                conditions: defaultDataTableSearchConditions
-            }
-        }
-    },
-    order: [
-        [1, 'desc']
-    ],
-    columns: [
-        {type: 'string'},
-        {
-            type: 'num',
-            render: DataTable.render.number(null, null, 2, null, null)
-        },
-        {type: 'num'},
-        {type: 'num'},
-        {type: 'num'}
-    ],
-};
 
 function calculateCardPicksTableData(selectedActs) {
     const cardPicksRawData = JSON.parse(document.getElementById("card-picks-raw-data").innerHTML);
@@ -81,6 +57,7 @@ function filterCardPicksTableByActs() {
     cardPicksTable.rows.add(newData);
     cardPicksTable.draw();
 }
+document.filterCardPicksTableByActs = filterCardPicksTableByActs;
 
 function initCardPicksTable() {
     const selectedActs = getCardPicksTableSelectedActs();
@@ -91,7 +68,28 @@ function initCardPicksTable() {
     }
 
     cardPicksTable = $('#card-picks-table').DataTable({
-        ...cardPicksTableOpts,
+        "responsive": true,
+        layout: {
+            top1: {
+                searchBuilder: {
+                    columns: [0, 1, 4],
+                    conditions: defaultDataTableSearchConditions
+                }
+            }
+        },
+        order: [
+            [1, 'desc']
+        ],
+        columns: [
+            {type: 'string'},
+            {
+                type: 'num',
+                render: DataTable.render.number(null, null, 2, null, null)
+            },
+            {type: 'num'},
+            {type: 'num'},
+            {type: 'num'}
+        ],
         data: initialData
     });
 }
