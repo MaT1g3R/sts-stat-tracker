@@ -225,7 +225,7 @@ func (db *DB) ImportRuns(ctx context.Context,
 
 //nolint:funlen
 func (db *DB) BatchInsertRuns(ctx context.Context,
-	user, profile, gameVersion string, schemaVersion int, runs []model.Run) error {
+	user, profile, gameVersion string, schemaVersion int, runs []model.Run) (err error) {
 	if len(runs) == 0 {
 		return nil
 	}
@@ -312,13 +312,18 @@ AND (period_start <= $4 AND period_end >= $5)
 		return fmt.Errorf("failed to insert runs: %w", err)
 	}
 	db.logger.Info("inserted runs", "runs", len(runs), "rows_affected", ct.RowsAffected())
+	defer func() {
+		if e := br.Close(); err != nil {
+			db.logger.Error("failed to close batch result", "error", e)
+			err = fmt.Errorf("failed to close batch result: %w", e)
+		}
+		if e := tx.Commit(ctx); err != nil {
+			db.logger.Error("failed to commit transaction", "error", e)
+			err = fmt.Errorf("failed to commit transaction: %w", e)
+		}
+	}()
 
-	// Commit the transaction
-	if err := tx.Commit(ctx); err != nil {
-		return fmt.Errorf("failed to commit transaction: %w", err)
-	}
-
-	return nil
+	return err
 }
 
 // convertRunsToRows converts model.Run slice to RunRow slice

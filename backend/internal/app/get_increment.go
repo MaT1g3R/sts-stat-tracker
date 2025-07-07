@@ -4,12 +4,11 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
-	"time"
 )
 
 type GetIncrementResponse struct {
-	LastRunTime *time.Time  `json:"lastRunTime"`
-	Outdated    []time.Time `json:"outdated"`
+	LastRunTime *int64  `json:"lastRunTime"`
+	Outdated    []int64 `json:"outdated"`
 }
 
 func (app *App) handleGetIncrement(w http.ResponseWriter, r *http.Request) {
@@ -46,9 +45,21 @@ func (app *App) handleGetIncrement(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to get increment", http.StatusInternalServerError)
 		return
 	}
+
+	var lastTimeStamp *int64
+	if last != nil {
+		t := last.UTC().Unix()
+		lastTimeStamp = &t
+	}
+
+	outdatedTimeStamps := make([]int64, 0, len(outdated))
+	for _, t := range outdated {
+		outdatedTimeStamps = append(outdatedTimeStamps, t.UTC().Unix())
+	}
+
 	response := GetIncrementResponse{
-		LastRunTime: last,
-		Outdated:    outdated,
+		LastRunTime: lastTimeStamp,
+		Outdated:    outdatedTimeStamps,
 	}
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(response)
@@ -56,5 +67,4 @@ func (app *App) handleGetIncrement(w http.ResponseWriter, r *http.Request) {
 		app.logger.Warn("Failed to encode get increment response", "error", err)
 		http.Error(w, "Failed to encode get increment response", http.StatusInternalServerError)
 	}
-	w.WriteHeader(http.StatusOK)
 }

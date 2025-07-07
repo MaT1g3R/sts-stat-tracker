@@ -40,7 +40,7 @@ public class HTTPClient {
 
             return response.toString();
         } catch (IOException e) {
-            logger.error("Error during POST request to endpoint " + endpoint, e);
+            logger.error("Error during GET request to endpoint " + endpoint, e);
             throw e;
         } finally {
             if (connection != null) {
