@@ -180,6 +180,17 @@ public class Run implements Comparable<Run> {
                     "GAIN_TWO_RANDOM_COMMON_RELICS",
                     "GAIN_UNCOMMON_RELIC"
             );
+    private static List<String> bannedBossRelics = Arrays.asList(
+            "Honey Jar",
+            "Snecko Heart",
+            "Unceasing Top",
+            "Anchor",
+            "Bag of Preparation",
+            "Abe's Treasure",
+            "TungstenRod",
+            "ChewingGum",
+            "Letter Opener"
+    );
 
 
     public boolean valid() {
@@ -215,11 +226,21 @@ public class Run implements Comparable<Run> {
             if (b.picked != null && b.picked.contains(":")) {
                 return false;
             }
+            if (b.picked != null && bannedBossRelics.contains(b.picked)) {
+                return false;
+            }
             for (String s : b.not_picked) {
                 if (s != null && s.contains(":")) {
                     return false;
                 }
+                if (s != null && bannedBossRelics.contains(s)) {
+                    return false;
+                }
             }
+        }
+
+        if (bossSwapRelic != null && bannedBossRelics.contains(bossSwapRelic.name)) {
+            return false;
         }
 
         if (neowPicked == null) {

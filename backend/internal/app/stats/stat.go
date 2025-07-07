@@ -12,6 +12,7 @@ var StatTypes = []string{
 	"Card Picks",
 	"Card Win Rate",
 	"Neow Bonus",
+	"Boss Relics",
 }
 
 func GetStatByKind(kind, character string) (Stat, error) {
@@ -24,6 +25,8 @@ func GetStatByKind(kind, character string) (Stat, error) {
 		return NewCardWinRate(), nil
 	case StatTypes[3]:
 		return NewNeowStats(), nil
+	case StatTypes[4]:
+		return NewBossRelics(), nil
 	default:
 		return nil, fmt.Errorf("unknown stat type %s", kind)
 	}

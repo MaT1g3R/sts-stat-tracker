@@ -5,9 +5,7 @@ import (
 	"github.com/MaT1g3R/stats-tracker/components/form"
 )
 
-var tableHandle = templ.NewOnceHandle()
-
-templ CardPicksDisplay(c *CardPicks) {
+templ DisplayBossRelics(b *BossRelics, ks []string) {
 	<div class="p-6">
 		<div class="mb-4">
 			<!-- Act selection -->
@@ -16,15 +14,15 @@ templ CardPicksDisplay(c *CardPicks) {
 				<div class="flex flex-wrap gap-2">
 					@form.ItemFlex() {
 						@checkbox.Checkbox(checkbox.Props{
-							ID:      "act-1",
+							ID:      "boss-relics-act-1",
 							Name:    "act-1",
 							Checked: true,
 							Attributes: templ.Attributes{
-								"onchange": "document.filterCardPicksTableByActs()",
+								"onchange": "document.filterBossRelicsTableByActs()",
 							},
 						})
 						@form.Label(form.LabelProps{
-							For:   "act-1",
+							For:   "boss-relics-act-1",
 							Class: "ml-2",
 						}) {
 							Act 1
@@ -32,15 +30,15 @@ templ CardPicksDisplay(c *CardPicks) {
 					}
 					@form.ItemFlex() {
 						@checkbox.Checkbox(checkbox.Props{
-							ID:      "act-2",
+							ID:      "boss-relics-act-2",
 							Name:    "act-2",
 							Checked: true,
 							Attributes: templ.Attributes{
-								"onchange": "document.filterCardPicksTableByActs()",
+								"onchange": "document.filterBossRelicsTableByActs()",
 							},
 						})
 						@form.Label(form.LabelProps{
-							For:   "act-2",
+							For:   "boss-relics-act-2",
 							Class: "ml-2",
 						}) {
 							Act 2
@@ -48,34 +46,18 @@ templ CardPicksDisplay(c *CardPicks) {
 					}
 					@form.ItemFlex() {
 						@checkbox.Checkbox(checkbox.Props{
-							ID:      "act-3",
-							Name:    "act-3",
+							ID:      "boss-relics-swap",
+							Name:    "swap",
 							Checked: true,
 							Attributes: templ.Attributes{
-								"onchange": "document.filterCardPicksTableByActs()",
+								"onchange": "document.filterBossRelicsTableByActs()",
 							},
 						})
 						@form.Label(form.LabelProps{
-							For:   "act-3",
+							For:   "boss-relics-swap",
 							Class: "ml-2",
 						}) {
-							Act 3
-						}
-					}
-					@form.ItemFlex() {
-						@checkbox.Checkbox(checkbox.Props{
-							ID:      "act-4",
-							Name:    "act-4",
-							Checked: true,
-							Attributes: templ.Attributes{
-								"onchange": "document.filterCardPicksTableByActs()",
-							},
-						})
-						@form.Label(form.LabelProps{
-							For:   "act-4",
-							Class: "ml-2",
-						}) {
-							Act 4
+							Swap
 						}
 					}
 				</div>
@@ -83,21 +65,28 @@ templ CardPicksDisplay(c *CardPicks) {
 		</div>
 		<!-- Card picks table -->
 		<div class="overflow-x-auto">
-			<table id="card-picks-table" class="order-column min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+			<table id="boss-relics-table" class="order-column min-w-full divide-y divide-gray-200 dark:divide-gray-700">
 				<thead class="bg-gray-50 dark:bg-gray-800">
 					<tr>
-						<th>Card</th>
+						<th>Boss Relic</th>
+						<th>Win Rate %</th>
+						<th></th>
 						<th>Pick Rate %</th>
-						<th>Times Picked</th>
-						<th>Times Skipped</th>
-						<th>Times Offered</th>
+						<th></th>
+						<th>Times Seen</th>
 					</tr>
 				</thead>
 				<tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800"></tbody>
 			</table>
 		</div>
 	</div>
-	<div style="display: none" id="card-picks-raw-data">
-		{ templ.JSONString(c.CardPickPerAct) }
+	<div style="display: none" id="boss-relics-pick-data">
+		{ templ.JSONString(b.PickRatePerAct) }
+	</div>
+	<div style="display: none" id="boss-relics-win-data">
+		{ templ.JSONString(b.WinRatePerAct) }
+	</div>
+	<div style="display: none" id="boss-relics-keys">
+		{ templ.JSONString(ks) }
 	</div>
 }
