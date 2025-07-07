@@ -12,6 +12,7 @@ public class Config {
 
     private static final String AUTO_SYNC_SETTINGS = "enable_auto_sync";
     private static final String ENDPOINT_SETTINGS = "endpoint";
+    private static final String DEBUG_SETTINGS = "debug";
 
     private final SpireConfig config;
 
@@ -22,6 +23,7 @@ public class Config {
         Properties prop = new Properties();
         prop.setProperty(ENDPOINT_SETTINGS, "https://sts-stats.otonokizaka.moe");
         prop.setProperty(AUTO_SYNC_SETTINGS, "false");
+        prop.setProperty(DEBUG_SETTINGS, "false");
 
         config = new SpireConfig("stats-tracker", "stats-tracker-config", prop);
         config.load();
@@ -44,5 +46,10 @@ public class Config {
 
     public String getEndpoint() {
         return config.getString(ENDPOINT_SETTINGS);
+    }
+
+    public boolean getDebug() {
+        String debug = config.getString(DEBUG_SETTINGS);
+        return debug.equals("true");
     }
 }

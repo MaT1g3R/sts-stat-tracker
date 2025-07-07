@@ -75,14 +75,16 @@ public class StatsTracker implements PostInitializeSubscriber {
         settingsPanel.addUIElement(shareButton);
 
 
-        ModLabeledButton
-                debugButton =
-                new ModLabeledButton("Super secret debug button",
-                        400,
-                        500,
-                        settingsPanel,
-                        btn -> this.uploadIncrementalRuns(0));
-        settingsPanel.addUIElement(debugButton);
+        if (config.getDebug()) {
+            ModLabeledButton
+                    debugButton =
+                    new ModLabeledButton("Super secret debug button",
+                            400,
+                            500,
+                            settingsPanel,
+                            btn -> this.uploadIncrementalRuns(0));
+            settingsPanel.addUIElement(debugButton);
+        }
 
 
         BaseMod.registerModBadge(ImageMaster.loadImage("StatsTracker/img/nob-32.png"),
