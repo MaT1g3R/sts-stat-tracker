@@ -52,6 +52,22 @@ public class RunHistoryManager {
         }).collect(Collectors.toList());
     }
 
+    public List<Run> getIncrementalRuns(Long lastRunTime, List<Long> outdated) {
+        if (lastRunTime == null) {
+            List<YearMonth> dates = getDates().collect(Collectors.toList());
+            YearMonth firstRun = dates.get(0);
+            YearMonth lastRun = dates.get(dates.size() - 1);
+            return getAllRuns(firstRun, lastRun, true);
+        }
+
+        return allRuns.stream().filter(run -> {
+            if (run.timestamp > lastRunTime) {
+                return true;
+            }
+            return outdated.contains(run.timestamp);
+        }).collect(Collectors.toList());
+    }
+
     public List<Run> getAllRuns(YearMonth start, YearMonth end, boolean includeAbandons) {
         return getRunsInRange(allRuns, start, end, includeAbandons);
     }

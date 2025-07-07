@@ -68,8 +68,20 @@ public class StatsTracker implements PostInitializeSubscriber {
                             }
                         }));
 
+
         settingsPanel.addUIElement(syncButton);
         settingsPanel.addUIElement(shareButton);
+
+
+        ModLabeledButton
+                debugButton =
+                new ModLabeledButton("Super secret debug button",
+                        400,
+                        500,
+                        settingsPanel,
+                        btn -> this.uploadIncrementalRuns());
+        settingsPanel.addUIElement(debugButton);
+
 
         BaseMod.registerModBadge(ImageMaster.loadImage("StatsTracker/img/nob-32.png"),
                 "Stats Tracker",
@@ -91,8 +103,20 @@ public class StatsTracker implements PostInitializeSubscriber {
         }
     }
 
+    private class IncrementalUploadTask implements Runnable {
+        @Override
+        public void run() {
+            runUploader.uploadIncrementalRuns();
+        }
+    }
+
     private void uploadAllRuns(ModLabeledButton btn) {
         Thread uploadThread = new Thread(new UploadTask(btn));
+        uploadThread.start();
+    }
+
+    private void uploadIncrementalRuns() {
+        Thread uploadThread = new Thread(new IncrementalUploadTask());
         uploadThread.start();
     }
 }
