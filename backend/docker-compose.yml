@@ -16,6 +16,12 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+  stats-tracker:
+    image: stats-tracker-test:latest
+    restart: unless-stopped
+    ports:
+      - "8090:8090"
+    env_file: ".env"
 
 volumes:
   postgres_data:
