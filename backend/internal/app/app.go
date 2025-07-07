@@ -63,6 +63,10 @@ func NewApp(
 
 	// Redirect
 	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/favicon.ico" {
+			http.Redirect(w, r, "/assets/img/favicon.ico", http.StatusFound)
+			return
+		}
 		if r.URL.Path != "/" {
 			http.NotFound(w, r)
 			return
