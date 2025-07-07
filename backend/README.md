@@ -10,7 +10,7 @@ backend/
 ├── bin/                # Compiled binaries
 ├── cmd/                # Command-line applications
 │   └── migrate/        # Database migration tool
-├── components/         # UI components for the web interface
+├── components/         # Vendored TemplUI components for the web interface
 ├── docs/               # Documentation files
 ├── internal/           # Internal packages
 │   ├── app/            # Application logic
