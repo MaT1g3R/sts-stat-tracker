@@ -1,81 +1,160 @@
-# Stats Tracker
+# Stats Tracker Backend
 
-A web application for tracking and analyzing game statistics.
+This is the backend server for the Slay the Spire Stats Tracker mod. It provides API endpoints for storing and retrieving run statistics, user authentication, and leaderboard functionality.
 
-## Prerequisites
+## Project Structure
 
-- Go 1.24.4 or later
-- Docker and Docker Compose
-- PostgreSQL 17
+```
+backend/
+├── assets/             # Frontend assets (CSS, JS, images)
+├── bin/                # Compiled binaries
+├── cmd/                # Command-line applications
+│   └── migrate/        # Database migration tool
+├── components/         # UI components for the web interface
+├── docs/               # Documentation files
+├── internal/           # Internal packages
+│   ├── app/            # Application logic
+│   │   └── stats/      # Stats processing and analysis
+│   ├── clients/        # External API clients (Auth, Twitch)
+│   ├── config/         # Configuration management
+│   ├── db/             # Database access and models
+│   │   └── migrations/ # Database migration files
+│   ├── model/          # Data models
+│   └── ui/             # Web UI implementation
+│       ├── components/ # UI components
+│       ├── layout/     # Page layouts
+│       └── pages/      # Page implementations
+└── utils/              # Utility functions
+```
 
-## Setup
+## Technology Stack
 
-1. Clone the repository
-2. Copy `.env.example` to `.env` and adjust values if needed
-3. Start the database:
+- **Language**: Go
+- **Database**: PostgreSQL
+- **Web Framework**: Custom HTTP server
+- **Frontend**: [templ](https://templ.guide/), [templui](https://templui.io/), [datatables](https://datatables.net/)
+- **Authentication**: External auth service integration
+- **Deployment**: Docker containerization
+
+## Development Setup
+
+### Prerequisites
+
+- Go 1.24.4 or higher
+- PostgreSQL 17 or higher
+- Docker and Docker Compose (for containerized development)
+
+### Environment Configuration
+
+1. Copy the example environment file:
+   ```
+   cp .env.example .env
+   ```
+
+2. Edit the `.env` file with your local configuration settings:
+   ```
+   DATABASE_URL=postgres://postgres:postgres@localhost:5432/stats_tracker?sslmode=disable
+   PORT=8090
+   HOST=
+
+   AUTH_API_URL=https://slay-the-relics.baalorlord.tv
+   TWITCH_CLIENT_ID=your_twitch_client_id
+   TWITCH_CLIENT_SECRET=your_twitch_client_secret
+
+   LOG_LEVEL=info
+   ENVIRONMENT=development
+   ```
+
+### Running Locally
+
+1. Start the database:
    ```
    make db-start
    ```
-4. Run migrations:
+
+2. Run database migrations:
    ```
    make migrate
    ```
 
-## Development
+3. Start the server:
+   ```
+   make run
+   ```
 
-Start the development server with all watchers:
+   For development with hot reload:
+   ```
+   make dev
+   ```
+
+4. The server will be available at http://localhost:8090
+
+### Using Docker Compose
+
+To run the entire stack with Docker Compose:
 
 ```
-make dev
+docker-compose up -d
 ```
 
-This will start:
-- Tailwind CSS watcher
-- Templ template watcher
-- Air live reload server
+To stop the services:
+
+```
+docker-compose down
+```
+
+To reset the database (drop and recreate):
+
+```
+make db-reset
+```
+
+## API Documentation
+
+The backend provides the following main API endpoints:
+
+- `GET /api/health` - Health check endpoint
+- `POST /api/v1/upload-all` - Upload all run data
+- `GET /api/v1/increment` - Get increment data
+- `GET /api/v1/players/search` - Search for players
+- `GET /api/v1/players/{name}/stats` - Get stats for a specific player
 
 ## Database Migrations
 
-Migrations are managed using the golang-migrate library.
+Database migrations are managed using a custom migration tool:
+
+```
+make migrate
+```
+
+To roll back the last migration:
+
+```
+make migrate-down
+```
 
 To create a new migration:
 
-```bash
-# Create empty migration files
-touch internal/db/migrations/$(date +%s)_name_of_migration.up.sql
-touch internal/db/migrations/$(date +%s)_name_of_migration.down.sql
-```
-
-To run migrations:
-
-```bash
-make migrate       # Run all pending migrations
-make migrate-down  # Rollback the most recent migration
-```
-
-## Building
-
-```bash
-make build
-```
-
-The executable will be placed in the `bin` directory.
+1. Create 2 SQL files in `internal/db/migrations/`
+2. Name it with a timestamp prefix: `$UNIX_TIME_STAMP_description.up.sql`, `$UNIX_TIME_STAMP_description.down.sql`
+3. Add your SQL statements to the file
+4. Run the migration tool using `make migrate`
 
 ## Testing
 
-```bash
+Run the test suite with:
+
+```
 make test
 ```
 
-## Docker
+## Deployment
 
-The application includes a Docker Compose setup for PostgreSQL:
+The application is containerized using Docker and can be deployed using the provided Dockerfile:
 
-```bash
-docker-compose up -d  # Start services
-docker-compose down    # Stop services
+```
+docker build -t stats-tracker-test .
+docker run -p 8090:8090 --env-file .env stats-tracker-test
 ```
 
-## License
-
-[MIT](LICENSE)
+For production deployments, we use GitHub Actions to build and publish the Docker image.

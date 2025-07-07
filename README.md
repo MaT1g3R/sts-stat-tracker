@@ -1,24 +1,35 @@
-# sts-stat-tracker
-Slay the Spire stats tracker mod
+# Slay the Spire Stats Tracker
 
-## Overview
-This is a mod for Slay the Spire that tracks your game statistics and sends them to a backend server for analysis and visualization.
+A comprehensive statistics tracking tool for Slay the Spire that helps you analyze your gameplay and improve your skills.
 
-## Components
-- **Mod**: Java mod for Slay the Spire that collects game statistics
-- **Backend**: Go server that receives, stores, and visualizes the statistics
+## Features
 
-## Docker
-The backend server is containerized using Docker. The Dockerfile is located at `backend/Dockerfile`.
+- Track detailed statistics for all characters (Ironclad, Silent, Defect, Watcher)
+- View win rates, pick rates, and other performance metrics
+- Analyze your run history with filters for date ranges and character selection
+- Optional automatic synchronization with online leaderboards
+- Compare your stats with the community
 
-### GitHub Actions
-This repository includes a GitHub Action workflow that automatically builds and publishes the Docker image to GitHub Container Registry (ghcr.io) when:
-- Changes are pushed to the `main` branch
-- A new tag is created (e.g., `v1.0.0`)
+## Installation
 
-The Docker image can be pulled using:
-```bash
-docker pull ghcr.io/OWNER/REPOSITORY:TAG
-```
+Install the mod from the [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3177081814).
 
-For more details about the GitHub Actions workflow, see [.github/README.md](.github/README.md).
+## Usage
+
+1. **View In-Game Stats**: Access statistics through the character statistics screen (Main Menu → Statistics → Character Stats)
+2. **Sync Your Stats Online** (optional):
+   1. Install and set up [Slay the Relics](https://steamcommunity.com/sharedfiles/filedetails/?id=3048891690)
+   2. In game, go to Main Menu → Mods → StatsTracker → Config:
+      - Click "Sync All Runs" to upload all of your runs for the current profile
+      - Optionally check the "Auto Share Runs" checkbox to automatically upload any new runs you play
+3. **View Online Stats**: Visit <https://sts-stats.otonokizaka.moe/app/players> and search for your player name
+
+## Support
+
+If you encounter any issues or have questions:
+- **Feature Requests**: [GitHub Discussion](https://github.com/MaT1g3R/sts-stat-tracker/discussions)
+- **Bug Reports**: [GitHub Issues](https://github.com/MaT1g3R/sts-stat-tracker/issues)
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.

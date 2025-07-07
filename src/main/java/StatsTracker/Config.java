@@ -20,7 +20,7 @@ public class Config {
 
     public Config() throws IOException {
         Properties prop = new Properties();
-        prop.setProperty(ENDPOINT_SETTINGS, "http://localhost:8090");
+        prop.setProperty(ENDPOINT_SETTINGS, "https://sts-stats.otonokizaka.moe");
         prop.setProperty(AUTO_SYNC_SETTINGS, "false");
 
         config = new SpireConfig("stats-tracker", "stats-tracker-config", prop);
