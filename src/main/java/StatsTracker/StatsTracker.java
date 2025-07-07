@@ -21,8 +21,10 @@ public class StatsTracker implements PostInitializeSubscriber {
     public static Texture nobbers;
     public static RunHistoryManager runHistoryManager;
 
-    private final Config config;
+    public final Config config;
     private RunUploader runUploader;
+
+    public static StatsTracker instance;
 
     public StatsTracker() {
         try {
@@ -35,7 +37,7 @@ public class StatsTracker implements PostInitializeSubscriber {
     }
 
     public static void initialize() {
-        new StatsTracker();
+        instance = new StatsTracker();
     }
 
     @Override
@@ -56,7 +58,7 @@ public class StatsTracker implements PostInitializeSubscriber {
                         700f,
                         Color.WHITE,
                         FontHelper.buttonLabelFont,
-                        false,
+                        config.getAutoSync(),
                         settingsPanel,
                         (lbl -> {
                         }),
@@ -79,7 +81,7 @@ public class StatsTracker implements PostInitializeSubscriber {
                         400,
                         500,
                         settingsPanel,
-                        btn -> this.uploadIncrementalRuns());
+                        btn -> this.uploadIncrementalRuns(0));
         settingsPanel.addUIElement(debugButton);
 
 
@@ -104,8 +106,24 @@ public class StatsTracker implements PostInitializeSubscriber {
     }
 
     private class IncrementalUploadTask implements Runnable {
+        private int delaySeconds = 0;
+
+        public IncrementalUploadTask(int delaySeconds) {
+            this.delaySeconds = delaySeconds;
+        }
+
         @Override
         public void run() {
+            if (delaySeconds > 0) {
+                try {
+                    logger.info("sleeping {} seconds", delaySeconds);
+                    Thread.sleep(1000L * delaySeconds);
+                    logger.info("sleeping done");
+                } catch (InterruptedException e) {
+                    logger.error(e);
+                    throw new RuntimeException(e);
+                }
+            }
             runUploader.uploadIncrementalRuns();
         }
     }
@@ -115,8 +133,8 @@ public class StatsTracker implements PostInitializeSubscriber {
         uploadThread.start();
     }
 
-    private void uploadIncrementalRuns() {
-        Thread uploadThread = new Thread(new IncrementalUploadTask());
+    public void uploadIncrementalRuns(int delaySeconds) {
+        Thread uploadThread = new Thread(new IncrementalUploadTask(delaySeconds));
         uploadThread.start();
     }
 }
