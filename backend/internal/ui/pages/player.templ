@@ -63,11 +63,12 @@ templ PlayerPage(props PlayerPageProps) {
 										}
 										@selectbox.SelectBox() {
 											@selectbox.Trigger(selectbox.TriggerProps{
-												ID:   "profile-name",
-												Name: "profile-name",
+												ID:       "profile-name",
+												Name:     "profile-name",
+												Required: true,
 												Attributes: templ.Attributes{
 													"hx-get":       "/api/v1/players/" + props.Name + "/stats",
-													"hx-trigger":   "load,change",
+													"hx-trigger":   "change",
 													"hx-target":    "#player-stats-content",
 													"hx-include":   "#player-filters",
 													"hx-indicator": "#loading-indicator",
@@ -75,11 +76,7 @@ templ PlayerPage(props PlayerPageProps) {
 												},
 											}) {
 												@selectbox.Value() {
-													for _, item := range props.Profiles {
-														if props.SelectedProfile == item {
-															{ item }
-														}
-													}
+													{ props.SelectedProfile }
 												}
 											}
 											@selectbox.Content() {
@@ -101,8 +98,9 @@ templ PlayerPage(props PlayerPageProps) {
 										}
 										@selectbox.SelectBox() {
 											@selectbox.Trigger(selectbox.TriggerProps{
-												ID:   "game-version",
-												Name: "game-version",
+												ID:       "game-version",
+												Name:     "game-version",
+												Required: true,
 												Attributes: templ.Attributes{
 													"hx-get":       "/api/v1/players/" + props.Name + "/stats",
 													"hx-trigger":   "change",
@@ -112,11 +110,7 @@ templ PlayerPage(props PlayerPageProps) {
 												},
 											}) {
 												@selectbox.Value() {
-													for _, item := range props.GameVersions {
-														if props.GameVersion == item {
-															{ GameVersionDisplay(item) }
-														}
-													}
+													{ props.GameVersion }
 												}
 											}
 											@selectbox.Content() {
@@ -179,8 +173,9 @@ templ PlayerPage(props PlayerPageProps) {
 									}
 									@selectbox.SelectBox() {
 										@selectbox.Trigger(selectbox.TriggerProps{
-											ID:   "character",
-											Name: "character",
+											ID:       "character",
+											Name:     "character",
+											Required: true,
 											Attributes: templ.Attributes{
 												"hx-get":       "/api/v1/players/" + props.Name + "/stats",
 												"hx-trigger":   "change",
@@ -190,11 +185,7 @@ templ PlayerPage(props PlayerPageProps) {
 											},
 										}) {
 											@selectbox.Value() {
-												for _, item := range props.Characters {
-													if props.Character == item {
-														{ CharacterDisplay(item) }
-													}
-												}
+												{ props.Character }
 											}
 										}
 										@selectbox.Content() {
@@ -238,8 +229,9 @@ templ PlayerPage(props PlayerPageProps) {
 										}
 										@selectbox.SelectBox(selectbox.Props{Class: "ml-2"}) {
 											@selectbox.Trigger(selectbox.TriggerProps{
-												ID:   "stat-type",
-												Name: "stat-type",
+												ID:       "stat-type",
+												Name:     "stat-type",
+												Required: true,
 												Attributes: templ.Attributes{
 													"hx-get":       "/api/v1/players/" + props.Name + "/stats",
 													"hx-trigger":   "change",
@@ -249,11 +241,7 @@ templ PlayerPage(props PlayerPageProps) {
 												},
 											}) {
 												@selectbox.Value() {
-													for _, item := range props.StatTypeOptions {
-														if props.StatType == item {
-															{ item }
-														}
-													}
+													{ props.StatType }
 												}
 											}
 											@selectbox.Content() {

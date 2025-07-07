@@ -33,7 +33,8 @@ func (app *App) handlePlayerStats(w http.ResponseWriter, r *http.Request) {
 	statType := r.FormValue("stat-type")
 
 	if gameVersion == "" || character == "" || startDateStr == "" || endDateStr == "" || profile == "" || statType == "" {
-		w.WriteHeader(http.StatusBadRequest)
+		// htmx sends partial form requests, send NoContent to prevent errors in the console
+		w.WriteHeader(http.StatusNoContent)
 		return
 	}
 
