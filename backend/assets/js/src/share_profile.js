@@ -51,7 +51,7 @@ document.addEventListener('htmx:afterSettle', function () {
         navigator.clipboard.writeText(shareLink.value)
             .then(() => {
                 // Change button text temporarily to indicate success
-                const originalText = copyButton.textContent;
+                const originalText = "Copy";
                 copyButton.textContent = 'Copied!';
 
                 // Reset button text after 2 seconds
