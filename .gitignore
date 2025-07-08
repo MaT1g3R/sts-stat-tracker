@@ -31,3 +31,5 @@ build
 .envrc
 sendToDevs
 steam_appid.txt
+steam/config.json
+output.bbcode
