@@ -2282,6 +2282,9 @@
   --ring: hsl(224.3 76.3% 48%);
   --radius: 0.5rem;
 }
+input {
+  color-scheme: dark;
+}
 @property --tw-translate-x {
   syntax: "*";
   inherits: false;
