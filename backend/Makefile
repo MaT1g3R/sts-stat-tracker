@@ -17,7 +17,7 @@ templ:
 	go tool templ generate --watch --proxy="http://localhost:8090" --open-browser=false
 
 bundle-js:
-	cat assets/js/src/* | esbuild --minify --bundle --outfile=assets/js/main.min.js
+	cat js/* | esbuild --minify --bundle --outfile=assets/js/main.min.js
 
 generate: bundle-js
 	go tool templ fmt .

@@ -15,7 +15,7 @@ COPY . .
 RUN templ generate
 
 # Generate js bundle
-RUN cat assets/js/src/* | esbuild --minify --bundle --outfile=assets/js/main.min.js
+RUN cat js/* | esbuild --minify --bundle --outfile=assets/js/main.min.js
 
 # Build the application
 RUN CGO_ENABLED=0 GOOS=linux go build -o main ./main.go
