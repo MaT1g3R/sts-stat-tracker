@@ -28,14 +28,7 @@ build: templ bundle-js tailwind
 
 # Run air for Go hot reload
 dev:
-	go tool air \
-    --build.cmd "make build" \
-    --build.bin "bin/stats-tracker" \
-    --build.delay "100" \
-    --build.exclude_dir "node_modules" \
-    --build.include_ext "go" \
-    --build.stop_on_error "false" \
-    --misc.clean_on_exit true
+	go tool air -c .air.toml
 
 # Run linters
 lint:
