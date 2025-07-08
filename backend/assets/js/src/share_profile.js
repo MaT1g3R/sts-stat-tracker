@@ -1,12 +1,12 @@
-document.addEventListener('htmx:afterSettle', function () {
+document.shareProfileOnClick = () => {
     // Get the share link input element
     const shareLink = document.getElementById('share-link');
+    if (!shareLink) {
+        return;
+    }
 
     // Get the include filters checkbox
     const includeFiltersCheckbox = document.getElementById('include-filters');
-
-    // Get the copy button
-    const copyButton = document.getElementById('copy-share-link');
 
     // Function to generate the share link
     function generateShareLink() {
@@ -40,27 +40,34 @@ document.addEventListener('htmx:afterSettle', function () {
 
     // Generate the initial link
     generateShareLink();
+}
 
-    // Copy to clipboard functionality
-    copyButton.addEventListener('click', function () {
-        // Select the text
-        shareLink.select();
-        shareLink.setSelectionRange(0, 99999); // For mobile devices
+document.copyShareLink = () => {
+    const shareLink = document.getElementById('share-link');
+    if (!shareLink) {
+        return;
+    }
+    const copyButton = document.getElementById('copy-share-link');
+    if (!copyButton) {
+        return;
+    }
+    // Select the text
+    shareLink.select();
+    shareLink.setSelectionRange(0, 99999); // For mobile devices
 
-        // Copy the text to clipboard
-        navigator.clipboard.writeText(shareLink.value)
-            .then(() => {
-                // Change button text temporarily to indicate success
-                const originalText = "Copy";
-                copyButton.textContent = 'Copied!';
+    // Copy the text to clipboard
+    navigator.clipboard.writeText(shareLink.value)
+        .then(() => {
+            // Change button text temporarily to indicate success
+            const originalText = "Copy";
+            copyButton.textContent = 'Copied!';
 
-                // Reset button text after 2 seconds
-                setTimeout(() => {
-                    copyButton.textContent = originalText;
-                }, 2000);
-            })
-            .catch(err => {
-                console.error('Failed to copy: ', err);
-            });
-    });
-});
+            // Reset button text after 2 seconds
+            setTimeout(() => {
+                copyButton.textContent = originalText;
+            }, 2000);
+        })
+        .catch(err => {
+            console.error('Failed to copy: ', err);
+        });
+}

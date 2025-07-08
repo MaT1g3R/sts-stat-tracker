@@ -17,6 +17,8 @@ type ProfileOption struct {
 	Name string
 }
 
+var searchScriptHandle = templ.NewOnceHandle()
+
 func Players() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -101,7 +103,25 @@ func Players() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = PlayerSearchScript().Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Var4 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+				if !templ_7745c5c3_IsBuffer {
+					defer func() {
+						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+						if templ_7745c5c3_Err == nil {
+							templ_7745c5c3_Err = templ_7745c5c3_BufErr
+						}
+					}()
+				}
+				ctx = templ.InitializeContext(ctx)
+				templ_7745c5c3_Err = PlayerSearchScript().Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				return nil
+			})
+			templ_7745c5c3_Err = searchScriptHandle.Once().Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -131,9 +151,9 @@ func PlayerSearchScript() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var4 == nil {
-			templ_7745c5c3_Var4 = templ.NopComponent
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<script>\n        document.addEventListener('DOMContentLoaded', function() {\n            const searchForm = document.getElementById('player-search-form');\n            const searchInput = document.getElementById('player-search');\n\n            // Handle form submission\n            searchForm.addEventListener('submit', function(e) {\n                e.preventDefault();\n                const playerName = searchInput.value.trim();\n                if (playerName) {\n                    window.location.href = `/app/players/${encodeURIComponent(playerName)}`;\n                }\n            });\n\n            // Handle Enter key in search input\n            searchInput.addEventListener('keydown', function(e) {\n                if (e.key === 'Enter') {\n                    e.preventDefault();\n                    const playerName = searchInput.value.trim();\n                    if (playerName) {\n                        window.location.href = `/app/players/${encodeURIComponent(playerName)}`;\n                    }\n                }\n            });\n        });\n\n        // Handle clicking on search results\n        document.body.addEventListener('click', function(e) {\n            if (e.target.classList.contains('search-result-item') || e.target.closest('.search-result-item')) {\n                const resultItem = e.target.classList.contains('search-result-item') ? \n                    e.target : e.target.closest('.search-result-item');\n                const playerName = resultItem.dataset.playerName;\n                if (playerName) {\n                    window.location.href = `/app/players/${encodeURIComponent(playerName)}`;\n                }\n            }\n        });\n    </script>")

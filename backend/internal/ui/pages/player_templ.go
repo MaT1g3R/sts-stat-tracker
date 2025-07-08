@@ -203,6 +203,9 @@ func PlayerPage(props PlayerPageProps) templ.Component {
 					templ_7745c5c3_Err = button.Button(button.Props{
 						ID:    "share-profile-button",
 						Class: "flex items-center space-x-2",
+						Attributes: templ.Attributes{
+							"onclick": "document.shareProfileOnClick()",
+						},
 					}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
@@ -254,6 +257,9 @@ func PlayerPage(props PlayerPageProps) templ.Component {
 					templ_7745c5c3_Err = button.Button(button.Props{
 						ID:    "copy-share-link",
 						Class: "rounded-l-none whitespace-nowrap",
+						Attributes: templ.Attributes{
+							"onclick": "document.copyShareLink()",
+						},
 					}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
@@ -439,7 +445,7 @@ func PlayerPage(props PlayerPageProps) templ.Component {
 								var templ_7745c5c3_Var19 string
 								templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(props.SelectedProfile)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 140, Col: 36}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 146, Col: 36}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 								if templ_7745c5c3_Err != nil {
@@ -501,7 +507,7 @@ func PlayerPage(props PlayerPageProps) templ.Component {
 									var templ_7745c5c3_Var22 string
 									templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(item)
 									if templ_7745c5c3_Err != nil {
-										return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 149, Col: 20}
+										return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 155, Col: 20}
 									}
 									_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 									if templ_7745c5c3_Err != nil {
@@ -616,7 +622,7 @@ func PlayerPage(props PlayerPageProps) templ.Component {
 								var templ_7745c5c3_Var28 string
 								templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(props.GameVersion)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 174, Col: 32}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 180, Col: 32}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 								if templ_7745c5c3_Err != nil {
@@ -677,7 +683,7 @@ func PlayerPage(props PlayerPageProps) templ.Component {
 									var templ_7745c5c3_Var31 string
 									templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(GameVersionDisplay(item))
 									if templ_7745c5c3_Err != nil {
-										return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 183, Col: 40}
+										return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 189, Col: 40}
 									}
 									_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 									if templ_7745c5c3_Err != nil {
@@ -756,7 +762,7 @@ func PlayerPage(props PlayerPageProps) templ.Component {
 					var templ_7745c5c3_Var34 string
 					templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs(DateToString(props.StartDate))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 200, Col: 49}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 206, Col: 49}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
 					if templ_7745c5c3_Err != nil {
@@ -769,7 +775,7 @@ func PlayerPage(props PlayerPageProps) templ.Component {
 					var templ_7745c5c3_Var35 string
 					templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.JoinStringErrs(DateToString(props.MinDate))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 201, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 207, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var35))
 					if templ_7745c5c3_Err != nil {
@@ -782,7 +788,7 @@ func PlayerPage(props PlayerPageProps) templ.Component {
 					var templ_7745c5c3_Var36 string
 					templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinStringErrs(DateToString(props.MaxDate))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 202, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 208, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
 					if templ_7745c5c3_Err != nil {
@@ -795,7 +801,7 @@ func PlayerPage(props PlayerPageProps) templ.Component {
 					var templ_7745c5c3_Var37 string
 					templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinStringErrs("/api/v1/players/" + props.Name + "/stats")
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 203, Col: 63}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 209, Col: 63}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
 					if templ_7745c5c3_Err != nil {
@@ -856,7 +862,7 @@ func PlayerPage(props PlayerPageProps) templ.Component {
 					var templ_7745c5c3_Var40 string
 					templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.JoinStringErrs(DateToString(props.EndDate))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 222, Col: 47}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 228, Col: 47}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var40))
 					if templ_7745c5c3_Err != nil {
@@ -869,7 +875,7 @@ func PlayerPage(props PlayerPageProps) templ.Component {
 					var templ_7745c5c3_Var41 string
 					templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.JoinStringErrs(DateToString(props.MinDate))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 223, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 229, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var41))
 					if templ_7745c5c3_Err != nil {
@@ -882,7 +888,7 @@ func PlayerPage(props PlayerPageProps) templ.Component {
 					var templ_7745c5c3_Var42 string
 					templ_7745c5c3_Var42, templ_7745c5c3_Err = templ.JoinStringErrs(DateToString(props.MaxDate))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 224, Col: 45}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 230, Col: 45}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var42))
 					if templ_7745c5c3_Err != nil {
@@ -895,7 +901,7 @@ func PlayerPage(props PlayerPageProps) templ.Component {
 					var templ_7745c5c3_Var43 string
 					templ_7745c5c3_Var43, templ_7745c5c3_Err = templ.JoinStringErrs("/api/v1/players/" + props.Name + "/stats")
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 225, Col: 63}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 231, Col: 63}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var43))
 					if templ_7745c5c3_Err != nil {
@@ -992,7 +998,7 @@ func PlayerPage(props PlayerPageProps) templ.Component {
 								var templ_7745c5c3_Var49 string
 								templ_7745c5c3_Var49, templ_7745c5c3_Err = templ.JoinStringErrs(props.Character)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 253, Col: 29}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 259, Col: 29}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var49))
 								if templ_7745c5c3_Err != nil {
@@ -1053,7 +1059,7 @@ func PlayerPage(props PlayerPageProps) templ.Component {
 									var templ_7745c5c3_Var52 string
 									templ_7745c5c3_Var52, templ_7745c5c3_Err = templ.JoinStringErrs(CharacterDisplay(item))
 									if templ_7745c5c3_Err != nil {
-										return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 262, Col: 37}
+										return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 268, Col: 37}
 									}
 									_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var52))
 									if templ_7745c5c3_Err != nil {
@@ -1234,7 +1240,7 @@ func PlayerPage(props PlayerPageProps) templ.Component {
 								var templ_7745c5c3_Var60 string
 								templ_7745c5c3_Var60, templ_7745c5c3_Err = templ.JoinStringErrs(props.StatType)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 309, Col: 29}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 315, Col: 29}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var60))
 								if templ_7745c5c3_Err != nil {
@@ -1295,7 +1301,7 @@ func PlayerPage(props PlayerPageProps) templ.Component {
 									var templ_7745c5c3_Var63 string
 									templ_7745c5c3_Var63, templ_7745c5c3_Err = templ.JoinStringErrs(item)
 									if templ_7745c5c3_Err != nil {
-										return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 318, Col: 20}
+										return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 324, Col: 20}
 									}
 									_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var63))
 									if templ_7745c5c3_Err != nil {
@@ -1398,7 +1404,7 @@ func PlayerStats(props PlayerPageProps, child templ.Component) templ.Component {
 			var templ_7745c5c3_Var66 string
 			templ_7745c5c3_Var66, templ_7745c5c3_Err = templ.JoinStringErrs(props.StatType)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 352, Col: 58}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 358, Col: 58}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var66))
 			if templ_7745c5c3_Err != nil {
@@ -1411,7 +1417,7 @@ func PlayerStats(props PlayerPageProps, child templ.Component) templ.Component {
 			var templ_7745c5c3_Var67 string
 			templ_7745c5c3_Var67, templ_7745c5c3_Err = templ.JoinStringErrs(props.SelectedProfile)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 354, Col: 39}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 360, Col: 39}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var67))
 			if templ_7745c5c3_Err != nil {
@@ -1424,7 +1430,7 @@ func PlayerStats(props PlayerPageProps, child templ.Component) templ.Component {
 			var templ_7745c5c3_Var68 string
 			templ_7745c5c3_Var68, templ_7745c5c3_Err = templ.JoinStringErrs(CharacterDisplay(props.Character))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 355, Col: 53}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 361, Col: 53}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var68))
 			if templ_7745c5c3_Err != nil {
@@ -1437,7 +1443,7 @@ func PlayerStats(props PlayerPageProps, child templ.Component) templ.Component {
 			var templ_7745c5c3_Var69 string
 			templ_7745c5c3_Var69, templ_7745c5c3_Err = templ.JoinStringErrs(DateToString(props.StartDate))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 358, Col: 36}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 364, Col: 36}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var69))
 			if templ_7745c5c3_Err != nil {
@@ -1450,7 +1456,7 @@ func PlayerStats(props PlayerPageProps, child templ.Component) templ.Component {
 			var templ_7745c5c3_Var70 string
 			templ_7745c5c3_Var70, templ_7745c5c3_Err = templ.JoinStringErrs(" to ")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 359, Col: 13}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 365, Col: 13}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var70))
 			if templ_7745c5c3_Err != nil {
@@ -1463,7 +1469,7 @@ func PlayerStats(props PlayerPageProps, child templ.Component) templ.Component {
 			var templ_7745c5c3_Var71 string
 			templ_7745c5c3_Var71, templ_7745c5c3_Err = templ.JoinStringErrs(DateToString(props.EndDate))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 360, Col: 34}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/player.templ`, Line: 366, Col: 34}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var71))
 			if templ_7745c5c3_Err != nil {

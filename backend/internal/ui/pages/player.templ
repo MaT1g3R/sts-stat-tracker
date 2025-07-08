@@ -60,6 +60,9 @@ templ PlayerPage(props PlayerPageProps) {
 									@button.Button(button.Props{
 										ID:    "share-profile-button",
 										Class: "flex items-center space-x-2",
+										Attributes: templ.Attributes{
+											"onclick": "document.shareProfileOnClick()",
+										},
 									}) {
 										@icon.Share(icon.Props{
 											Size: 24,
@@ -86,6 +89,9 @@ templ PlayerPage(props PlayerPageProps) {
 												@button.Button(button.Props{
 													ID:    "copy-share-link",
 													Class: "rounded-l-none whitespace-nowrap",
+													Attributes: templ.Attributes{
+														"onclick": "document.copyShareLink()",
+													},
 												}) {
 													<span>Copy</span>
 												}
