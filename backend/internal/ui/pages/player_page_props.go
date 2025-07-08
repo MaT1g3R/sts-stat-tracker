@@ -7,6 +7,8 @@ type PlayerPageProps struct {
 	AvatarURL string
 
 	LastSeen         time.Time
+	MinDate          time.Time
+	MaxDate          time.Time
 	StartDate        time.Time
 	EndDate          time.Time
 	IncludeAbandoned bool

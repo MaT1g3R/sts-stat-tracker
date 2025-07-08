@@ -2,9 +2,12 @@ package pages
 
 import (
 	"github.com/MaT1g3R/stats-tracker/components/avatar"
+	"github.com/MaT1g3R/stats-tracker/components/button"
 	"github.com/MaT1g3R/stats-tracker/components/card"
 	"github.com/MaT1g3R/stats-tracker/components/checkbox"
 	"github.com/MaT1g3R/stats-tracker/components/form"
+	"github.com/MaT1g3R/stats-tracker/components/icon"
+	"github.com/MaT1g3R/stats-tracker/components/popover"
 	"github.com/MaT1g3R/stats-tracker/components/selectbox"
 	"github.com/MaT1g3R/stats-tracker/internal/ui/components/localtime"
 	"github.com/MaT1g3R/stats-tracker/internal/ui/layout"
@@ -28,7 +31,7 @@ templ PlayerPage(props PlayerPageProps) {
 			<div class="max-w-6xl mx-auto">
 				<!-- Player Header -->
 				<div class="mb-8">
-					@card.Card() {
+					@card.Card(card.Props{Class: "flex justify-between items-center"}) {
 						<div class="flex items-center gap-4 p-6">
 							@avatar.Avatar(avatar.Props{
 								Size: "lg",
@@ -45,6 +48,64 @@ templ PlayerPage(props PlayerPageProps) {
 										Time: props.LastSeen,
 									})
 								</p>
+							</div>
+						</div>
+						<div class="flex items-center justify-end p-6">
+							<div class="flex items-center space-x-4">
+								@popover.Trigger(popover.TriggerProps{
+									ID:          "share-profile-trigger",
+									For:         "share-profile-popover",
+									TriggerType: popover.TriggerTypeClick,
+								}) {
+									@button.Button(button.Props{
+										ID:    "share-profile-button",
+										Class: "flex items-center space-x-2",
+									}) {
+										@icon.Share(icon.Props{
+											Size: 24,
+										})
+										<span>Share Profile</span>
+									}
+								}
+								@popover.Content(popover.ContentProps{
+									ID:        "share-profile-popover",
+									Placement: popover.PlacementBottom,
+									ShowArrow: true,
+									Class:     "p-4 w-80",
+								}) {
+									<div class="space-y-4">
+										<h3 class="text-lg font-semibold">Share Profile</h3>
+										<div class="space-y-2">
+											<div class="flex flex-nowrap">
+												<input
+													type="text"
+													id="share-link"
+													class="w-full min-w-0 rounded-l-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+													readonly
+												/>
+												@button.Button(button.Props{
+													ID:    "copy-share-link",
+													Class: "rounded-l-none whitespace-nowrap",
+												}) {
+													<span>Copy</span>
+												}
+											</div>
+											@form.ItemFlex() {
+												@checkbox.Checkbox(checkbox.Props{
+													ID:      "include-filters",
+													Name:    "include-filters",
+													Checked: true,
+												})
+												@form.Label(form.LabelProps{
+													For:   "include-filters",
+													Class: "ml-2",
+												}) {
+													Include current filters
+												}
+											}
+										</div>
+									</div>
+								}
 							</div>
 						</div>
 					}
@@ -137,8 +198,8 @@ templ PlayerPage(props PlayerPageProps) {
 												name="start-date"
 												class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 												value={ DateToString(props.StartDate) }
-												min={ DateToString(props.StartDate) }
-												max={ DateToString(props.EndDate) }
+												min={ DateToString(props.MinDate) }
+												max={ DateToString(props.MaxDate) }
 												hx-get={ "/api/v1/players/" + props.Name + "/stats" }
 												hx-trigger="change"
 												hx-target="#player-stats-content"
@@ -159,8 +220,8 @@ templ PlayerPage(props PlayerPageProps) {
 												name="end-date"
 												class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
 												value={ DateToString(props.EndDate) }
-												min={ DateToString(props.StartDate) }
-												max={ DateToString(props.EndDate) }
+												min={ DateToString(props.MinDate) }
+												max={ DateToString(props.MaxDate) }
 												hx-get={ "/api/v1/players/" + props.Name + "/stats" }
 												hx-trigger="change"
 												hx-target="#player-stats-content"
@@ -280,6 +341,7 @@ templ PlayerPage(props PlayerPageProps) {
 			</div>
 		</div>
 		<!-- Include the component scripts -->
+		@popover.Script()
 	}
 }
 

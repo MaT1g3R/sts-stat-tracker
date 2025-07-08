@@ -535,6 +535,9 @@
   .w-16 {
     width: calc(var(--spacing) * 16);
   }
+  .w-80 {
+    width: calc(var(--spacing) * 80);
+  }
   .w-\[1px\] {
     width: 1px;
   }
@@ -704,6 +707,9 @@
   .justify-center {
     justify-content: center;
   }
+  .justify-end {
+    justify-content: flex-end;
+  }
   .gap-1 {
     gap: calc(var(--spacing) * 1);
   }
@@ -859,6 +865,14 @@
   }
   .rounded-sm {
     border-radius: calc(var(--radius) - 4px);
+  }
+  .rounded-l-md {
+    border-top-left-radius: calc(var(--radius) - 2px);
+    border-bottom-left-radius: calc(var(--radius) - 2px);
+  }
+  .rounded-l-none {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
   }
   .border {
     border-style: var(--tw-border-style);
