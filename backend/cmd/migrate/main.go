@@ -8,9 +8,46 @@ import (
 	"log/slog"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/MaT1g3R/stats-tracker/internal/db"
 )
+
+func connectToDB(ctx context.Context, url string, logger *slog.Logger) *db.DB {
+	const maxRetries = 5
+	var database *db.DB
+	var err error
+
+	// Initial delay of 1 second, will double with each retry
+	delay := time.Second
+
+	for attempt := 1; attempt <= maxRetries; attempt++ {
+		logger.Info("Attempting to connect to database", "attempt", attempt, "max_retries", maxRetries)
+
+		database, err = db.New(ctx, url, logger)
+		if err == nil {
+			logger.Info("Successfully connected to database", "attempt", attempt)
+			return database
+		}
+
+		if attempt == maxRetries {
+			log.Fatal("Failed to connect to database after maximum retries:", err)
+		}
+
+		logger.Warn("Failed to connect to database, retrying...",
+			"attempt", attempt,
+			"next_retry_in", delay.String())
+
+		// Wait before next attempt with exponential backoff
+		time.Sleep(delay)
+
+		// Double the delay for next attempt (exponential backoff)
+		delay *= 2
+	}
+
+	// This should never be reached due to the log.Fatal above
+	return database
+}
 
 func main() {
 	var (
@@ -27,10 +64,8 @@ func main() {
 	ctx := context.Background()
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 	slog.SetDefault(logger)
-	database, err := db.New(ctx, *databaseURL, logger)
-	if err != nil {
-		log.Fatal("Failed to connect to database:", err)
-	}
+
+	database := connectToDB(ctx, *databaseURL, logger)
 	defer database.Close()
 
 	switch *cmd {

@@ -78,5 +78,5 @@ db-stop:
 db-reset:
 	docker-compose down -v
 	docker-compose up -d postgres
-	sleep 3
+	sleep 5
 	$(MAKE) migrate
