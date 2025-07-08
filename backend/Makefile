@@ -14,34 +14,28 @@ DATABASE_URL = postgres://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_N
 
 # Run templ generation in watch mode
 templ:
-	go tool templ generate --watch --proxy="http://localhost:8090" --open-browser=false
+	go tool templ fmt .
+	go tool templ generate
 
 bundle-js:
 	cat js/* | esbuild --minify --bundle --outfile=assets/js/main.min.js
 
-generate: bundle-js
-	go tool templ fmt .
-	go tool templ generate
-	make lint-fix
+tailwind:
+	tailwindcss -i ./assets/css/input.css -o ./assets/css/output.css
+
+build: templ bundle-js tailwind
+	go build -o $(BUILD_DIR)/$(APP_NAME) ./main.go
 
 # Run air for Go hot reload
-server:
+dev:
 	go tool air \
-    --build.cmd "go build -o tmp/bin/main ./main.go" \
-    --build.bin "tmp/bin/main" \
+    --build.cmd "make build" \
+    --build.bin "bin/stats-tracker" \
     --build.delay "100" \
     --build.exclude_dir "node_modules" \
     --build.include_ext "go" \
     --build.stop_on_error "false" \
     --misc.clean_on_exit true
-
-# Watch Tailwind CSS changes
-tailwind:
-	tailwindcss -i ./assets/css/input.css -o ./assets/css/output.css --watch
-
-# Start development server with all watchers
-dev:
-	trap 'kill 0' INT; make -j3 tailwind templ server
 
 # Run linters
 lint:
@@ -54,10 +48,6 @@ lint-fix:
 	golangci-lint run --fix ./...
 	@echo "Running goimports format..."
 	goimports -l -w $$(find . -type f -name '*.go' | grep -v /vendor/ | grep -v /third_party/)
-
-# Build the application
-build: bundle-js
-	go build -o $(BUILD_DIR)/$(APP_NAME) ./main.go
 
 # Clean build artifacts
 clean:
