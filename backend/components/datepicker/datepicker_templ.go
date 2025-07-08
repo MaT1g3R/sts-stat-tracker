@@ -7,16 +7,16 @@ package datepicker
 
 //lint:file-ignore SA4006 This context is only used if a nested component is present.
 
-import (
-	"time"
+import "github.com/a-h/templ"
+import templruntime "github.com/a-h/templ/runtime"
 
+import (
 	"github.com/MaT1g3R/stats-tracker/components/button"
 	"github.com/MaT1g3R/stats-tracker/components/calendar"
 	"github.com/MaT1g3R/stats-tracker/components/icon"
 	"github.com/MaT1g3R/stats-tracker/components/popover"
 	"github.com/MaT1g3R/stats-tracker/utils"
-	"github.com/a-h/templ"
-	templruntime "github.com/a-h/templ/runtime"
+	"time"
 )
 
 type Format string

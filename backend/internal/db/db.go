@@ -6,9 +6,10 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/MaT1g3R/stats-tracker/internal/config"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/stdlib"
+
+	"github.com/MaT1g3R/stats-tracker/internal/config"
 )
 
 type DB struct {

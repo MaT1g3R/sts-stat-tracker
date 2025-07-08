@@ -5,16 +5,15 @@ package layout
 
 //lint:file-ignore SA4006 This context is only used if a nested component is present.
 
-import (
-	"github.com/MaT1g3R/stats-tracker/components/avatar"
-	"github.com/MaT1g3R/stats-tracker/components/dropdown"
-	"github.com/MaT1g3R/stats-tracker/components/popover"
-	"github.com/MaT1g3R/stats-tracker/components/selectbox"
-	"github.com/MaT1g3R/stats-tracker/internal/ui/components/localtime"
-	"github.com/MaT1g3R/stats-tracker/internal/ui/components/navbar"
-	"github.com/a-h/templ"
-	templruntime "github.com/a-h/templ/runtime"
-)
+import "github.com/a-h/templ"
+import templruntime "github.com/a-h/templ/runtime"
+
+import "github.com/MaT1g3R/stats-tracker/internal/ui/components/navbar"
+import "github.com/MaT1g3R/stats-tracker/components/avatar"
+import "github.com/MaT1g3R/stats-tracker/components/dropdown"
+import "github.com/MaT1g3R/stats-tracker/components/popover"
+import "github.com/MaT1g3R/stats-tracker/components/selectbox"
+import "github.com/MaT1g3R/stats-tracker/internal/ui/components/localtime"
 
 func BaseLayout(currentPath ...string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {

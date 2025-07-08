@@ -7,8 +7,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/MaT1g3R/stats-tracker/internal/app/stats"
 	"github.com/jackc/pgx/v5"
+
+	"github.com/MaT1g3R/stats-tracker/internal/app/stats"
 )
 
 type StatQuery struct {

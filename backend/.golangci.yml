@@ -103,7 +103,7 @@ formatters:
   settings:
     goimports:
       local-prefixes:
-        - github.com/MaT1g3R/slaytherelics
+        - "github.com/MaT1g3R/stats-tracker"
   exclusions:
     generated: lax
     paths:

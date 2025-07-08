@@ -6,8 +6,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/MaT1g3R/stats-tracker/internal/model"
 	"github.com/jackc/pgx/v5"
+
+	"github.com/MaT1g3R/stats-tracker/internal/model"
 )
 
 func (db *DB) GetUser(ctx context.Context, name string) (model.User, error) {

@@ -14,9 +14,10 @@ import (
 
 	"github.com/MaT1g3R/stats-tracker/internal/app"
 
+	"github.com/joho/godotenv"
+
 	"github.com/MaT1g3R/stats-tracker/internal/config"
 	"github.com/MaT1g3R/stats-tracker/internal/db"
-	"github.com/joho/godotenv"
 )
 
 //nolint:funlen

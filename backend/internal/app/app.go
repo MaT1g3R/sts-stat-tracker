@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/MaT1g3R/stats-tracker/internal/clients"
-
 	"github.com/MaT1g3R/stats-tracker/internal/config"
 	"github.com/MaT1g3R/stats-tracker/internal/db"
 )

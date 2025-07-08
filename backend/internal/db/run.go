@@ -7,8 +7,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/MaT1g3R/stats-tracker/internal/model"
 	"github.com/jackc/pgx/v5"
+
+	"github.com/MaT1g3R/stats-tracker/internal/model"
 )
 
 // RunRow represents a database row for the runs table

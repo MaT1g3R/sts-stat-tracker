@@ -3,8 +3,9 @@ package stats
 import (
 	"fmt"
 
-	"github.com/MaT1g3R/stats-tracker/internal/model"
 	"github.com/a-h/templ"
+
+	"github.com/MaT1g3R/stats-tracker/internal/model"
 )
 
 var StatTypes = []string{

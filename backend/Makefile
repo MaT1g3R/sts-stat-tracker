@@ -41,13 +41,13 @@ dev:
 lint:
 	golangci-lint run ./...
 	@echo "Running goimports check..."
-	goimports -l -d $$(find . -type f -name '*.go' | grep -v /vendor/ | grep -v /third_party/)
+	goimports -l -d $$(find . -type f -name '*.go' | grep -v /vendor/ | grep -v /third_party/ | grep -v _templ.go)
 
 # Auto-fix linting issues where possible
 lint-fix:
 	golangci-lint run --fix ./...
 	@echo "Running goimports format..."
-	goimports -l -w $$(find . -type f -name '*.go' | grep -v /vendor/ | grep -v /third_party/)
+	goimports -l -w $$(find . -type f -name '*.go' | grep -v /vendor/ | grep -v /third_party/ | grep -v _templ.go)
 
 # Clean build artifacts
 clean:
