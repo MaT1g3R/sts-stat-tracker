@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math/rand"
+	"strconv"
 	"time"
 
 	"github.com/jackc/pgx/v5"
@@ -102,6 +104,11 @@ func (db *DB) ImportRuns(ctx context.Context,
 	if len(runs) == 0 {
 		return nil
 	}
+	// Generate a random suffix for the temporary table name
+	// nolint:gosec
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	randomSuffix := strconv.FormatInt(r.Int63(), 10)
+	tempTableName := "temp_runs_" + randomSuffix
 
 	// Start transaction
 	tx, err := db.Pool.Begin(ctx)
@@ -126,7 +133,7 @@ func (db *DB) ImportRuns(ctx context.Context,
 
 	// Create a temporary table for the bulk data
 	tempTableQuery := `
-		CREATE TEMP TABLE temp_runs (
+		CREATE TEMP TABLE ` + tempTableName + ` (
 			username TEXT,
 			profile_name TEXT,
 			run_timestamp TIMESTAMP WITH TIME ZONE,
@@ -156,7 +163,7 @@ func (db *DB) ImportRuns(ctx context.Context,
 
 	// Use CopyFrom for efficient bulk insert into temp table
 	copyCount, err := tx.CopyFrom(ctx,
-		pgx.Identifier{"temp_runs"},
+		pgx.Identifier{tempTableName},
 		[]string{
 			"username", "profile_name", "run_timestamp", "character_name",
 			"victory", "abandoned", "score", "floor_reached", "playtime_minutes",
@@ -181,7 +188,7 @@ func (db *DB) ImportRuns(ctx context.Context,
 			username, profile_name, run_timestamp, character_name,
 			victory, abandoned, score, floor_reached, playtime_minutes,
 			game_version, data_schema_version, run_data::jsonb
-		FROM temp_runs
+		FROM ` + tempTableName + `
 		ON CONFLICT (username, profile_name, run_timestamp) DO UPDATE SET
 			character_name = EXCLUDED.character_name,
 			victory = EXCLUDED.victory,
