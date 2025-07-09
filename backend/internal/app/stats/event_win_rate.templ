@@ -1,0 +1,84 @@
+package stats
+
+import (
+	"github.com/MaT1g3R/stats-tracker/components/checkbox"
+	"github.com/MaT1g3R/stats-tracker/components/form"
+)
+
+templ DisplayEventWinRate(e *EventWinRate) {
+	<div class="p-6">
+		<div class="mb-4">
+			<!-- Act selection -->
+			<div class="mb-4">
+				<label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Filter by Act</label>
+				<div class="flex flex-wrap gap-2">
+					@form.ItemFlex() {
+						@checkbox.Checkbox(checkbox.Props{
+							ID:      "event-win-rate-act-1",
+							Name:    "act-1",
+							Checked: true,
+							Attributes: templ.Attributes{
+								"onchange": "document.filterEventWinRateTableByActs()",
+							},
+						})
+						@form.Label(form.LabelProps{
+							For:   "event-win-rate-act-1",
+							Class: "ml-2",
+						}) {
+							Act 1
+						}
+					}
+					@form.ItemFlex() {
+						@checkbox.Checkbox(checkbox.Props{
+							ID:      "event-win-rate-act-2",
+							Name:    "act-2",
+							Checked: true,
+							Attributes: templ.Attributes{
+								"onchange": "document.filterEventWinRateTableByActs()",
+							},
+						})
+						@form.Label(form.LabelProps{
+							For:   "event-win-rate-act-2",
+							Class: "ml-2",
+						}) {
+							Act 2
+						}
+					}
+					@form.ItemFlex() {
+						@checkbox.Checkbox(checkbox.Props{
+							ID:      "event-win-rate-act-3",
+							Name:    "act-3",
+							Checked: true,
+							Attributes: templ.Attributes{
+								"onchange": "document.filterEventWinRateTableByActs()",
+							},
+						})
+						@form.Label(form.LabelProps{
+							For:   "event-win-rate-act-3",
+							Class: "ml-2",
+						}) {
+							Act 3
+						}
+					}
+				</div>
+			</div>
+		</div>
+		<!-- Event win rate table -->
+		<div class="overflow-x-auto">
+			<table id="event-win-rate-table" class="order-column min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+				<thead class="bg-gray-50 dark:bg-gray-800">
+					<tr>
+						<th>Event</th>
+						<th>Win Rate %</th>
+						<th></th>
+						<th>Times Seen</th>
+					</tr>
+				</thead>
+				<tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800"></tbody>
+			</table>
+		</div>
+	</div>
+	<div style="display: none" id="event-win-rate-data">
+		{ templ.JSONString(e.WinRatePerAct) }
+	</div>
+}

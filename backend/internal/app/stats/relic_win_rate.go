@@ -53,8 +53,7 @@ func (r *RelicWinRate) CollectRun(run *model.Run) {
 	}
 }
 
-func (r *RelicWinRate) Finalize() {
-}
+func (r *RelicWinRate) Finalize() {}
 
 func (r *RelicWinRate) Render() templ.Component {
 	// Prepare the pre-computed rows for all relics
