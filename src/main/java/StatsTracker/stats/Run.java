@@ -189,12 +189,21 @@ public class Run implements Comparable<Run> {
             "Abe's Treasure",
             "TungstenRod",
             "ChewingGum",
-            "Letter Opener"
+            "Letter Opener",
+            "Pocketwatch",
+            "Calipers",
+            "FaceOfCleric",
+            "NeowsBlessing",
+            "Smiling Mask",
+            "Centennial Puzzle",
+            "Frozen Egg 2"
     );
 
     private static List<String> bannedEnemies = Arrays.asList(
             "Flame Bruiser (One Orb)",
             "Flame Bruiser (Two Orb)",
+            "Flame Bruiser 2 Orb",
+            "Flame Bruiser 1 Orb",
             "SlaverBoss",
             "Louse",
             "Slime"
@@ -221,7 +230,28 @@ public class Run implements Comparable<Run> {
             "SnakePlant",
             "Snecko",
             "The Heart",
-            "Time Eater"
+            "Time Eater",
+            "Shield and Spear",
+            "3 Darklings",
+            "3 Byrds",
+            "Jaw Worm Horde",
+            "Collector",
+            "Cultist and Chosen",
+            "Gremlin Leader"
+    );
+
+    private static List<String> bannedAct2Encounters = Arrays.asList(
+            "Maw",
+            "Slime Boss"
+    );
+
+    private static List<String> bannedAct3Encounters = Arrays.asList(
+            "Snake Plant",
+            "The Heart"
+    );
+
+    private static List<String> bannedAct4Encounters = Arrays.asList(
+            "2 Orb Walkers"
     );
 
 
@@ -298,6 +328,15 @@ public class Run implements Comparable<Run> {
             }
             int act = getAct(e.floor);
             if (act == 1 && bannedAct1Encounters.contains(e.enemies)) {
+                return false;
+            }
+            if (act == 2 && bannedAct2Encounters.contains(e.enemies)) {
+                return false;
+            }
+            if (act == 3 && bannedAct3Encounters.contains(e.enemies)) {
+                return false;
+            }
+            if (act == 4 && bannedAct4Encounters.contains(e.enemies)) {
                 return false;
             }
         }
