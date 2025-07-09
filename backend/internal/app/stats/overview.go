@@ -1,15 +1,58 @@
 package stats
 
 import (
-	"context"
 	"fmt"
-	"io"
 	"strconv"
 
 	"github.com/a-h/templ"
 
 	"github.com/MaT1g3R/stats-tracker/internal/model"
 )
+
+// TimeStats contains time-related statistics
+type TimeStats struct {
+	TotalPlayTime  string
+	FastestWin     string
+	AverageWinTime string
+}
+
+// WinStats contains win/loss statistics
+type WinStats struct {
+	Wins          string
+	Losses        string
+	WinRate       string
+	BestWinStreak string
+}
+
+// GameStats contains general game statistics
+type GameStats struct {
+	HighestScore  string
+	TotalFloors   string
+	BossesKilled  string
+	EnemiesKilled string
+}
+
+// SurvivalStats contains survival rate statistics
+type SurvivalStats struct {
+	Act1Rate string
+	Act2Rate string
+	Act3Rate string
+	Act4Rate string
+	NobRate  string
+}
+
+// ScalingStats contains meta scaling statistics
+type ScalingStats struct {
+	MaxRelics       string
+	MaxGold         string
+	MaxRemoves      string
+	MaxRitualDagger string
+	MaxHP           string
+	MaxSearingBlow  string
+	MaxPotions      string
+	MaxAlgorithm    string
+	MaxLessons      string
+}
 
 type runForStreak struct {
 	char string
@@ -65,6 +108,54 @@ func NewOverview(character string) *Overview {
 
 func (o *Overview) Name() string {
 	return StatTypes[0]
+}
+
+func (o *Overview) metaScaling(run *model.Run) {
+	// Update max relics
+	if len(run.Relics) > o.MaxRelics {
+		o.MaxRelics = len(run.Relics)
+	}
+
+	// Update max gold
+	if run.Gold > o.MaxGold {
+		o.MaxGold = run.Gold
+	}
+
+	// Update max removes
+	if len(run.ItemsPurged) > o.MaxRemoves {
+		o.MaxRemoves = len(run.ItemsPurged)
+	}
+
+	// Update max ritual dagger
+	if run.MaxDagger > o.MaxRitualDagger {
+		o.MaxRitualDagger = run.MaxDagger
+	}
+
+	// Update max HP
+	if run.MaxHP > o.MaxHP {
+		o.MaxHP = run.MaxHP
+	}
+
+	// Update max searing blow
+	if run.MaxSearingBlow > o.MaxSearingBlow {
+		o.MaxSearingBlow = run.MaxSearingBlow
+	}
+
+	// Update max potions created
+	if run.PotionsCreated > o.MaxPotions {
+		o.MaxPotions = run.PotionsCreated
+	}
+
+	// Update max genetic algorithm
+	if run.MaxAlgo > o.MaxAlgorithm {
+		o.MaxAlgorithm = run.MaxAlgo
+	}
+
+	// Update max lessons learned
+	if run.LessonsLearned > o.MaxLessons {
+		o.MaxLessons = run.LessonsLearned
+	}
+
 }
 
 func (o *Overview) CollectRun(run *model.Run) {
@@ -127,51 +218,7 @@ func (o *Overview) CollectRun(run *model.Run) {
 		win:  run.IsHeartKill,
 	})
 
-	// Meta scaling stats
-	// Update max relics
-	if len(run.Relics) > o.MaxRelics {
-		o.MaxRelics = len(run.Relics)
-	}
-
-	// Update max gold
-	if run.Gold > o.MaxGold {
-		o.MaxGold = run.Gold
-	}
-
-	// Update max removes
-	if len(run.ItemsPurged) > o.MaxRemoves {
-		o.MaxRemoves = len(run.ItemsPurged)
-	}
-
-	// Update max ritual dagger
-	if run.MaxDagger > o.MaxRitualDagger {
-		o.MaxRitualDagger = run.MaxDagger
-	}
-
-	// Update max HP
-	if run.MaxHP > o.MaxHP {
-		o.MaxHP = run.MaxHP
-	}
-
-	// Update max searing blow
-	if run.MaxSearingBlow > o.MaxSearingBlow {
-		o.MaxSearingBlow = run.MaxSearingBlow
-	}
-
-	// Update max potions created
-	if run.PotionsCreated > o.MaxPotions {
-		o.MaxPotions = run.PotionsCreated
-	}
-
-	// Update max genetic algorithm
-	if run.MaxAlgo > o.MaxAlgorithm {
-		o.MaxAlgorithm = run.MaxAlgo
-	}
-
-	// Update max lessons learned
-	if run.LessonsLearned > o.MaxLessons {
-		o.MaxLessons = run.LessonsLearned
-	}
+	o.metaScaling(run)
 }
 
 func (o *Overview) Finalize() {
@@ -239,64 +286,57 @@ func classFollows(curr string, prev string) bool {
 }
 
 func (o *Overview) Render() templ.Component {
-	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) error {
-		// Get formatted values
-		totalPlayTime := FormatTime(o.TotalPlayTimeMins)
-		fastestWin := FormatTime(o.FastestWinMins)
-		averageWinTime := FormatTime(int(o.AverageWinTimeMins.Mean()))
-		winRate := FormatPercentage(o.WinPercent)
+	// Create TimeStats struct
+	timeStats := TimeStats{
+		TotalPlayTime:  FormatTime(o.TotalPlayTimeMins),
+		FastestWin:     FormatTime(o.FastestWinMins),
+		AverageWinTime: FormatTime(int(o.AverageWinTimeMins.Mean())),
+	}
 
-		// Format numbers with commas for readability
-		highestScore := fmt.Sprintf("%d", o.HighestScore)
-		totalFloors := fmt.Sprintf("%d", o.TotalFloorsClimbed)
-		bossesKilled := fmt.Sprintf("%d", o.BossesKilled)
-		enemiesKilled := fmt.Sprintf("%d", o.EnemyKilled)
+	// Create WinStats struct
+	winStats := WinStats{
+		Wins:          strconv.Itoa(o.Wins),
+		Losses:        strconv.Itoa(o.Losses),
+		WinRate:       FormatPercentage(o.WinPercent),
+		BestWinStreak: strconv.Itoa(o.BestWinStreak),
+	}
 
-		// Survival rates
-		act1Rate := FormatPercentage(o.SurvivalRatePerAct[1].GetRate())
-		act2Rate := FormatPercentage(o.SurvivalRatePerAct[2].GetRate())
-		act3Rate := FormatPercentage(o.SurvivalRatePerAct[3].GetRate())
-		act4Rate := FormatPercentage(o.SurvivalRatePerAct[4].GetRate())
-		nobRate := FormatPercentage(o.NobSurvivalRate.GetRate())
+	// Create GameStats struct
+	gameStats := GameStats{
+		HighestScore:  fmt.Sprintf("%d", o.HighestScore),
+		TotalFloors:   fmt.Sprintf("%d", o.TotalFloorsClimbed),
+		BossesKilled:  fmt.Sprintf("%d", o.BossesKilled),
+		EnemiesKilled: fmt.Sprintf("%d", o.EnemyKilled),
+	}
 
-		// Meta scaling stats
-		maxRelics := fmt.Sprintf("%d", o.MaxRelics)
-		maxGold := fmt.Sprintf("%d", o.MaxGold)
-		maxRemoves := fmt.Sprintf("%d", o.MaxRemoves)
-		maxRitualDagger := fmt.Sprintf("%d", o.MaxRitualDagger)
-		maxHP := fmt.Sprintf("%d", o.MaxHP)
-		maxSearingBlow := fmt.Sprintf("%d", o.MaxSearingBlow)
-		maxPotions := fmt.Sprintf("%d", o.MaxPotions)
-		maxAlgorithm := fmt.Sprintf("%d", o.MaxAlgorithm)
-		maxLessons := fmt.Sprintf("%d", o.MaxLessons)
+	// Create SurvivalStats struct
+	survivalStats := SurvivalStats{
+		Act1Rate: FormatPercentage(o.SurvivalRatePerAct[1].GetRate()),
+		Act2Rate: FormatPercentage(o.SurvivalRatePerAct[2].GetRate()),
+		Act3Rate: FormatPercentage(o.SurvivalRatePerAct[3].GetRate()),
+		Act4Rate: FormatPercentage(o.SurvivalRatePerAct[4].GetRate()),
+		NobRate:  FormatPercentage(o.NobSurvivalRate.GetRate()),
+	}
 
-		// Render the template
-		return PlayerOverview(
-			totalPlayTime,
-			fastestWin,
-			averageWinTime,
-			highestScore,
-			strconv.Itoa(o.BestWinStreak),
-			strconv.Itoa(o.Wins),
-			strconv.Itoa(o.Losses),
-			winRate,
-			act1Rate,
-			act2Rate,
-			act3Rate,
-			act4Rate,
-			totalFloors,
-			bossesKilled,
-			enemiesKilled,
-			nobRate,
-			maxRelics,
-			maxGold,
-			maxRemoves,
-			maxRitualDagger,
-			maxHP,
-			maxSearingBlow,
-			maxPotions,
-			maxAlgorithm,
-			maxLessons,
-		).Render(ctx, w)
-	})
+	// Create ScalingStats struct
+	scalingStats := ScalingStats{
+		MaxRelics:       fmt.Sprintf("%d", o.MaxRelics),
+		MaxGold:         fmt.Sprintf("%d", o.MaxGold),
+		MaxRemoves:      fmt.Sprintf("%d", o.MaxRemoves),
+		MaxRitualDagger: fmt.Sprintf("%d", o.MaxRitualDagger),
+		MaxHP:           fmt.Sprintf("%d", o.MaxHP),
+		MaxSearingBlow:  fmt.Sprintf("%d", o.MaxSearingBlow),
+		MaxPotions:      fmt.Sprintf("%d", o.MaxPotions),
+		MaxAlgorithm:    fmt.Sprintf("%d", o.MaxAlgorithm),
+		MaxLessons:      fmt.Sprintf("%d", o.MaxLessons),
+	}
+
+	// Render the template with the structs
+	return PlayerOverview(
+		timeStats,
+		winStats,
+		gameStats,
+		survivalStats,
+		scalingStats,
+	)
 }

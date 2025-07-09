@@ -11,10 +11,11 @@ import templruntime "github.com/a-h/templ/runtime"
 import "github.com/MaT1g3R/stats-tracker/components/card"
 
 func PlayerOverview(
-	totalPlayTime, fastestWin, averageWinTime, highestScore, bestWinStreak,
-	wins, losses, winRate, act1Rate, act2Rate, act3Rate, act4Rate,
-	totalFloors, bossesKilled, enemiesKilled, nobRate string,
-	maxRelics, maxGold, maxRemoves, maxRitualDagger, maxHP, maxSearingBlow, maxPotions, maxAlgorithm, maxLessons string,
+	timeStats TimeStats,
+	winStats WinStats,
+	gameStats GameStats,
+	survivalStats SurvivalStats,
+	scalingStats ScalingStats,
 ) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -113,9 +114,9 @@ func PlayerOverview(
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var6 string
-				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(wins)
+				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(winStats.Wins)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 24, Col: 50}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 25, Col: 59}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -126,9 +127,9 @@ func PlayerOverview(
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var7 string
-				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(losses)
+				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(winStats.Losses)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 28, Col: 50}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 29, Col: 59}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -139,9 +140,9 @@ func PlayerOverview(
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var8 string
-				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(winRate)
+				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(winStats.WinRate)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 32, Col: 52}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 33, Col: 61}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {
@@ -152,9 +153,9 @@ func PlayerOverview(
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var9 string
-				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(bestWinStreak)
+				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(winStats.BestWinStreak)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 36, Col: 44}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 37, Col: 53}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 				if templ_7745c5c3_Err != nil {
@@ -165,9 +166,9 @@ func PlayerOverview(
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var10 string
-				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(highestScore)
+				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(gameStats.HighestScore)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 40, Col: 43}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 41, Col: 53}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
@@ -266,9 +267,9 @@ func PlayerOverview(
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var15 string
-				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(totalPlayTime)
+				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(timeStats.TotalPlayTime)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 56, Col: 44}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 57, Col: 54}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
@@ -279,9 +280,9 @@ func PlayerOverview(
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var16 string
-				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(fastestWin)
+				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(timeStats.FastestWin)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 60, Col: 41}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 61, Col: 51}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 				if templ_7745c5c3_Err != nil {
@@ -292,9 +293,9 @@ func PlayerOverview(
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var17 string
-				templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(averageWinTime)
+				templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(timeStats.AverageWinTime)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 64, Col: 45}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 65, Col: 55}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 				if templ_7745c5c3_Err != nil {
@@ -393,9 +394,9 @@ func PlayerOverview(
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var22 string
-				templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(act1Rate)
+				templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(survivalStats.Act1Rate)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 80, Col: 39}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 81, Col: 53}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 				if templ_7745c5c3_Err != nil {
@@ -406,9 +407,9 @@ func PlayerOverview(
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var23 string
-				templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(act2Rate)
+				templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(survivalStats.Act2Rate)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 84, Col: 39}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 85, Col: 53}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 				if templ_7745c5c3_Err != nil {
@@ -419,9 +420,9 @@ func PlayerOverview(
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var24 string
-				templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(act3Rate)
+				templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(survivalStats.Act3Rate)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 88, Col: 39}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 89, Col: 53}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 				if templ_7745c5c3_Err != nil {
@@ -432,9 +433,9 @@ func PlayerOverview(
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var25 string
-				templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(act4Rate)
+				templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(survivalStats.Act4Rate)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 92, Col: 39}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 93, Col: 53}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 				if templ_7745c5c3_Err != nil {
@@ -445,9 +446,9 @@ func PlayerOverview(
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var26 string
-				templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(nobRate)
+				templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(survivalStats.NobRate)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 99, Col: 38}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 100, Col: 52}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 				if templ_7745c5c3_Err != nil {
@@ -546,9 +547,9 @@ func PlayerOverview(
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var31 string
-				templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(totalFloors)
+				templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(gameStats.TotalFloors)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 115, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 116, Col: 52}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 				if templ_7745c5c3_Err != nil {
@@ -559,9 +560,9 @@ func PlayerOverview(
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var32 string
-				templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(bossesKilled)
+				templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(gameStats.BossesKilled)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 119, Col: 43}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 120, Col: 53}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
 				if templ_7745c5c3_Err != nil {
@@ -572,9 +573,9 @@ func PlayerOverview(
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var33 string
-				templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(enemiesKilled)
+				templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(gameStats.EnemiesKilled)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 123, Col: 44}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 124, Col: 54}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 				if templ_7745c5c3_Err != nil {
@@ -672,15 +673,15 @@ func PlayerOverview(
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				if maxRelics != "0" {
+				if scalingStats.MaxRelics != "0" {
 					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "<div class=\"flex justify-between items-center\"><span class=\"text-sm font-medium\">Max Relics</span> <span class=\"text-sm\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var38 string
-					templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinStringErrs(maxRelics)
+					templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinStringErrs(scalingStats.MaxRelics)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 140, Col: 41}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 141, Col: 54}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var38))
 					if templ_7745c5c3_Err != nil {
@@ -691,15 +692,15 @@ func PlayerOverview(
 						return templ_7745c5c3_Err
 					}
 				}
-				if maxGold != "0" {
+				if scalingStats.MaxGold != "0" {
 					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<div class=\"flex justify-between items-center\"><span class=\"text-sm font-medium\">Max Gold</span> <span class=\"text-sm\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var39 string
-					templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.JoinStringErrs(maxGold)
+					templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.JoinStringErrs(scalingStats.MaxGold)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 146, Col: 39}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 147, Col: 52}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var39))
 					if templ_7745c5c3_Err != nil {
@@ -710,15 +711,15 @@ func PlayerOverview(
 						return templ_7745c5c3_Err
 					}
 				}
-				if maxRemoves != "0" {
+				if scalingStats.MaxRemoves != "0" {
 					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "<div class=\"flex justify-between items-center\"><span class=\"text-sm font-medium\">Max Removes</span> <span class=\"text-sm\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var40 string
-					templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.JoinStringErrs(maxRemoves)
+					templ_7745c5c3_Var40, templ_7745c5c3_Err = templ.JoinStringErrs(scalingStats.MaxRemoves)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 152, Col: 42}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 153, Col: 55}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var40))
 					if templ_7745c5c3_Err != nil {
@@ -729,15 +730,15 @@ func PlayerOverview(
 						return templ_7745c5c3_Err
 					}
 				}
-				if maxRitualDagger != "0" {
+				if scalingStats.MaxRitualDagger != "0" {
 					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<div class=\"flex justify-between items-center\"><span class=\"text-sm font-medium\">Max Ritual Dagger</span> <span class=\"text-sm\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var41 string
-					templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.JoinStringErrs(maxRitualDagger)
+					templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.JoinStringErrs(scalingStats.MaxRitualDagger)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 158, Col: 47}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 159, Col: 60}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var41))
 					if templ_7745c5c3_Err != nil {
@@ -748,15 +749,15 @@ func PlayerOverview(
 						return templ_7745c5c3_Err
 					}
 				}
-				if maxHP != "0" {
+				if scalingStats.MaxHP != "0" {
 					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<div class=\"flex justify-between items-center\"><span class=\"text-sm font-medium\">Max HP</span> <span class=\"text-sm\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var42 string
-					templ_7745c5c3_Var42, templ_7745c5c3_Err = templ.JoinStringErrs(maxHP)
+					templ_7745c5c3_Var42, templ_7745c5c3_Err = templ.JoinStringErrs(scalingStats.MaxHP)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 164, Col: 37}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 165, Col: 50}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var42))
 					if templ_7745c5c3_Err != nil {
@@ -767,15 +768,15 @@ func PlayerOverview(
 						return templ_7745c5c3_Err
 					}
 				}
-				if maxSearingBlow != "0" {
+				if scalingStats.MaxSearingBlow != "0" {
 					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 47, "<div class=\"flex justify-between items-center\"><span class=\"text-sm font-medium\">Max Searing Blow</span> <span class=\"text-sm\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var43 string
-					templ_7745c5c3_Var43, templ_7745c5c3_Err = templ.JoinStringErrs(maxSearingBlow)
+					templ_7745c5c3_Var43, templ_7745c5c3_Err = templ.JoinStringErrs(scalingStats.MaxSearingBlow)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 170, Col: 46}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 171, Col: 59}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var43))
 					if templ_7745c5c3_Err != nil {
@@ -786,15 +787,15 @@ func PlayerOverview(
 						return templ_7745c5c3_Err
 					}
 				}
-				if maxPotions != "0" {
+				if scalingStats.MaxPotions != "0" {
 					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<div class=\"flex justify-between items-center\"><span class=\"text-sm font-medium\">Max Potions Created</span> <span class=\"text-sm\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var44 string
-					templ_7745c5c3_Var44, templ_7745c5c3_Err = templ.JoinStringErrs(maxPotions)
+					templ_7745c5c3_Var44, templ_7745c5c3_Err = templ.JoinStringErrs(scalingStats.MaxPotions)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 176, Col: 42}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 177, Col: 55}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var44))
 					if templ_7745c5c3_Err != nil {
@@ -805,15 +806,15 @@ func PlayerOverview(
 						return templ_7745c5c3_Err
 					}
 				}
-				if maxAlgorithm != "0" {
+				if scalingStats.MaxAlgorithm != "0" {
 					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<div class=\"flex justify-between items-center\"><span class=\"text-sm font-medium\">Max Genetic Algorithm</span> <span class=\"text-sm\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var45 string
-					templ_7745c5c3_Var45, templ_7745c5c3_Err = templ.JoinStringErrs(maxAlgorithm)
+					templ_7745c5c3_Var45, templ_7745c5c3_Err = templ.JoinStringErrs(scalingStats.MaxAlgorithm)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 182, Col: 44}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 183, Col: 57}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var45))
 					if templ_7745c5c3_Err != nil {
@@ -824,15 +825,15 @@ func PlayerOverview(
 						return templ_7745c5c3_Err
 					}
 				}
-				if maxLessons != "0" {
+				if scalingStats.MaxLessons != "0" {
 					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<div class=\"flex justify-between items-center\"><span class=\"text-sm font-medium\">Max Lessons Learned</span> <span class=\"text-sm\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var46 string
-					templ_7745c5c3_Var46, templ_7745c5c3_Err = templ.JoinStringErrs(maxLessons)
+					templ_7745c5c3_Var46, templ_7745c5c3_Err = templ.JoinStringErrs(scalingStats.MaxLessons)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 188, Col: 42}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/app/stats/overview.templ`, Line: 189, Col: 55}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var46))
 					if templ_7745c5c3_Err != nil {

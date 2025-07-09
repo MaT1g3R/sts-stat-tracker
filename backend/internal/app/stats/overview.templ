@@ -3,10 +3,11 @@ package stats
 import "github.com/MaT1g3R/stats-tracker/components/card"
 
 templ PlayerOverview(
-	totalPlayTime, fastestWin, averageWinTime, highestScore, bestWinStreak,
-	wins, losses, winRate, act1Rate, act2Rate, act3Rate, act4Rate,
-	totalFloors, bossesKilled, enemiesKilled, nobRate string,
-	maxRelics, maxGold, maxRemoves, maxRitualDagger, maxHP, maxSearingBlow, maxPotions, maxAlgorithm, maxLessons string,
+	timeStats TimeStats,
+	winStats WinStats,
+	gameStats GameStats,
+	survivalStats SurvivalStats,
+	scalingStats ScalingStats,
 ) {
 	<div class="container mx-auto p-6">
 		<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -21,23 +22,23 @@ templ PlayerOverview(
 					<div class="space-y-3">
 						<div class="flex justify-between items-center">
 							<span class="text-sm font-medium">Wins</span>
-							<span class="text-sm text-green-600">{ wins }</span>
+							<span class="text-sm text-green-600">{ winStats.Wins }</span>
 						</div>
 						<div class="flex justify-between items-center">
 							<span class="text-sm font-medium">Losses</span>
-							<span class="text-sm text-red-600">{ losses }</span>
+							<span class="text-sm text-red-600">{ winStats.Losses }</span>
 						</div>
 						<div class="flex justify-between items-center">
 							<span class="text-sm font-medium">Win Rate</span>
-							<span class="text-sm font-semibold">{ winRate }</span>
+							<span class="text-sm font-semibold">{ winStats.WinRate }</span>
 						</div>
 						<div class="flex justify-between items-center">
 							<span class="text-sm font-medium">Best Win Streak</span>
-							<span class="text-sm">{ bestWinStreak }</span>
+							<span class="text-sm">{ winStats.BestWinStreak }</span>
 						</div>
 						<div class="flex justify-between items-center">
 							<span class="text-sm font-medium">Highest Score</span>
-							<span class="text-sm">{ highestScore }</span>
+							<span class="text-sm">{ gameStats.HighestScore }</span>
 						</div>
 					</div>
 				}
@@ -53,15 +54,15 @@ templ PlayerOverview(
 					<div class="space-y-3">
 						<div class="flex justify-between items-center">
 							<span class="text-sm font-medium">Total Play Time</span>
-							<span class="text-sm">{ totalPlayTime }</span>
+							<span class="text-sm">{ timeStats.TotalPlayTime }</span>
 						</div>
 						<div class="flex justify-between items-center">
 							<span class="text-sm font-medium">Fastest Win</span>
-							<span class="text-sm">{ fastestWin }</span>
+							<span class="text-sm">{ timeStats.FastestWin }</span>
 						</div>
 						<div class="flex justify-between items-center">
 							<span class="text-sm font-medium">Average Win Time</span>
-							<span class="text-sm">{ averageWinTime }</span>
+							<span class="text-sm">{ timeStats.AverageWinTime }</span>
 						</div>
 					</div>
 				}
@@ -77,26 +78,26 @@ templ PlayerOverview(
 					<div class="space-y-3">
 						<div class="flex justify-between items-center">
 							<span class="text-sm font-medium">Act 1</span>
-							<span class="text-sm">{ act1Rate }</span>
+							<span class="text-sm">{ survivalStats.Act1Rate }</span>
 						</div>
 						<div class="flex justify-between items-center">
 							<span class="text-sm font-medium">Act 2</span>
-							<span class="text-sm">{ act2Rate }</span>
+							<span class="text-sm">{ survivalStats.Act2Rate }</span>
 						</div>
 						<div class="flex justify-between items-center">
 							<span class="text-sm font-medium">Act 3</span>
-							<span class="text-sm">{ act3Rate }</span>
+							<span class="text-sm">{ survivalStats.Act3Rate }</span>
 						</div>
 						<div class="flex justify-between items-center">
 							<span class="text-sm font-medium">Act 4</span>
-							<span class="text-sm">{ act4Rate }</span>
+							<span class="text-sm">{ survivalStats.Act4Rate }</span>
 						</div>
 						<div class="flex justify-between items-center">
 							<div class="flex items-center">
 								<span class="text-sm font-medium">Against</span>
 								<img src="/assets/img/nob-2.png" alt="Gremlin Nob"/>
 							</div>
-							<span class="text-sm">{ nobRate }</span>
+							<span class="text-sm">{ survivalStats.NobRate }</span>
 						</div>
 					</div>
 				}
@@ -112,15 +113,15 @@ templ PlayerOverview(
 					<div class="space-y-3">
 						<div class="flex justify-between items-center">
 							<span class="text-sm font-medium">Total Floors Climbed</span>
-							<span class="text-sm">{ totalFloors }</span>
+							<span class="text-sm">{ gameStats.TotalFloors }</span>
 						</div>
 						<div class="flex justify-between items-center">
 							<span class="text-sm font-medium">Bosses Killed</span>
-							<span class="text-sm">{ bossesKilled }</span>
+							<span class="text-sm">{ gameStats.BossesKilled }</span>
 						</div>
 						<div class="flex justify-between items-center">
 							<span class="text-sm font-medium">Enemies Killed</span>
-							<span class="text-sm">{ enemiesKilled }</span>
+							<span class="text-sm">{ gameStats.EnemiesKilled }</span>
 						</div>
 					</div>
 				}
@@ -134,58 +135,58 @@ templ PlayerOverview(
 				}
 				@card.Content() {
 					<div class="space-y-3">
-						if maxRelics != "0" {
+						if scalingStats.MaxRelics != "0" {
 							<div class="flex justify-between items-center">
 								<span class="text-sm font-medium">Max Relics</span>
-								<span class="text-sm">{ maxRelics }</span>
+								<span class="text-sm">{ scalingStats.MaxRelics }</span>
 							</div>
 						}
-						if maxGold != "0" {
+						if scalingStats.MaxGold != "0" {
 							<div class="flex justify-between items-center">
 								<span class="text-sm font-medium">Max Gold</span>
-								<span class="text-sm">{ maxGold }</span>
+								<span class="text-sm">{ scalingStats.MaxGold }</span>
 							</div>
 						}
-						if maxRemoves != "0" {
+						if scalingStats.MaxRemoves != "0" {
 							<div class="flex justify-between items-center">
 								<span class="text-sm font-medium">Max Removes</span>
-								<span class="text-sm">{ maxRemoves }</span>
+								<span class="text-sm">{ scalingStats.MaxRemoves }</span>
 							</div>
 						}
-						if maxRitualDagger != "0" {
+						if scalingStats.MaxRitualDagger != "0" {
 							<div class="flex justify-between items-center">
 								<span class="text-sm font-medium">Max Ritual Dagger</span>
-								<span class="text-sm">{ maxRitualDagger }</span>
+								<span class="text-sm">{ scalingStats.MaxRitualDagger }</span>
 							</div>
 						}
-						if maxHP != "0" {
+						if scalingStats.MaxHP != "0" {
 							<div class="flex justify-between items-center">
 								<span class="text-sm font-medium">Max HP</span>
-								<span class="text-sm">{ maxHP }</span>
+								<span class="text-sm">{ scalingStats.MaxHP }</span>
 							</div>
 						}
-						if maxSearingBlow != "0" {
+						if scalingStats.MaxSearingBlow != "0" {
 							<div class="flex justify-between items-center">
 								<span class="text-sm font-medium">Max Searing Blow</span>
-								<span class="text-sm">{ maxSearingBlow }</span>
+								<span class="text-sm">{ scalingStats.MaxSearingBlow }</span>
 							</div>
 						}
-						if maxPotions != "0" {
+						if scalingStats.MaxPotions != "0" {
 							<div class="flex justify-between items-center">
 								<span class="text-sm font-medium">Max Potions Created</span>
-								<span class="text-sm">{ maxPotions }</span>
+								<span class="text-sm">{ scalingStats.MaxPotions }</span>
 							</div>
 						}
-						if maxAlgorithm != "0" {
+						if scalingStats.MaxAlgorithm != "0" {
 							<div class="flex justify-between items-center">
 								<span class="text-sm font-medium">Max Genetic Algorithm</span>
-								<span class="text-sm">{ maxAlgorithm }</span>
+								<span class="text-sm">{ scalingStats.MaxAlgorithm }</span>
 							</div>
 						}
-						if maxLessons != "0" {
+						if scalingStats.MaxLessons != "0" {
 							<div class="flex justify-between items-center">
 								<span class="text-sm font-medium">Max Lessons Learned</span>
-								<span class="text-sm">{ maxLessons }</span>
+								<span class="text-sm">{ scalingStats.MaxLessons }</span>
 							</div>
 						}
 					</div>
