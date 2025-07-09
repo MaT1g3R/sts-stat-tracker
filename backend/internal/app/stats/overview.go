@@ -2,7 +2,9 @@ package stats
 
 import (
 	"fmt"
+	"slices"
 	"strconv"
+	"time"
 
 	"github.com/a-h/templ"
 
@@ -54,6 +56,11 @@ type ScalingStats struct {
 	MaxLessons      string
 }
 
+type MonthlyWinRateData struct {
+	Labels  []string
+	Dataset []float64
+}
+
 type runForStreak struct {
 	char string
 	win  bool
@@ -92,6 +99,8 @@ type Overview struct {
 	MaxPotions      int `json:"max_potions"`
 	MaxAlgorithm    int `json:"max_algorithm"`
 	MaxLessons      int `json:"max_lessons"`
+
+	MonthlyWinRate map[string]*Rate `json:"monthly_win_rate"`
 }
 
 func NewOverview(character string) *Overview {
@@ -103,6 +112,7 @@ func NewOverview(character string) *Overview {
 			3: {},
 			4: {},
 		},
+		MonthlyWinRate: map[string]*Rate{},
 	}
 }
 
@@ -156,6 +166,22 @@ func (o *Overview) metaScaling(run *model.Run) {
 		o.MaxLessons = run.LessonsLearned
 	}
 
+}
+
+func (o *Overview) monthlyWinRate(run *model.Run) {
+	t := time.Unix(int64(run.Timestamp), 0).UTC()
+	monthStr := fmt.Sprintf("%d", t.Month())
+	if t.Month() < 10 {
+		monthStr = "0" + monthStr
+	}
+	month := fmt.Sprintf("%d-%s", t.Year(), monthStr)
+
+	rate := PutIfAbsent(o.MonthlyWinRate, month, &Rate{})
+	if run.IsHeartKill {
+		rate.Yes++
+	} else {
+		rate.No++
+	}
 }
 
 func (o *Overview) CollectRun(run *model.Run) {
@@ -219,6 +245,7 @@ func (o *Overview) CollectRun(run *model.Run) {
 	})
 
 	o.metaScaling(run)
+	o.monthlyWinRate(run)
 }
 
 func (o *Overview) Finalize() {
@@ -285,6 +312,7 @@ func classFollows(curr string, prev string) bool {
 	}
 }
 
+//nolint:funlen
 func (o *Overview) Render() templ.Component {
 	// Create TimeStats struct
 	timeStats := TimeStats{
@@ -331,6 +359,20 @@ func (o *Overview) Render() templ.Component {
 		MaxLessons:      fmt.Sprintf("%d", o.MaxLessons),
 	}
 
+	monthlyWinRateData := MonthlyWinRateData{}
+
+	for key := range o.MonthlyWinRate {
+		monthlyWinRateData.Labels = append(monthlyWinRateData.Labels, key)
+	}
+	slices.Sort(monthlyWinRateData.Labels)
+	for _, label := range monthlyWinRateData.Labels {
+		rate := o.MonthlyWinRate[label]
+		if rate == nil {
+			rate = &Rate{}
+		}
+		monthlyWinRateData.Dataset = append(monthlyWinRateData.Dataset, rate.GetRate()*100)
+	}
+
 	// Render the template with the structs
 	return PlayerOverview(
 		timeStats,
@@ -338,5 +380,6 @@ func (o *Overview) Render() templ.Component {
 		gameStats,
 		survivalStats,
 		scalingStats,
+		monthlyWinRateData,
 	)
 }

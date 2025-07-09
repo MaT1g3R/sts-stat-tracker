@@ -5,6 +5,7 @@ import "github.com/MaT1g3R/stats-tracker/components/avatar"
 import "github.com/MaT1g3R/stats-tracker/components/dropdown"
 import "github.com/MaT1g3R/stats-tracker/components/popover"
 import "github.com/MaT1g3R/stats-tracker/components/selectbox"
+import "github.com/MaT1g3R/stats-tracker/components/chart"
 import "github.com/MaT1g3R/stats-tracker/internal/ui/components/localtime"
 
 templ BaseLayout(currentPath ...string) {
@@ -29,6 +30,7 @@ templ BaseLayout(currentPath ...string) {
 			@dropdown.Script()
 			@popover.Script()
 			@selectbox.Script()
+			@chart.Script()
 		</head>
 		<body class="h-full bg-gray-50 dark:bg-gray-900">
 			<!-- Navigation -->

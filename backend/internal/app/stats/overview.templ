@@ -1,6 +1,7 @@
 package stats
 
 import "github.com/MaT1g3R/stats-tracker/components/card"
+import "github.com/MaT1g3R/stats-tracker/components/chart"
 
 templ PlayerOverview(
 	timeStats TimeStats,
@@ -8,9 +9,46 @@ templ PlayerOverview(
 	gameStats GameStats,
 	survivalStats SurvivalStats,
 	scalingStats ScalingStats,
+	monthlyWinRateData MonthlyWinRateData,
 ) {
 	<div class="container mx-auto p-6">
 		<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+			<!-- Monthly Win Rate -->
+			@card.Card(card.Props{Class: "lg:col-span-2 xl:col-span-3"}) {
+				@card.Header() {
+					@card.Title() {
+						Monthly Win Rate
+					}
+				}
+				@card.Content() {
+					<div class="space-y-3">
+						@chart.Chart(
+							chart.Props{
+								Options: chart.Options{
+									Responsive: true,
+									Legend:     true,
+								},
+								Variant:     chart.VariantLine,
+								ShowYGrid:   true,
+								ShowXLabels: true,
+								ShowYLabels: true,
+								ShowYAxis:   true,
+								Class:       "lg:h-80",
+								Data: chart.Data{
+									Labels: monthlyWinRateData.Labels,
+									Datasets: []chart.Dataset{
+										{
+											Label:   "Win Rate %",
+											Data:    monthlyWinRateData.Dataset,
+											Tension: 0.1,
+										},
+									},
+								},
+							},
+						)
+					</div>
+				}
+			}
 			<!-- Game Performance -->
 			@card.Card() {
 				@card.Header() {
