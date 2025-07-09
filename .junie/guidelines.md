@@ -44,6 +44,7 @@ When making changes to the Go backend component, you should:
 - Follow standard Go code style (gofmt)
 - Use `templui` components for UI as much as possible. Do not use the `templui` datepicker as it's broken
 - Use `datatables` to display data in a table
+- When editing templ components, run `make templ` to generate the Go code. The Makefile is `backend/Makefile`
 - Use meaningful package and function names
 - Add comments for exported functions
 - Handle errors appropriately

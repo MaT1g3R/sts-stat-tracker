@@ -38,6 +38,17 @@ type Overview struct {
 	BossesKilled       int  `json:"bosses_killed"`
 	EnemyKilled        int  `json:"enemy_killed"`
 	NobSurvivalRate    Rate `json:"nob_survival_rate"`
+
+	// Meta scaling stats
+	MaxRelics       int `json:"max_relics"`
+	MaxGold         int `json:"max_gold"`
+	MaxRemoves      int `json:"max_removes"`
+	MaxRitualDagger int `json:"max_ritual_dagger"`
+	MaxHP           int `json:"max_hp"`
+	MaxSearingBlow  int `json:"max_searing_blow"`
+	MaxPotions      int `json:"max_potions"`
+	MaxAlgorithm    int `json:"max_algorithm"`
+	MaxLessons      int `json:"max_lessons"`
 }
 
 func NewOverview(character string) *Overview {
@@ -115,6 +126,52 @@ func (o *Overview) CollectRun(run *model.Run) {
 		char: run.PlayerClass,
 		win:  run.IsHeartKill,
 	})
+
+	// Meta scaling stats
+	// Update max relics
+	if len(run.Relics) > o.MaxRelics {
+		o.MaxRelics = len(run.Relics)
+	}
+
+	// Update max gold
+	if run.Gold > o.MaxGold {
+		o.MaxGold = run.Gold
+	}
+
+	// Update max removes
+	if len(run.ItemsPurged) > o.MaxRemoves {
+		o.MaxRemoves = len(run.ItemsPurged)
+	}
+
+	// Update max ritual dagger
+	if run.MaxDagger > o.MaxRitualDagger {
+		o.MaxRitualDagger = run.MaxDagger
+	}
+
+	// Update max HP
+	if run.MaxHP > o.MaxHP {
+		o.MaxHP = run.MaxHP
+	}
+
+	// Update max searing blow
+	if run.MaxSearingBlow > o.MaxSearingBlow {
+		o.MaxSearingBlow = run.MaxSearingBlow
+	}
+
+	// Update max potions created
+	if run.PotionsCreated > o.MaxPotions {
+		o.MaxPotions = run.PotionsCreated
+	}
+
+	// Update max genetic algorithm
+	if run.MaxAlgo > o.MaxAlgorithm {
+		o.MaxAlgorithm = run.MaxAlgo
+	}
+
+	// Update max lessons learned
+	if run.LessonsLearned > o.MaxLessons {
+		o.MaxLessons = run.LessonsLearned
+	}
 }
 
 func (o *Overview) Finalize() {
@@ -202,6 +259,17 @@ func (o *Overview) Render() templ.Component {
 		act4Rate := FormatPercentage(o.SurvivalRatePerAct[4].GetRate())
 		nobRate := FormatPercentage(o.NobSurvivalRate.GetRate())
 
+		// Meta scaling stats
+		maxRelics := fmt.Sprintf("%d", o.MaxRelics)
+		maxGold := fmt.Sprintf("%d", o.MaxGold)
+		maxRemoves := fmt.Sprintf("%d", o.MaxRemoves)
+		maxRitualDagger := fmt.Sprintf("%d", o.MaxRitualDagger)
+		maxHP := fmt.Sprintf("%d", o.MaxHP)
+		maxSearingBlow := fmt.Sprintf("%d", o.MaxSearingBlow)
+		maxPotions := fmt.Sprintf("%d", o.MaxPotions)
+		maxAlgorithm := fmt.Sprintf("%d", o.MaxAlgorithm)
+		maxLessons := fmt.Sprintf("%d", o.MaxLessons)
+
 		// Render the template
 		return PlayerOverview(
 			totalPlayTime,
@@ -220,6 +288,15 @@ func (o *Overview) Render() templ.Component {
 			bossesKilled,
 			enemiesKilled,
 			nobRate,
+			maxRelics,
+			maxGold,
+			maxRemoves,
+			maxRitualDagger,
+			maxHP,
+			maxSearingBlow,
+			maxPotions,
+			maxAlgorithm,
+			maxLessons,
 		).Render(ctx, w)
 	})
 }

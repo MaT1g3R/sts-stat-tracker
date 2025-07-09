@@ -6,6 +6,7 @@ templ PlayerOverview(
 	totalPlayTime, fastestWin, averageWinTime, highestScore, bestWinStreak,
 	wins, losses, winRate, act1Rate, act2Rate, act3Rate, act4Rate,
 	totalFloors, bossesKilled, enemiesKilled, nobRate string,
+	maxRelics, maxGold, maxRemoves, maxRitualDagger, maxHP, maxSearingBlow, maxPotions, maxAlgorithm, maxLessons string,
 ) {
 	<div class="container mx-auto p-6">
 		<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -121,6 +122,72 @@ templ PlayerOverview(
 							<span class="text-sm font-medium">Enemies Killed</span>
 							<span class="text-sm">{ enemiesKilled }</span>
 						</div>
+					</div>
+				}
+			}
+			<!-- Meta Scaling Stats -->
+			@card.Card() {
+				@card.Header() {
+					@card.Title() {
+						Meta Scaling
+					}
+				}
+				@card.Content() {
+					<div class="space-y-3">
+						if maxRelics != "0" {
+							<div class="flex justify-between items-center">
+								<span class="text-sm font-medium">Max Relics</span>
+								<span class="text-sm">{ maxRelics }</span>
+							</div>
+						}
+						if maxGold != "0" {
+							<div class="flex justify-between items-center">
+								<span class="text-sm font-medium">Max Gold</span>
+								<span class="text-sm">{ maxGold }</span>
+							</div>
+						}
+						if maxRemoves != "0" {
+							<div class="flex justify-between items-center">
+								<span class="text-sm font-medium">Max Removes</span>
+								<span class="text-sm">{ maxRemoves }</span>
+							</div>
+						}
+						if maxRitualDagger != "0" {
+							<div class="flex justify-between items-center">
+								<span class="text-sm font-medium">Max Ritual Dagger</span>
+								<span class="text-sm">{ maxRitualDagger }</span>
+							</div>
+						}
+						if maxHP != "0" {
+							<div class="flex justify-between items-center">
+								<span class="text-sm font-medium">Max HP</span>
+								<span class="text-sm">{ maxHP }</span>
+							</div>
+						}
+						if maxSearingBlow != "0" {
+							<div class="flex justify-between items-center">
+								<span class="text-sm font-medium">Max Searing Blow</span>
+								<span class="text-sm">{ maxSearingBlow }</span>
+							</div>
+						}
+						if maxPotions != "0" {
+							<div class="flex justify-between items-center">
+								<span class="text-sm font-medium">Max Potions Created</span>
+								<span class="text-sm">{ maxPotions }</span>
+							</div>
+						}
+						if maxAlgorithm != "0" {
+							<div class="flex justify-between items-center">
+								<span class="text-sm font-medium">Max Genetic Algorithm</span>
+								<span class="text-sm">{ maxAlgorithm }</span>
+							</div>
+						}
+						if maxLessons != "0" {
+							<div class="flex justify-between items-center">
+								<span class="text-sm font-medium">Max Lessons Learned</span>
+								<span class="text-sm">{ maxLessons }</span>
+							</div>
+						}
 					</div>
 				}
 			}
