@@ -343,22 +343,56 @@ templ PlayerPage(props PlayerPageProps) {
 					</div>
 				</div>
 				<!-- Stats Content -->
+				// Need to include the used classes for templ to generate the correct CSS
+				<div
+					style="display: none"
+					class="
+border-red-700
+text-red-700
+border-green-700
+text-green-700
+border-blue-600
+text-blue-600
+border-purple-500
+text-purple-500
+border-yellow-500
+text-yellow-500
+"
+				></div>
 				<div id="player-stats-content" class="space-y-6"></div>
 			</div>
 		</div>
-		<!-- Include the component scripts -->
-		@popover.Script()
+	}
+}
+
+func GetCharacterColors(character string) string {
+	switch character {
+	case "ironclad":
+		return "red-700"
+	case "silent":
+		return "green-700"
+	case "defect":
+		return "blue-600"
+	case "watcher":
+		return "purple-500"
+	default:
+		return "yellow-500"
 	}
 }
 
 // PlayerStats renders the player statistics based on the current filters
 templ PlayerStats(props PlayerPageProps, child templ.Component) {
-	@card.Card() {
+	@card.Card(card.Props{Class: "border-" + GetCharacterColors(props.Character)}) {
 		<div class="p-6">
 			<h2 class="text-xl font-semibold mb-4">{ props.StatType }</h2>
 			<div class="text-sm text-gray-500 dark:text-gray-400 mb-4">
 				<p>Profile: { props.SelectedProfile }</p>
-				<p>Character: { CharacterDisplay(props.Character) }</p>
+				<p>
+					Character:
+					<b class={ "text-" + GetCharacterColors(props.Character) }>
+						{ CharacterDisplay(props.Character) }
+					</b>
+				</p>
 				<p>
 					Date range:
 					{ DateToString(props.StartDate) }
