@@ -146,7 +146,7 @@ func (db *DB) ImportRuns(ctx context.Context,
 			game_version TEXT,
 			data_schema_version INTEGER,
 			run_data JSONB
-		)
+		) ON COMMIT DROP
 	`
 
 	_, err = tx.Exec(ctx, tempTableQuery)
