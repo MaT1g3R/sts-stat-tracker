@@ -36,11 +36,26 @@ func BaseLayout(currentPath ...string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+
 		var path string
+		version := "4"
 		if len(currentPath) > 0 {
 			path = currentPath[0]
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" class=\"h-full dark\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><!-- Tailwind CSS (output) --><link href=\"/assets/css/output.css\" rel=\"stylesheet\"><link href=\"https://cdn.datatables.net/v/dt/jq-3.7.0/dt-2.3.2/b-3.2.4/sb-1.8.3/sp-2.3.3/sl-3.0.1/datatables.min.css\" rel=\"stylesheet\" integrity=\"sha384-4ZAa8uqNhbDCUR/tHCGmIK5n4Nyr1ZIvO+MTMc+2K31fhTPgPdZYRyBxXI/sV9kQ\" crossorigin=\"anonymous\"><script src=\"https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js\"></script><script src=\"https://cdn.datatables.net/v/dt/jq-3.7.0/dt-2.3.2/b-3.2.4/sb-1.8.3/sp-2.3.3/sl-3.0.1/datatables.min.js\" integrity=\"sha384-d97rqlT6/jgjAXWPO+aauK1JKyHmXfY0vfFUWsJn/+rOV9/xP3cv5JOe8HEXnkMj\" crossorigin=\"anonymous\"></script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" class=\"h-full dark\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><!-- Tailwind CSS (output) --><link href=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var2 string
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs("/assets/css/output.css?version=" + version)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/layout/layout.templ`, Line: 24, Col: 59}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" rel=\"stylesheet\"><link href=\"https://cdn.datatables.net/v/dt/jq-3.7.0/dt-2.3.2/b-3.2.4/sb-1.8.3/sp-2.3.3/sl-3.0.1/datatables.min.css\" rel=\"stylesheet\" integrity=\"sha384-4ZAa8uqNhbDCUR/tHCGmIK5n4Nyr1ZIvO+MTMc+2K31fhTPgPdZYRyBxXI/sV9kQ\" crossorigin=\"anonymous\"><script src=\"https://cdn.jsdelivr.net/npm/htmx.org@2.0.6/dist/htmx.min.js\"></script><script src=\"https://cdn.datatables.net/v/dt/jq-3.7.0/dt-2.3.2/b-3.2.4/sb-1.8.3/sp-2.3.3/sl-3.0.1/datatables.min.js\" integrity=\"sha384-d97rqlT6/jgjAXWPO+aauK1JKyHmXfY0vfFUWsJn/+rOV9/xP3cv5JOe8HEXnkMj\" crossorigin=\"anonymous\"></script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -60,11 +75,11 @@ func BaseLayout(currentPath ...string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</head><body class=\"h-full bg-gray-50 dark:bg-gray-900\"><!-- Navigation -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</head><body class=\"h-full bg-gray-50 dark:bg-gray-900\"><!-- Navigation -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Var2 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Var3 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
 			if !templ_7745c5c3_IsBuffer {
@@ -84,7 +99,7 @@ func BaseLayout(currentPath ...string) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, " ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -98,11 +113,11 @@ func BaseLayout(currentPath ...string) templ.Component {
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = navbar.Navbar().Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = navbar.Navbar().Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<!-- Main Content --><main class=\"min-h-full\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<!-- Main Content --><main class=\"min-h-full\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -110,7 +125,7 @@ func BaseLayout(currentPath ...string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</main></body>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</main></body>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -118,7 +133,20 @@ func BaseLayout(currentPath ...string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<script src=\"/assets/js/main.min.js?version=2\"></script><script>\n          // Re-initialize templUI components after HTMX swaps\n          document.body.addEventListener(\"htmx:afterSwap\", (e) => {\n            if (window.templUI) {\n              Object.values(window.templUI).forEach(comp => {\n                comp.init?.(e.detail.elt);\n              });\n            }\n          });\n\n          // Re-initialize components after out-of-band swaps\n          document.body.addEventListener(\"htmx:oobAfterSwap\", (e) => {\n            if (window.templUI) {\n              Object.values(window.templUI).forEach(comp => {\n                comp.init?.(e.detail.target);\n              });\n            }\n          });\n\n          // Cleanup before swap (for components with event listeners)\n          document.body.addEventListener(\"htmx:beforeSwap\", (e) => {\n            if (window.templUI) {\n              Object.values(window.templUI).forEach(comp => {\n                comp.cleanup?.(e.detail.target);\n              });\n            }\n          });\n        </script></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<script src=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var4 string
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs("/assets/js/main.min.js?version=" + version)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/layout/layout.templ`, Line: 53, Col: 59}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\"></script><script>\n          // Re-initialize templUI components after HTMX swaps\n          document.body.addEventListener(\"htmx:afterSwap\", (e) => {\n            if (window.templUI) {\n              Object.values(window.templUI).forEach(comp => {\n                comp.init?.(e.detail.elt);\n              });\n            }\n          });\n\n          // Re-initialize components after out-of-band swaps\n          document.body.addEventListener(\"htmx:oobAfterSwap\", (e) => {\n            if (window.templUI) {\n              Object.values(window.templUI).forEach(comp => {\n                comp.init?.(e.detail.target);\n              });\n            }\n          });\n\n          // Cleanup before swap (for components with event listeners)\n          document.body.addEventListener(\"htmx:beforeSwap\", (e) => {\n            if (window.templUI) {\n              Object.values(window.templUI).forEach(comp => {\n                comp.cleanup?.(e.detail.target);\n              });\n            }\n          });\n        </script></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
