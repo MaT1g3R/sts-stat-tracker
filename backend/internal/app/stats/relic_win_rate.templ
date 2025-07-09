@@ -1,0 +1,44 @@
+package stats
+
+import "github.com/MaT1g3R/stats-tracker/components/toggle"
+
+templ DisplayRelicWinRate(allRelicsRows []relicWinRateRow, boughtRelicsRows []relicWinRateRow) {
+	<div class="p-6">
+		<div class="mb-4">
+			<!-- Display mode toggle -->
+			<div class="mb-4">
+				<label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Display Mode</label>
+				<div class="flex items-center gap-2">
+					<span class="text-sm text-gray-700 dark:text-gray-300">All Relics</span>
+					@toggle.Toggle(toggle.Props{
+						ID: "relic-win-rate-toggle",
+						Attributes: templ.Attributes{
+							"onchange": "document.toggleRelicWinRateDisplay()",
+						},
+					})
+					<span class="text-sm text-gray-700 dark:text-gray-300">Purchased Relics</span>
+				</div>
+			</div>
+		</div>
+		<!-- Relic win rate table -->
+		<div class="overflow-x-auto">
+			<table id="relic-win-rate-table" class="order-column min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+				<thead class="bg-gray-50 dark:bg-gray-800">
+					<tr>
+						<th>Relic</th>
+						<th>Win Rate %</th>
+						<th></th>
+						<th>Times Seen</th>
+					</tr>
+				</thead>
+				<tbody class="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-800"></tbody>
+			</table>
+		</div>
+	</div>
+	<div style="display: none" id="relic-all-rows-data">
+		{ templ.JSONString(allRelicsRows) }
+	</div>
+	<div style="display: none" id="relic-purchased-rows-data">
+		{ templ.JSONString(boughtRelicsRows ) }
+	</div>
+}
