@@ -53,7 +53,7 @@ func Navbar(props ...Props) templ.Component {
 			p = props[0]
 		}
 		var templ_7745c5c3_Var2 = []any{utils.TwMerge(
-			"bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700",
+			"bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 dark:from-indigo-900 dark:via-purple-900 dark:to-pink-900 border-b border-gray-200 dark:border-gray-700 shadow-md",
 			p.Class,
 		),
 		}
@@ -105,7 +105,7 @@ func Navbar(props ...Props) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "><div class=\"container mx-auto px-4\"><div class=\"flex justify-between items-center h-16\"><!-- Logo/Brand --><div class=\"flex items-center\"><a href=\"/\" class=\"text-xl font-bold text-gray-900 dark:text-white\">Stats Tracker</a></div><!-- Navigation Links --><div class=\"flex items-center space-x-4\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "><div class=\"container mx-auto px-4\"><div class=\"flex justify-between items-center h-16\"><!-- Logo/Brand --><div class=\"flex items-center\"><a href=\"/\" class=\"text-xl font-bold text-white drop-shadow-sm\">Stats Tracker</a></div><!-- Navigation Links --><div class=\"flex items-center space-x-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -149,8 +149,8 @@ func Item(props ...ItemProps) templ.Component {
 		var templ_7745c5c3_Var6 = []any{utils.TwMerge(
 			"px-3 py-2 rounded-md text-sm font-medium transition-colors",
 			utils.IfElse(p.IsActive,
-				"bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-100",
-				"text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white",
+				"bg-white/20 text-white font-semibold backdrop-blur-sm border border-white/30",
+				"text-white/80 hover:bg-white/10 hover:text-white backdrop-blur-sm",
 			),
 			p.Class,
 		),
