@@ -1,0 +1,138 @@
+package stats
+
+import (
+	"github.com/MaT1g3R/stats-tracker/components/card"
+	"github.com/MaT1g3R/stats-tracker/components/carousel"
+	"github.com/MaT1g3R/stats-tracker/components/chart"
+)
+
+// ActTitle returns the title for an act
+templ ActTitle(act int) {
+	if act == 1 {
+		Act 1
+	} else if act == 2 {
+		Act 2
+	} else if act == 3 {
+		Act 3
+	} else if act == 4 {
+		Act 4
+	}
+}
+
+templ renderBarChart(data ChartData, yLabel string) {
+	@chart.Chart(
+		chart.Props{
+			Variant:     chart.VariantBar,
+			ShowYGrid:   true,
+			ShowXLabels: true,
+			ShowYLabels: true,
+			ShowYAxis:   true,
+			Class:       "lg:h-80",
+			Data: chart.Data{
+				Labels: data.Labels,
+				Datasets: []chart.Dataset{
+					{
+						Label:       yLabel,
+						Data:        data.Data,
+						BorderWidth: 1,
+					},
+				},
+			},
+		},
+	)
+}
+
+templ renderActCharts(
+	act int,
+	avgHPLossData map[int]ChartData,
+	mortalityRateData map[int]ChartData,
+	avgPotionsData map[int]ChartData,
+	topDamageData map[int]ChartData,
+) {
+	@carousel.Item() {
+		<div class="w-full">
+			<h2 class="text-2xl font-bold mb-4 text-center">Act { act } Encounter Stats</h2>
+			<div class="grid grid-cols-1 gap-6">
+				<!-- Average HP Loss Chart -->
+				@card.Card() {
+					@card.Header() {
+						@card.Title() {
+							Average HP Loss Per Encounter
+						}
+					}
+					@card.Content() {
+						@renderBarChart(avgHPLossData[act], "HP Loss")
+					}
+				}
+				<!-- Mortality Rate Chart -->
+				@card.Card() {
+					@card.Header() {
+						@card.Title() {
+							Mortality Rate Per Encounter
+						}
+					}
+					@card.Content() {
+						@renderBarChart(mortalityRateData[act], "Mortality Rate %")
+					}
+				}
+				<!-- Average Potions Used Chart -->
+				@card.Card() {
+					@card.Header() {
+						@card.Title() {
+							Average Potions Used Per Encounter
+						}
+					}
+					@card.Content() {
+						@renderBarChart(avgPotionsData[act], "Potions Used")
+					}
+				}
+				<!-- Top 10 Most Damage Taken Fights Chart -->
+				@card.Card() {
+					@card.Header() {
+						@card.Title() {
+							Top 10 Most Damage Taken Fights
+						}
+					}
+					@card.Content() {
+						@renderBarChart(topDamageData[act], "Damage Taken")
+					}
+				}
+			</div>
+		</div>
+	}
+}
+
+// EncounterStatsTemplate renders the encounter stats with a carousel for switching between acts
+templ EncounterStatsTemplate(
+	avgHPLossData map[int]ChartData,
+	mortalityRateData map[int]ChartData,
+	avgPotionsData map[int]ChartData,
+	topDamageData map[int]ChartData,
+) {
+	{{
+	var acts = []int{1, 2, 3, 4}
+	}}
+	<div class="container mx-auto p-6">
+		<div class="grid grid-cols-1 gap-6">
+			@carousel.Carousel(carousel.Props{
+				Class: "w-full h-full",
+				Loop:  true,
+			}) {
+				@carousel.Content() {
+					for _, act := range acts {
+						@renderActCharts(
+							act,
+							avgHPLossData,
+							mortalityRateData,
+							avgPotionsData,
+							topDamageData,
+						)
+					}
+				}
+				@carousel.Previous()
+				@carousel.Next()
+				@carousel.Indicators(carousel.IndicatorsProps{Count: 4})
+			}
+		</div>
+	</div>
+}

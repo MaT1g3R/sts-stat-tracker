@@ -16,6 +16,7 @@ var StatTypes = []string{
 	"Boss Relics",
 	"Relic Win Rate",
 	"Event Win Rate",
+	"Encounter Stats",
 }
 
 func GetStatByKind(kind, character string) (Stat, error) {
@@ -34,6 +35,8 @@ func GetStatByKind(kind, character string) (Stat, error) {
 		return NewRelicWinRate(), nil
 	case StatTypes[6]:
 		return NewEventWinRate(), nil
+	case StatTypes[7]:
+		return NewEncounterStats(), nil
 	default:
 		return nil, fmt.Errorf("unknown stat type %s", kind)
 	}
@@ -47,30 +50,30 @@ type Stat interface {
 }
 
 type Mean struct {
-	values []float64
+	Values []float64 `json:"values"`
 }
 
 func NewMean() *Mean {
-	return &Mean{values: []float64{}}
+	return &Mean{Values: []float64{}}
 }
 
 func (m *Mean) Add(v float64) {
-	m.values = append(m.values, v)
+	m.Values = append(m.Values, v)
 }
 
 func (m *Mean) SampleSize() int {
-	return len(m.values)
+	return len(m.Values)
 }
 
 func (m *Mean) Mean() float64 {
-	if len(m.values) == 0 {
+	if len(m.Values) == 0 {
 		return 0
 	}
 	sum := 0.0
-	for _, v := range m.values {
+	for _, v := range m.Values {
 		sum += v
 	}
-	return sum / float64(len(m.values))
+	return sum / float64(len(m.Values))
 }
 
 type Rate struct {

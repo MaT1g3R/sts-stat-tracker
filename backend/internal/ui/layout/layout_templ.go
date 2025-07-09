@@ -14,6 +14,7 @@ import "github.com/MaT1g3R/stats-tracker/components/dropdown"
 import "github.com/MaT1g3R/stats-tracker/components/popover"
 import "github.com/MaT1g3R/stats-tracker/components/selectbox"
 import "github.com/MaT1g3R/stats-tracker/components/chart"
+import "github.com/MaT1g3R/stats-tracker/components/carousel"
 import "github.com/MaT1g3R/stats-tracker/internal/ui/components/localtime"
 
 func BaseLayout(currentPath ...string) templ.Component {
@@ -50,7 +51,7 @@ func BaseLayout(currentPath ...string) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs("/assets/css/output.css?version=" + version)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/layout/layout.templ`, Line: 25, Col: 59}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/layout/layout.templ`, Line: 26, Col: 59}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -77,6 +78,10 @@ func BaseLayout(currentPath ...string) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = chart.Script().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = carousel.Script().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -145,7 +150,7 @@ func BaseLayout(currentPath ...string) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs("/assets/js/main.min.js?version=" + version)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/layout/layout.templ`, Line: 55, Col: 59}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/layout/layout.templ`, Line: 57, Col: 59}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {

@@ -70,7 +70,7 @@ public class Run implements Comparable<Run> {
         this.abandoned = abandoned;
 
         masterDeck = runData.master_deck.stream().map(Card::fromString).collect(Collectors.toList());
-        killedBy = runData.killed_by;
+        killedBy = EncounterStats.getNameReplacementMap().getOrDefault(runData.killed_by, runData.killed_by);
         floorsReached = runData.floor_reached;
         relics = runData.relics;
         playtime = runData.playtime;
@@ -192,6 +192,38 @@ public class Run implements Comparable<Run> {
             "Letter Opener"
     );
 
+    private static List<String> bannedEnemies = Arrays.asList(
+            "Flame Bruiser (One Orb)",
+            "Flame Bruiser (Two Orb)",
+            "SlaverBoss",
+            "Louse",
+            "Slime"
+    );
+
+    private static List<String> bannedAct1Encounters = Arrays.asList(
+            "Book of Stabbing",
+            "GiantHead",
+            "Reptomancer",
+            "Champ",
+            "BookOfStabbing",
+            "City Looters",
+            "Colosseum Nobs",
+            "Colosseum Slavers",
+            "Darkling Encounter",
+            "Double Orb Walker",
+            "Flame Bruiser (Two Orb)",
+            "HealerTank",
+            "Murder of Cultists",
+            "Nemesis",
+            "Shell Parasite",
+            "Shelled Parasite",
+            "SlaverBoss",
+            "SnakePlant",
+            "Snecko",
+            "The Heart",
+            "Time Eater"
+    );
+
 
     public boolean valid() {
         boolean
@@ -253,6 +285,19 @@ public class Run implements Comparable<Run> {
 
         for (Neow n : neowSkipped) {
             if (bannedNeows.contains(n.bonus)) {
+                return false;
+            }
+        }
+
+        for (EncounterStats e : encounterStats) {
+            if (e.enemies.contains(":")) {
+                return false;
+            }
+            if (bannedEnemies.contains(e.enemies)) {
+                return false;
+            }
+            int act = getAct(e.floor);
+            if (act == 1 && bannedAct1Encounters.contains(e.enemies)) {
                 return false;
             }
         }
