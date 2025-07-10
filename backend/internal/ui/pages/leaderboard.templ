@@ -4,8 +4,12 @@ import (
 	"fmt"
 	"github.com/MaT1g3R/stats-tracker/components/card"
 	"github.com/MaT1g3R/stats-tracker/components/form"
+	"github.com/MaT1g3R/stats-tracker/components/pagination"
 	"github.com/MaT1g3R/stats-tracker/components/selectbox"
+	"github.com/MaT1g3R/stats-tracker/components/table"
 	"github.com/MaT1g3R/stats-tracker/internal/ui/layout"
+	"net/url"
+	"strconv"
 	"time"
 )
 
@@ -43,6 +47,8 @@ type LeaderboardProps struct {
 	Kinds            []LeaderboardKind
 	MonthOptions     []*MonthOption
 	CharacterOptions []*CharacterOption
+	CurrentPage      int
+	TotalPages       int
 }
 
 func filterOnClick(myName, myValue string, additionalFilterIDs []string) string {
@@ -57,45 +63,78 @@ func filterOnClick(myName, myValue string, additionalFilterIDs []string) string 
 // Leaderboard renders the leaderboard page
 templ Leaderboard(props LeaderboardProps) {
 	@layout.BaseLayout("/app/leaderboards") {
-		<div class="container mx-auto px-4 py-8">
-			<div class="max-w-6xl mx-auto">
-				<!-- Page Header -->
-				<div class="mb-8 text-center">
-					<h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-						Leaderboards
-					</h1>
-					<p class="text-gray-600 dark:text-gray-400">
-						For fun only, not official, data is not validated
-					</p>
-				</div>
-				<!-- Controls Card -->
-				<div class="mb-8">
-					@card.Card() {
-						<div class="p-6">
-							<div class="flex flex-col md:flex-row gap-4 items-center justify-between">
-								<form id="leaderboard-filters">
-									<div class="flex items-center justify-start space-x-4">
+		<div class="container mx-auto px-4 py-8 max-w-6xl">
+			<!-- Page Header -->
+			<div class="mb-8 text-center">
+				<h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+					Leaderboards
+				</h1>
+				<p class="text-gray-600 dark:text-gray-400">
+					For fun only, not official, data is not validated
+				</p>
+			</div>
+			<!-- Controls Card -->
+			<div class="mb-8">
+				@card.Card() {
+					<div class="p-6">
+						<div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+							<form id="leaderboard-filters">
+								<div class="flex items-center justify-start space-x-4">
+									@form.Item(form.ItemProps{Class: "w-48"}) {
+										@form.Label(form.LabelProps{For: "leaderboard-kind"}) {
+											Leaderboard Kind
+										}
+										@selectbox.SelectBox() {
+											@selectbox.Trigger(selectbox.TriggerProps{
+												ID:       "leaderboard-kind",
+												Name:     "leaderboard-kind",
+												Required: true,
+											}) {
+												@selectbox.Value() {
+													{ props.SelectedKind.Value }
+												}
+											}
+											@selectbox.Content() {
+												for _, item := range props.Kinds {
+													@selectbox.Item(selectbox.ItemProps{
+														Value:    item.Value,
+														Selected: item.Value == props.SelectedKind.Value,
+														Attributes: templ.Attributes{
+															"onclick": filterOnClick("kind", item.Value, []string{}),
+														},
+													}) {
+														{ item.Display }
+													}
+												}
+											}
+										}
+									}
+									if len(props.CharacterOptions) > 0 {
 										@form.Item(form.ItemProps{Class: "w-48"}) {
-											@form.Label(form.LabelProps{For: "leaderboard-kind"}) {
-												Leaderboard Kind
+											@form.Label(form.LabelProps{For: "leaderboard-char"}) {
+												Character
 											}
 											@selectbox.SelectBox() {
 												@selectbox.Trigger(selectbox.TriggerProps{
-													ID:       "leaderboard-kind",
-													Name:     "leaderboard-kind",
+													ID:       "leaderboard-char",
+													Name:     "leaderboard-char",
 													Required: true,
 												}) {
 													@selectbox.Value() {
-														{ props.SelectedKind.Value }
+														for _, c := range props.CharacterOptions {
+															if c.Selected {
+																{ c.Value }
+															}
+														}
 													}
 												}
 												@selectbox.Content() {
-													for _, item := range props.Kinds {
+													for _, item := range props.CharacterOptions {
 														@selectbox.Item(selectbox.ItemProps{
 															Value:    item.Value,
-															Selected: item.Value == props.SelectedKind.Value,
+															Selected: item.Selected,
 															Attributes: templ.Attributes{
-																"onclick": filterOnClick("kind", item.Value, []string{}),
+																"onclick": filterOnClick("char", item.Value, []string{"leaderboard-kind"}),
 															},
 														}) {
 															{ item.Display }
@@ -104,83 +143,212 @@ templ Leaderboard(props LeaderboardProps) {
 												}
 											}
 										}
-										if len(props.CharacterOptions) > 0 {
-											@form.Item(form.ItemProps{Class: "w-48"}) {
-												@form.Label(form.LabelProps{For: "leaderboard-char"}) {
-													Character
-												}
-												@selectbox.SelectBox() {
-													@selectbox.Trigger(selectbox.TriggerProps{
-														ID:       "leaderboard-char",
-														Name:     "leaderboard-char",
-														Required: true,
-													}) {
-														@selectbox.Value() {
-															for _, c := range props.CharacterOptions {
-																if c.Selected {
-																	{ c.Value }
-																}
+									}
+									if len(props.MonthOptions) > 0 {
+										@form.Item(form.ItemProps{Class: "w-48"}) {
+											@form.Label(form.LabelProps{For: "leaderboard-month"}) {
+												Month
+											}
+											@selectbox.SelectBox() {
+												@selectbox.Trigger(selectbox.TriggerProps{
+													ID:       "leaderboard-month",
+													Name:     "leaderboard-month",
+													Required: true,
+												}) {
+													@selectbox.Value() {
+														for _, c := range props.MonthOptions {
+															if c.Selected {
+																{ c.Value }
 															}
 														}
 													}
-													@selectbox.Content() {
-														for _, item := range props.CharacterOptions {
-															@selectbox.Item(selectbox.ItemProps{
-																Value:    item.Value,
-																Selected: item.Selected,
-																Attributes: templ.Attributes{
-																	"onclick": filterOnClick("char", item.Value, []string{"leaderboard-kind"}),
-																},
-															}) {
-																{ item.Display }
-															}
+												}
+												@selectbox.Content() {
+													for _, item := range props.MonthOptions {
+														@selectbox.Item(selectbox.ItemProps{
+															Value:    item.Value,
+															Selected: item.Selected,
+															Attributes: templ.Attributes{
+																"onclick": filterOnClick("month", item.Value, []string{"leaderboard-kind", "leaderboard-char"}),
+															},
+														}) {
+															{ item.Display }
 														}
 													}
 												}
 											}
 										}
-										if len(props.MonthOptions) > 0 {
-											@form.Item(form.ItemProps{Class: "w-48"}) {
-												@form.Label(form.LabelProps{For: "leaderboard-month"}) {
-													Month
-												}
-												@selectbox.SelectBox() {
-													@selectbox.Trigger(selectbox.TriggerProps{
-														ID:       "leaderboard-month",
-														Name:     "leaderboard-month",
-														Required: true,
-													}) {
-														@selectbox.Value() {
-															for _, c := range props.MonthOptions {
-																if c.Selected {
-																	{ c.Value }
-																}
-															}
-														}
-													}
-													@selectbox.Content() {
-														for _, item := range props.MonthOptions {
-															@selectbox.Item(selectbox.ItemProps{
-																Value:    item.Value,
-																Selected: item.Selected,
-																Attributes: templ.Attributes{
-																	"onclick": filterOnClick("month", item.Value, []string{"leaderboard-kind", "leaderboard-char"}),
-																},
-															}) {
-																{ item.Display }
-															}
-														}
-													}
-												}
-											}
-										}
-									</div>
-								</form>
-							</div>
+									}
+								</div>
+							</form>
 						</div>
-					}
-				</div>
+					</div>
+				}
+			</div>
+			<!-- Table content -->
+			<div class="mb-8">
+				@card.Card() {
+					<div class="p-6">
+						<div class="items-center">
+							@Table(props)
+							@PaginationWithHelper(props)
+						</div>
+					</div>
+				}
 			</div>
 		</div>
+	}
+}
+
+func generateLeaderboardCaption(p LeaderboardProps) string {
+	base := p.SelectedKind.Display
+	for _, char := range p.CharacterOptions {
+		if char.Selected {
+			base += " - " + char.Display
+			break
+		}
+	}
+	for _, month := range p.MonthOptions {
+		if month.Selected {
+			base += " - " + month.Display
+			break
+		}
+	}
+	return base
+}
+
+templ Table(props LeaderboardProps) {
+	<div class="mb-8 text-center">
+		<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
+			{ generateLeaderboardCaption(props) }
+		</h3>
+	</div>
+	@table.Table() {
+		@table.Header() {
+			@table.Row() {
+				@table.Head() {
+					Rank
+				}
+				@table.Head() {
+					Player
+				}
+				@table.Head() {
+					Score
+				}
+				@table.Head() {
+					Character
+				}
+				@table.Head() {
+					Date Achieved
+				}
+			}
+		}
+		@table.Body() {
+			for _, e := range props.Entries {
+				@table.Row() {
+					@table.Cell() {
+						{ e.Rank }
+					}
+					@table.Cell() {
+						<a class="transition-colors text-primary" href={ "/app/players/" + e.PlayerName }>
+							{ e.PlayerName }
+						</a>
+					}
+					@table.Cell() {
+						{ e.Score }
+					}
+					@table.Cell() {
+						{ e.Character }
+					}
+					@table.Cell() {
+						{ DateToString(e.Date) }
+					}
+				}
+			}
+		}
+	}
+}
+
+func propsToParams(p LeaderboardProps, page int) string {
+	q := url.Values{}
+	q.Add("kind", p.SelectedKind.Value)
+	for _, option := range p.CharacterOptions {
+		if option.Selected {
+			q.Add("char", option.Value)
+			break
+		}
+	}
+	for _, option := range p.MonthOptions {
+		if option.Selected {
+			q.Add("month", option.Value)
+			break
+		}
+	}
+	q.Add("page", strconv.Itoa(page))
+	return "/app/leaderboards?" + q.Encode()
+}
+
+templ PaginationWithHelper(props LeaderboardProps) {
+	{{
+	p := pagination.CreatePagination(props.CurrentPage, props.TotalPages, 3)
+	}}
+	@pagination.Pagination() {
+		@pagination.Content() {
+			@pagination.Item() {
+				@pagination.Previous(pagination.PreviousProps{
+					Href:     propsToParams(props, p.CurrentPage-1),
+					Disabled: !p.HasPrevious,
+					Label:    "Previous",
+				})
+			}
+			// First page with ellipsis if needed
+			if p.Pages[0] > 1 {
+				@pagination.Item() {
+					@pagination.Link(pagination.LinkProps{
+						Href: propsToParams(props, 1),
+					}) {
+						1
+					}
+				}
+				if p.Pages[0] > 2 {
+					@pagination.Item() {
+						@pagination.Ellipsis()
+					}
+				}
+			}
+			// Visible pages
+			for _, page := range p.Pages {
+				@pagination.Item() {
+					@pagination.Link(pagination.LinkProps{
+						Href:     propsToParams(props, page),
+						IsActive: page == p.CurrentPage,
+					}) {
+						{ fmt.Sprint(page) }
+					}
+				}
+			}
+			// Last page with ellipsis if needed
+			if p.Pages[len(p.Pages)-1] < p.TotalPages {
+				if p.Pages[len(p.Pages)-1] < p.TotalPages-1 {
+					@pagination.Item() {
+						@pagination.Ellipsis()
+					}
+				}
+				@pagination.Item() {
+					@pagination.Link(pagination.LinkProps{
+						Href: propsToParams(props, p.TotalPages),
+					}) {
+						{ fmt.Sprint(p.TotalPages) }
+					}
+				}
+			}
+			@pagination.Item() {
+				@pagination.Next(pagination.NextProps{
+					Href:     propsToParams(props, p.CurrentPage+1),
+					Disabled: !p.HasNext,
+					Label:    "Next",
+				})
+			}
+		}
 	}
 }

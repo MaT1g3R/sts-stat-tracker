@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/MaT1g3R/stats-tracker/internal/ui/pages"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -38,10 +39,6 @@ var LeaderboardKinds = []pages.LeaderboardKind{
 		Display: "Streak",
 	},
 	{
-		Value:   "winrate",
-		Display: "Win Rate",
-	},
-	{
 		Value:   "winrate-monthly",
 		Display: "Monthly Win Rate",
 	},
@@ -73,7 +70,7 @@ func getCharacterOptions(k pages.LeaderboardKind) []*pages.CharacterOption {
 	if k.Value == "streak" {
 		return defaultCharacterOptions("Rotating")
 	}
-	return defaultCharacterOptions("All")
+	return defaultCharacterOptions("All Characters")
 }
 
 // handleLeaderboard handles the leaderboard page
@@ -137,6 +134,15 @@ func (app *App) handleLeaderboard(w http.ResponseWriter, r *http.Request) {
 		characterOptions[0].Selected = true
 	}
 
+	page := r.FormValue("page")
+	if page == "" {
+		page = "1"
+	}
+	pageInt, err := strconv.Atoi(page)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("invalid page: %s", page), http.StatusBadRequest)
+	}
+
 	// Render the leaderboard page
 	_ = pages.Leaderboard(pages.LeaderboardProps{
 		Kinds:            LeaderboardKinds,
@@ -144,6 +150,8 @@ func (app *App) handleLeaderboard(w http.ResponseWriter, r *http.Request) {
 		CharacterOptions: characterOptions,
 		Entries:          entries,
 		MonthOptions:     monthOptions,
+		TotalPages:       10,
+		CurrentPage:      pageInt,
 	}).Render(r.Context(), w)
 }
 
