@@ -59,6 +59,7 @@ func NewApp(
 	// App routes
 	mux.HandleFunc("GET /app/players/{name}", app.handlePlayer)
 	mux.HandleFunc("GET /app/players", app.handlePlayers)
+	mux.HandleFunc("GET /app/leaderboards", app.handleLeaderboard)
 
 	// Redirect
 	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {

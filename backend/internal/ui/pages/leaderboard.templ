@@ -1,0 +1,186 @@
+package pages
+
+import (
+	"fmt"
+	"github.com/MaT1g3R/stats-tracker/components/card"
+	"github.com/MaT1g3R/stats-tracker/components/form"
+	"github.com/MaT1g3R/stats-tracker/components/selectbox"
+	"github.com/MaT1g3R/stats-tracker/internal/ui/layout"
+	"time"
+)
+
+// LeaderboardEntry represents a single entry in the leaderboard
+type LeaderboardEntry struct {
+	Rank       int
+	PlayerName string
+	Score      float64
+	Character  string
+	Date       time.Time
+}
+
+type MonthOption struct {
+	Value    string
+	Display  string
+	Selected bool
+}
+
+type CharacterOption struct {
+	Value    string
+	Display  string
+	Selected bool
+}
+
+// LeaderboardKind represents a kind of leaderboard
+type LeaderboardKind struct {
+	Value   string // The value used in URLs and for identification
+	Display string // The display name shown to users
+}
+
+// LeaderboardProps contains the properties for the leaderboard page
+type LeaderboardProps struct {
+	Entries          []LeaderboardEntry
+	SelectedKind     LeaderboardKind
+	Kinds            []LeaderboardKind
+	MonthOptions     []*MonthOption
+	CharacterOptions []*CharacterOption
+}
+
+func filterOnClick(myName, myValue string, additionalFilterIDs []string) string {
+	filterIDStr := "["
+	for _, id := range additionalFilterIDs {
+		filterIDStr += "'" + id + "',"
+	}
+	filterIDStr += "]"
+	return fmt.Sprintf("document.leaderboardFilterAction('%s', '%s', %s)", myName, myValue, filterIDStr)
+}
+
+// Leaderboard renders the leaderboard page
+templ Leaderboard(props LeaderboardProps) {
+	@layout.BaseLayout("/app/leaderboards") {
+		<div class="container mx-auto px-4 py-8">
+			<div class="max-w-6xl mx-auto">
+				<!-- Page Header -->
+				<div class="mb-8 text-center">
+					<h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+						Leaderboards
+					</h1>
+					<p class="text-gray-600 dark:text-gray-400">
+						For fun only, not official, data is not validated
+					</p>
+				</div>
+				<!-- Controls Card -->
+				<div class="mb-8">
+					@card.Card() {
+						<div class="p-6">
+							<div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+								<form id="leaderboard-filters">
+									<div class="flex items-center justify-start space-x-4">
+										@form.Item(form.ItemProps{Class: "w-48"}) {
+											@form.Label(form.LabelProps{For: "leaderboard-kind"}) {
+												Leaderboard Kind
+											}
+											@selectbox.SelectBox() {
+												@selectbox.Trigger(selectbox.TriggerProps{
+													ID:       "leaderboard-kind",
+													Name:     "leaderboard-kind",
+													Required: true,
+												}) {
+													@selectbox.Value() {
+														{ props.SelectedKind.Value }
+													}
+												}
+												@selectbox.Content() {
+													for _, item := range props.Kinds {
+														@selectbox.Item(selectbox.ItemProps{
+															Value:    item.Value,
+															Selected: item.Value == props.SelectedKind.Value,
+															Attributes: templ.Attributes{
+																"onclick": filterOnClick("kind", item.Value, []string{}),
+															},
+														}) {
+															{ item.Display }
+														}
+													}
+												}
+											}
+										}
+										if len(props.CharacterOptions) > 0 {
+											@form.Item(form.ItemProps{Class: "w-48"}) {
+												@form.Label(form.LabelProps{For: "leaderboard-char"}) {
+													Character
+												}
+												@selectbox.SelectBox() {
+													@selectbox.Trigger(selectbox.TriggerProps{
+														ID:       "leaderboard-char",
+														Name:     "leaderboard-char",
+														Required: true,
+													}) {
+														@selectbox.Value() {
+															for _, c := range props.CharacterOptions {
+																if c.Selected {
+																	{ c.Value }
+																}
+															}
+														}
+													}
+													@selectbox.Content() {
+														for _, item := range props.CharacterOptions {
+															@selectbox.Item(selectbox.ItemProps{
+																Value:    item.Value,
+																Selected: item.Selected,
+																Attributes: templ.Attributes{
+																	"onclick": filterOnClick("char", item.Value, []string{"leaderboard-kind"}),
+																},
+															}) {
+																{ item.Display }
+															}
+														}
+													}
+												}
+											}
+										}
+										if len(props.MonthOptions) > 0 {
+											@form.Item(form.ItemProps{Class: "w-48"}) {
+												@form.Label(form.LabelProps{For: "leaderboard-month"}) {
+													Month
+												}
+												@selectbox.SelectBox() {
+													@selectbox.Trigger(selectbox.TriggerProps{
+														ID:       "leaderboard-month",
+														Name:     "leaderboard-month",
+														Required: true,
+													}) {
+														@selectbox.Value() {
+															for _, c := range props.MonthOptions {
+																if c.Selected {
+																	{ c.Value }
+																}
+															}
+														}
+													}
+													@selectbox.Content() {
+														for _, item := range props.MonthOptions {
+															@selectbox.Item(selectbox.ItemProps{
+																Value:    item.Value,
+																Selected: item.Selected,
+																Attributes: templ.Attributes{
+																	"onclick": filterOnClick("month", item.Value, []string{"leaderboard-kind", "leaderboard-char"}),
+																},
+															}) {
+																{ item.Display }
+															}
+														}
+													}
+												}
+											}
+										}
+									</div>
+								</form>
+							</div>
+						</div>
+					}
+				</div>
+			</div>
+		</div>
+	}
+}
