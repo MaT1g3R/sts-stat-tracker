@@ -7,20 +7,11 @@ import (
 	"github.com/MaT1g3R/stats-tracker/components/pagination"
 	"github.com/MaT1g3R/stats-tracker/components/selectbox"
 	"github.com/MaT1g3R/stats-tracker/components/table"
+	"github.com/MaT1g3R/stats-tracker/internal/model"
 	"github.com/MaT1g3R/stats-tracker/internal/ui/layout"
 	"net/url"
 	"strconv"
-	"time"
 )
-
-// LeaderboardEntry represents a single entry in the leaderboard
-type LeaderboardEntry struct {
-	Rank       int
-	PlayerName string
-	Score      float64
-	Character  string
-	Date       time.Time
-}
 
 type MonthOption struct {
 	Value    string
@@ -34,17 +25,11 @@ type CharacterOption struct {
 	Selected bool
 }
 
-// LeaderboardKind represents a kind of leaderboard
-type LeaderboardKind struct {
-	Value   string // The value used in URLs and for identification
-	Display string // The display name shown to users
-}
-
 // LeaderboardProps contains the properties for the leaderboard page
 type LeaderboardProps struct {
-	Entries          []LeaderboardEntry
-	SelectedKind     LeaderboardKind
-	Kinds            []LeaderboardKind
+	Entries          []model.LeaderboardEntry
+	SelectedKind     model.LeaderboardKind
+	Kinds            []model.LeaderboardKind
 	MonthOptions     []*MonthOption
 	CharacterOptions []*CharacterOption
 	CurrentPage      int

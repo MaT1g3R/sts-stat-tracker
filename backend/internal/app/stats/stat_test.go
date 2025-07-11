@@ -89,6 +89,10 @@ func TestStatTypes(t *testing.T) {
 		"Card Picks",
 		"Card Win Rate",
 		"Neow Bonus",
+		"Boss Relics",
+		"Relic Win Rate",
+		"Event Win Rate",
+		"Encounter Stats",
 	}
 
 	if len(StatTypes) != len(expectedTypes) {

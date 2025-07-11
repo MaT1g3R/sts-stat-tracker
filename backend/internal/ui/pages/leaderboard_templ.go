@@ -15,20 +15,11 @@ import (
 	"github.com/MaT1g3R/stats-tracker/components/pagination"
 	"github.com/MaT1g3R/stats-tracker/components/selectbox"
 	"github.com/MaT1g3R/stats-tracker/components/table"
+	"github.com/MaT1g3R/stats-tracker/internal/model"
 	"github.com/MaT1g3R/stats-tracker/internal/ui/layout"
 	"net/url"
 	"strconv"
-	"time"
 )
-
-// LeaderboardEntry represents a single entry in the leaderboard
-type LeaderboardEntry struct {
-	Rank       int
-	PlayerName string
-	Score      float64
-	Character  string
-	Date       time.Time
-}
 
 type MonthOption struct {
 	Value    string
@@ -42,17 +33,11 @@ type CharacterOption struct {
 	Selected bool
 }
 
-// LeaderboardKind represents a kind of leaderboard
-type LeaderboardKind struct {
-	Value   string // The value used in URLs and for identification
-	Display string // The display name shown to users
-}
-
 // LeaderboardProps contains the properties for the leaderboard page
 type LeaderboardProps struct {
-	Entries          []LeaderboardEntry
-	SelectedKind     LeaderboardKind
-	Kinds            []LeaderboardKind
+	Entries          []model.LeaderboardEntry
+	SelectedKind     model.LeaderboardKind
+	Kinds            []model.LeaderboardKind
 	MonthOptions     []*MonthOption
 	CharacterOptions []*CharacterOption
 	CurrentPage      int
@@ -199,7 +184,7 @@ func Leaderboard(props LeaderboardProps) templ.Component {
 								var templ_7745c5c3_Var9 string
 								templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(props.SelectedKind.Value)
 								if templ_7745c5c3_Err != nil {
-									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 94, Col: 39}
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 79, Col: 39}
 								}
 								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 								if templ_7745c5c3_Err != nil {
@@ -253,7 +238,7 @@ func Leaderboard(props LeaderboardProps) templ.Component {
 									var templ_7745c5c3_Var12 string
 									templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(item.Display)
 									if templ_7745c5c3_Err != nil {
-										return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 106, Col: 28}
+										return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 91, Col: 28}
 									}
 									_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 									if templ_7745c5c3_Err != nil {
@@ -370,7 +355,7 @@ func Leaderboard(props LeaderboardProps) templ.Component {
 											var templ_7745c5c3_Var18 string
 											templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(c.Value)
 											if templ_7745c5c3_Err != nil {
-												return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 126, Col: 25}
+												return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 111, Col: 25}
 											}
 											_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 											if templ_7745c5c3_Err != nil {
@@ -426,7 +411,7 @@ func Leaderboard(props LeaderboardProps) templ.Component {
 										var templ_7745c5c3_Var21 string
 										templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(item.Display)
 										if templ_7745c5c3_Err != nil {
-											return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 140, Col: 29}
+											return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 125, Col: 29}
 										}
 										_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 										if templ_7745c5c3_Err != nil {
@@ -544,7 +529,7 @@ func Leaderboard(props LeaderboardProps) templ.Component {
 											var templ_7745c5c3_Var27 string
 											templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(c.Value)
 											if templ_7745c5c3_Err != nil {
-												return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 161, Col: 25}
+												return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 146, Col: 25}
 											}
 											_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 											if templ_7745c5c3_Err != nil {
@@ -600,7 +585,7 @@ func Leaderboard(props LeaderboardProps) templ.Component {
 										var templ_7745c5c3_Var30 string
 										templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(item.Display)
 										if templ_7745c5c3_Err != nil {
-											return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 175, Col: 29}
+											return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 160, Col: 29}
 										}
 										_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 										if templ_7745c5c3_Err != nil {
@@ -745,7 +730,7 @@ func Table(props LeaderboardProps) templ.Component {
 		var templ_7745c5c3_Var33 string
 		templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(generateLeaderboardCaption(props))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 223, Col: 38}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 208, Col: 38}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 		if templ_7745c5c3_Err != nil {
@@ -973,7 +958,7 @@ func Table(props LeaderboardProps) templ.Component {
 							var templ_7745c5c3_Var45 string
 							templ_7745c5c3_Var45, templ_7745c5c3_Err = templ.JoinStringErrs(e.Rank)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 250, Col: 14}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 235, Col: 14}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var45))
 							if templ_7745c5c3_Err != nil {
@@ -1008,7 +993,7 @@ func Table(props LeaderboardProps) templ.Component {
 							var templ_7745c5c3_Var47 templ.SafeURL
 							templ_7745c5c3_Var47, templ_7745c5c3_Err = templ.JoinURLErrs("/app/players/" + e.PlayerName)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 253, Col: 85}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 238, Col: 85}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var47))
 							if templ_7745c5c3_Err != nil {
@@ -1021,7 +1006,7 @@ func Table(props LeaderboardProps) templ.Component {
 							var templ_7745c5c3_Var48 string
 							templ_7745c5c3_Var48, templ_7745c5c3_Err = templ.JoinStringErrs(e.PlayerName)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 254, Col: 21}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 239, Col: 21}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var48))
 							if templ_7745c5c3_Err != nil {
@@ -1056,7 +1041,7 @@ func Table(props LeaderboardProps) templ.Component {
 							var templ_7745c5c3_Var50 string
 							templ_7745c5c3_Var50, templ_7745c5c3_Err = templ.JoinStringErrs(e.Score)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 258, Col: 15}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 243, Col: 15}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var50))
 							if templ_7745c5c3_Err != nil {
@@ -1087,7 +1072,7 @@ func Table(props LeaderboardProps) templ.Component {
 							var templ_7745c5c3_Var52 string
 							templ_7745c5c3_Var52, templ_7745c5c3_Err = templ.JoinStringErrs(e.Character)
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 261, Col: 19}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 246, Col: 19}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var52))
 							if templ_7745c5c3_Err != nil {
@@ -1118,7 +1103,7 @@ func Table(props LeaderboardProps) templ.Component {
 							var templ_7745c5c3_Var54 string
 							templ_7745c5c3_Var54, templ_7745c5c3_Err = templ.JoinStringErrs(DateToString(e.Date))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 264, Col: 28}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 249, Col: 28}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var54))
 							if templ_7745c5c3_Err != nil {
@@ -1353,7 +1338,7 @@ func PaginationWithHelper(props LeaderboardProps) templ.Component {
 							var templ_7745c5c3_Var64 string
 							templ_7745c5c3_Var64, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(page))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 326, Col: 24}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 311, Col: 24}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var64))
 							if templ_7745c5c3_Err != nil {
@@ -1435,7 +1420,7 @@ func PaginationWithHelper(props LeaderboardProps) templ.Component {
 							var templ_7745c5c3_Var68 string
 							templ_7745c5c3_Var68, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprint(p.TotalPages))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 341, Col: 32}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/pages/leaderboard.templ`, Line: 326, Col: 32}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var68))
 							if templ_7745c5c3_Err != nil {
