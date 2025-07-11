@@ -5,38 +5,67 @@ document.shareProfileOnClick = () => {
         return;
     }
 
-    // Get the include filters checkbox
-    const includeFiltersCheckbox = document.getElementById('include-filters');
+    // Get all the individual filter checkboxes
+    const filterCheckboxes = {
+        'include-profile': 'profile-name',
+        'include-game-version': 'game-version',
+        'include-character': 'character',
+        'include-stat-type': 'stat-type',
+        'include-start-date': 'start-date',
+        'include-end-date': 'end-date',
+        'include-abandoned': 'include-abandoned'
+    };
 
     // Function to generate the share link
     function generateShareLink() {
         // Get the base URL (current URL without query parameters)
         let baseUrl = window.location.href.split('?')[0];
 
-        // If include filters is checked, add the current filters as query parameters
-        if (includeFiltersCheckbox.checked) {
-            const filterForm = document.getElementById('player-filters');
-            const formData = new FormData(filterForm);
+        // Get the filter form
+        const filterForm = document.getElementById('player-filters');
+        const formData = new FormData(filterForm);
 
-            // Convert form data to URL parameters
-            const params = new URLSearchParams();
-            for (const [key, value] of formData.entries()) {
-                params.append(key, value);
-            }
+        // Convert form data to URL parameters, but only include selected filters
+        const params = new URLSearchParams();
 
-            // Add parameters to the URL
-            const queryString = params.toString();
-            if (queryString) {
-                baseUrl += '?' + queryString;
+        for (const [checkboxId, formFieldName] of Object.entries(filterCheckboxes)) {
+            const checkbox = document.getElementById(checkboxId);
+            if (checkbox && checkbox.checked) {
+                if (Array.isArray(formFieldName)) {
+                    // Handle multiple form fields (like dates)
+                    for (const fieldName of formFieldName) {
+                        const value = formData.get(fieldName);
+                        if (value) {
+                            params.append(fieldName, value);
+                        }
+                    }
+                } else {
+                    // Handle single form field
+                    const value = formData.get(formFieldName);
+                    if (value) {
+                        params.append(formFieldName, value);
+                    }
+                }
             }
+        }
+
+        // Add parameters to the URL
+        const queryString = params.toString();
+        if (queryString) {
+            baseUrl += '?' + queryString;
         }
 
         // Update the share link input value
         shareLink.value = baseUrl;
     }
 
-    // Generate the link when the checkbox state changes
-    includeFiltersCheckbox.addEventListener('change', generateShareLink);
+    // Add event listeners to all filter checkboxes
+    for (const checkboxId of Object.keys(filterCheckboxes)) {
+        const checkbox = document.getElementById(checkboxId);
+        if (checkbox) {
+            checkbox.addEventListener('change', generateShareLink);
+        }
+    }
 
     // Generate the initial link
     generateShareLink();

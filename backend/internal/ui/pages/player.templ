@@ -96,19 +96,102 @@ templ PlayerPage(props PlayerPageProps) {
 													<span>Copy</span>
 												}
 											</div>
-											@form.ItemFlex() {
-												@checkbox.Checkbox(checkbox.Props{
-													ID:      "include-filters",
-													Name:    "include-filters",
-													Checked: true,
-												})
-												@form.Label(form.LabelProps{
-													For:   "include-filters",
-													Class: "ml-2",
-												}) {
-													Include current filters
-												}
-											}
+											<div class="space-y-3">
+												<h4 class="text-sm font-medium">Include filters in shared URL:</h4>
+												<div class="grid grid-cols-2 gap-2 text-sm">
+													@form.ItemFlex() {
+														@checkbox.Checkbox(checkbox.Props{
+															ID:      "include-profile",
+															Name:    "include-profile",
+															Checked: true,
+														})
+														@form.Label(form.LabelProps{
+															For:   "include-profile",
+															Class: "ml-2",
+														}) {
+															Profile
+														}
+													}
+													@form.ItemFlex() {
+														@checkbox.Checkbox(checkbox.Props{
+															ID:      "include-game-version",
+															Name:    "include-game-version",
+															Checked: true,
+														})
+														@form.Label(form.LabelProps{
+															For:   "include-game-version",
+															Class: "ml-2",
+														}) {
+															Game Version
+														}
+													}
+													@form.ItemFlex() {
+														@checkbox.Checkbox(checkbox.Props{
+															ID:      "include-character",
+															Name:    "include-character",
+															Checked: true,
+														})
+														@form.Label(form.LabelProps{
+															For:   "include-character",
+															Class: "ml-2",
+														}) {
+															Character
+														}
+													}
+													@form.ItemFlex() {
+														@checkbox.Checkbox(checkbox.Props{
+															ID:      "include-stat-type",
+															Name:    "include-stat-type",
+															Checked: true,
+														})
+														@form.Label(form.LabelProps{
+															For:   "include-stat-type",
+															Class: "ml-2",
+														}) {
+															Stats Type
+														}
+													}
+													@form.ItemFlex() {
+														@checkbox.Checkbox(checkbox.Props{
+															ID:      "include-start-date",
+															Name:    "include-start-date",
+															Checked: false,
+														})
+														@form.Label(form.LabelProps{
+															For:   "include-start-date",
+															Class: "ml-2",
+														}) {
+															Start Date
+														}
+													}
+													@form.ItemFlex() {
+														@checkbox.Checkbox(checkbox.Props{
+															ID:      "include-end-date",
+															Name:    "include-end-date",
+															Checked: false,
+														})
+														@form.Label(form.LabelProps{
+															For:   "include-end-date",
+															Class: "ml-2",
+														}) {
+															End Date
+														}
+													}
+													@form.ItemFlex() {
+														@checkbox.Checkbox(checkbox.Props{
+															ID:      "include-abandoned",
+															Name:    "include-abandoned",
+															Checked: false,
+														})
+														@form.Label(form.LabelProps{
+															For:   "include-abandoned",
+															Class: "ml-2",
+														}) {
+															Abandoned status
+														}
+													}
+												</div>
+											</div>
 										</div>
 									</div>
 								}
