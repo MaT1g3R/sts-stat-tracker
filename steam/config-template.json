@@ -3,7 +3,7 @@
   "title": "StatsTracker",
   "description": "Additional stats tracking",
   "visibility": "public",
-  "changeNote": "v3.0.0 - Stats tracker online",
+  "changeNote": "v3.0.1 - Fix java version",
   "tags": [
     "Utility",
     "Qol"

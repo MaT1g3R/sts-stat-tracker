@@ -2,7 +2,7 @@
 
 set -xe
 
-./gradlew buildJAR
+# ./gradlew buildJAR
 pandoc -t "bbcode_steam.lua" -f "markdown_github" README.md > output.bbcode
 cd steam || exit 1
 rm -f ./content/StatsTracker.jar
