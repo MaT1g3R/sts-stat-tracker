@@ -29,6 +29,10 @@ the [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3177
         - Click "Sync All Runs" to upload all of your runs for the current profile
         - Optionally check the "Auto Share Runs" checkbox to automatically upload any new runs you
           play
+       - Leaderboard Profile: Choose which save profile(s) to include in online leaderboards:
+           - *No profiles*: Don't participate in leaderboards (default)
+           - *[Profile Name]*: Only include stats from the selected save profile
+           - *All profiles*: Include stats from all save profiles
 3. **View Online Stats**: Visit <https://sts-stats.otonokizaka.moe/app/players> and search for your
    player name
 
