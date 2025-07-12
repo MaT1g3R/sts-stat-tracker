@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/MaT1g3R/stats-tracker/internal/db"
+
 	"github.com/MaT1g3R/stats-tracker/internal/model"
 	"github.com/MaT1g3R/stats-tracker/internal/ui/pages"
 )
@@ -113,17 +115,18 @@ func (app *App) handleLeaderboard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	monthOptions := make([]*pages.MonthOption, len(res.Months))
-	for _, m := range res.Months {
+	for i, m := range res.Months {
 		selected := false
 		if p.selectedMonth != nil {
 			selected = m.Equal(*p.selectedMonth)
 		}
-		monthOptions = append(monthOptions, &pages.MonthOption{
+		monthOptions[i] = &pages.MonthOption{
 			Value:    m.Format("2006-01"),
 			Display:  m.Format("Jan 2006"),
 			Selected: selected,
-		})
+		}
 	}
+
 	if p.selectedMonth == nil && len(monthOptions) > 0 {
 		monthOptions[0].Selected = true
 	}
@@ -137,5 +140,6 @@ func (app *App) handleLeaderboard(w http.ResponseWriter, r *http.Request) {
 		MonthOptions:     monthOptions,
 		TotalPages:       res.Pages,
 		CurrentPage:      p.pageInt,
+		PageSize:         db.PageSize,
 	}).Render(r.Context(), w)
 }

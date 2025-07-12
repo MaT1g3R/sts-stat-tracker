@@ -16,7 +16,14 @@ func FormatTime(seconds int) string {
 		return fmt.Sprintf("%02dh %02dm %02ds", hours, minutes, secs)
 	}
 	return fmt.Sprintf("%02dm %02ds", minutes, secs)
+}
 
+// FormatPercentageFromRate formats a float as a percentage with 1 decimal place
+func FormatPercentageFromRate(value float64) string {
+	if math.IsNaN(value) || math.IsInf(value, 0) {
+		return "0.0%"
+	}
+	return fmt.Sprintf("%.1f%%", value*100)
 }
 
 // FormatPercentage formats a float as a percentage with 1 decimal place
@@ -24,7 +31,7 @@ func FormatPercentage(value float64) string {
 	if math.IsNaN(value) || math.IsInf(value, 0) {
 		return "0.0%"
 	}
-	return fmt.Sprintf("%.1f%%", value*100)
+	return fmt.Sprintf("%.1f%%", value)
 }
 
 func PutIfAbsent[A comparable, B any](m map[A]B, key A, value B) B {

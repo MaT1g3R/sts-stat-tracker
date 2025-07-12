@@ -38,7 +38,15 @@ public class HTTPClient {
             }
             reader.close();
 
-            return response.toString();
+            String responseString = response.toString();
+
+            if (connection.getResponseCode() >= 400) {
+                String errorMessage = String.format("GET %s: HTTP error code %d: %s", endpoint, connection.getResponseCode(), responseString);
+                logger.error(errorMessage);
+                throw new IOException(errorMessage);
+            }
+
+            return responseString;
         } catch (IOException e) {
             logger.error("Error during GET request to endpoint " + endpoint, e);
             throw e;
@@ -67,8 +75,13 @@ public class HTTPClient {
                 response.append(line);
             }
             reader.close();
-
-            return response.toString();
+            String responseString = response.toString();
+            if (connection.getResponseCode() >= 400) {
+                String errorMessage = String.format("POST %s: HTTP error code %d: %s", endpoint, connection.getResponseCode(), responseString);
+                logger.error(errorMessage);
+                throw new IOException(errorMessage);
+            }
+            return responseString;
         } finally {
             connection.disconnect();
         }

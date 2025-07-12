@@ -1,6 +1,7 @@
 package StatsTracker;
 
 
+import StatsTracker.stats.Leaderboard;
 import StatsTracker.stats.Run;
 import basemod.ModLabeledButton;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
@@ -43,20 +44,29 @@ public class RunUploader {
         }
     }
 
+    public void uploadLeaderboard(List<Run> runs) throws IOException {
+        List<Leaderboard.Entry> entries = new Leaderboard(runs).getEntries();
+        httpClient.post("/api/v1/leaderboard", gson.toJson(entries));
+    }
+
+    private List<Run> getAllRuns() {
+        List<YearMonth> dates = runHistoryManager.getDates().collect(Collectors.toList());
+        YearMonth firstRun = dates.get(0);
+        YearMonth lastRun = dates.get(dates.size() - 1);
+        return runHistoryManager.getAllRuns(firstRun, lastRun, true);
+    }
 
     public void uploadAllRuns(ModLabeledButton btn) {
         btn.label = "Gathering runs...";
         runHistoryManager.refreshData();
-        List<YearMonth> dates = runHistoryManager.getDates().collect(Collectors.toList());
-        YearMonth firstRun = dates.get(0);
-        YearMonth lastRun = dates.get(dates.size() - 1);
-        List<Run> runs = runHistoryManager.getAllRuns(firstRun, lastRun, true);
+
+        List<Run> runs = getAllRuns();
         String name = CardCrawlGame.playerName;
 
         try {
             btn.label = "Uploading...";
-            httpClient.post("/api/v1/upload-all",
-                    gson.toJson(new UploadAllRunsRequest(runs, name, gameVersion, schemaVersion)));
+            httpClient.post("/api/v1/upload-all", gson.toJson(new UploadAllRunsRequest(runs, name, gameVersion, schemaVersion)));
+            uploadLeaderboard(runs);
             btn.label = "Upload successful";
         } catch (IOException e) {
             btn.label = "Upload failed";
@@ -81,11 +91,7 @@ public class RunUploader {
         String name = CardCrawlGame.playerName;
         String endpoint = "";
         try {
-            endpoint =
-                    String.format("/api/v1/increment?profile=%s&game-version=%s&schema-version=%d",
-                            URLEncoder.encode(name, "UTF-8"),
-                            gameVersion,
-                            schemaVersion);
+            endpoint = String.format("/api/v1/increment?profile=%s&game-version=%s&schema-version=%d", URLEncoder.encode(name, "UTF-8"), gameVersion, schemaVersion);
         } catch (UnsupportedEncodingException e) {
             logger.error(e);
             throw new RuntimeException(e);
@@ -105,8 +111,8 @@ public class RunUploader {
         }
         logger.info("{} incremental runs found", runs.size());
         try {
-            httpClient.post("/api/v1/upload-all",
-                    gson.toJson(new UploadAllRunsRequest(runs, name, gameVersion, schemaVersion)));
+            httpClient.post("/api/v1/upload-all", gson.toJson(new UploadAllRunsRequest(runs, name, gameVersion, schemaVersion)));
+            uploadLeaderboard(getAllRuns());
         } catch (IOException e) {
             logger.error(e);
             throw new RuntimeException(e);

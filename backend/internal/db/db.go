@@ -70,19 +70,3 @@ func (db *DB) Close() {
 func (db *DB) Health(ctx context.Context) error {
 	return db.Pool.Ping(ctx)
 }
-
-// mapPlayerClassToCharacter maps the player class from the run data to database character names
-func mapPlayerClassToCharacter(playerClass string) (string, error) {
-	switch playerClass {
-	case "IRONCLAD":
-		return "ironclad", nil
-	case "THE_SILENT":
-		return "silent", nil
-	case "DEFECT":
-		return "defect", nil
-	case "WATCHER":
-		return "watcher", nil
-	default:
-		return "", fmt.Errorf("unknown player class: %s", playerClass)
-	}
-}

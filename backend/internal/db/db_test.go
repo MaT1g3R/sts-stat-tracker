@@ -567,10 +567,10 @@ func (suite *DBSuite) TestLeaderboardEdgeCases() {
 		assert.NotEmpty(t, result.Entries)
 
 		// Find our player's entry
-		var playerEntry *model.LeaderboardEntry
+		var playerEntry model.LeaderboardEntry
 		for _, e := range result.Entries {
 			if e.PlayerName == "edge_player1" {
-				playerEntry = &e
+				playerEntry = e
 				break
 			}
 		}
@@ -608,10 +608,10 @@ func (suite *DBSuite) TestLeaderboardEdgeCases() {
 		assert.NotEmpty(t, result.Entries)
 
 		// Find our player's entry
-		var playerEntry *model.LeaderboardEntry
+		var playerEntry model.LeaderboardEntry
 		for _, e := range result.Entries {
 			if e.PlayerName == "edge_player2" {
-				playerEntry = &e
+				playerEntry = e
 				break
 			}
 		}
