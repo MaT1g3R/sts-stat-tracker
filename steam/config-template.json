@@ -3,7 +3,7 @@
   "title": "StatsTracker",
   "description": "Additional stats tracking",
   "visibility": "public",
-  "changeNote": "v3.0.1 - Fix java version",
+  "changeNote": "v3.0.2 - Fix UI scaling",
   "tags": [
     "Utility",
     "Qol"

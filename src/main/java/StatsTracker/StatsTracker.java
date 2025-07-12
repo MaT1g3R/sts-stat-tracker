@@ -61,7 +61,7 @@ public class StatsTracker implements PostInitializeSubscriber {
 
         @Override
         public void render(SpriteBatch spriteBatch) {
-            this.dropdownMenu.render(spriteBatch, x, y);
+            this.dropdownMenu.render(spriteBatch, x * Settings.scale, y * Settings.scale);
         }
 
         @Override
@@ -143,12 +143,10 @@ public class StatsTracker implements PostInitializeSubscriber {
         y -= 100;
         ModLabeledButton syncButton = new ModLabeledButton("Sync all runs", x, y, settingsPanel, (this::uploadAllRuns));
 
-
         settingsPanel.addUIElement(leaderboardLabel);
         settingsPanel.addUIElement(leaderboardProfileDropdown);
         settingsPanel.addUIElement(syncButton);
         settingsPanel.addUIElement(shareButton);
-
 
         if (config.getDebug()) {
             y -= 100;
