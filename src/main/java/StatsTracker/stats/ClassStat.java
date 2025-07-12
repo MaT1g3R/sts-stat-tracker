@@ -18,7 +18,7 @@ public class ClassStat {
     public int totalFloorsClimbed = 0;
     public int bossKilled = 0;
     public int enemyKilled = 0;
-    public final int bestWinStreak;
+    public int bestWinStreak = 0;
     public int highestScore = 0;
     public Mean averageWinningTime;
     public List<Rate<Card>> cardPicksAct1;
@@ -372,9 +372,16 @@ public class ClassStat {
     public ClassStat(List<Run> runs, boolean rotate) {
         this.rotate = rotate;
         if (rotate) {
-            bestWinStreak = getHighestRotateWinStreak(runs);
+            WinStreak streak = WinStreak.getWinStreak(runs, null);
+            if (streak != null) {
+                bestWinStreak = streak.streak;
+            }
         } else {
-            bestWinStreak = getHighestWinStreak(runs);
+            AbstractPlayer.PlayerClass playerClass = runs.get(0).playerClass;
+            WinStreak streak = WinStreak.getWinStreak(runs, playerClass);
+            if (streak != null) {
+                bestWinStreak = streak.streak;
+            }
         }
 
         StatCollector collector = new StatCollector();
@@ -399,63 +406,5 @@ public class ClassStat {
         }
 
         collector.finalise(this);
-    }
-
-    private static int getHighestWinStreak(List<Run> runs) {
-        int max = 0;
-        int current = 0;
-        for (Run run : runs) {
-            if (run.isHeartKill) {
-                ++current;
-            } else {
-                max = Math.max(max, current);
-                current = 0;
-            }
-        }
-        max = Math.max(max, current);
-        return max;
-    }
-
-
-    private static int getHighestRotateWinStreak(List<Run> runs) {
-        int max = 0;
-        int current = 0;
-        AbstractPlayer.PlayerClass currentClass;
-        AbstractPlayer.PlayerClass previousClass = null;
-
-        for (Run run : runs) {
-            currentClass = run.playerClass;
-            if (run.isHeartKill) {
-                if (previousClass == null || classFollows(currentClass, previousClass)) {
-                    ++current;
-                } else {
-                    max = Math.max(max, current);
-                    current = 1;
-                }
-            } else {
-                max = Math.max(max, current);
-                current = 0;
-            }
-            previousClass = currentClass;
-        }
-
-        max = Math.max(max, current);
-        return max;
-    }
-
-    private static boolean classFollows(AbstractPlayer.PlayerClass currentClass,
-                                        AbstractPlayer.PlayerClass previousClass) {
-        switch (currentClass) {
-            case IRONCLAD:
-                return previousClass == AbstractPlayer.PlayerClass.WATCHER;
-            case THE_SILENT:
-                return previousClass == AbstractPlayer.PlayerClass.IRONCLAD;
-            case DEFECT:
-                return previousClass == AbstractPlayer.PlayerClass.THE_SILENT;
-            case WATCHER:
-                return previousClass == AbstractPlayer.PlayerClass.DEFECT;
-            default:
-                return false;
-        }
     }
 }

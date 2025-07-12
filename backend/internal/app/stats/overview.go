@@ -254,7 +254,11 @@ func (o *Overview) Finalize() {
 	} else {
 		o.BestWinStreak = o.getHighestStreak()
 	}
-	o.WinPercent = float64(o.Wins) / float64(o.Wins+o.Losses)
+	if o.Wins+o.Losses == 0 {
+		o.WinPercent = 0
+	} else {
+		o.WinPercent = float64(o.Wins) / float64(o.Wins+o.Losses)
+	}
 }
 
 func (o *Overview) getHighestStreak() int {
@@ -325,7 +329,7 @@ func (o *Overview) Render() templ.Component {
 	winStats := WinStats{
 		Wins:          strconv.Itoa(o.Wins),
 		Losses:        strconv.Itoa(o.Losses),
-		WinRate:       FormatPercentage(o.WinPercent),
+		WinRate:       FormatPercentageFromRate(o.WinPercent),
 		BestWinStreak: strconv.Itoa(o.BestWinStreak),
 	}
 
@@ -339,11 +343,11 @@ func (o *Overview) Render() templ.Component {
 
 	// Create SurvivalStats struct
 	survivalStats := SurvivalStats{
-		Act1Rate: FormatPercentage(o.SurvivalRatePerAct[1].GetRate()),
-		Act2Rate: FormatPercentage(o.SurvivalRatePerAct[2].GetRate()),
-		Act3Rate: FormatPercentage(o.SurvivalRatePerAct[3].GetRate()),
-		Act4Rate: FormatPercentage(o.SurvivalRatePerAct[4].GetRate()),
-		NobRate:  FormatPercentage(o.NobSurvivalRate.GetRate()),
+		Act1Rate: FormatPercentageFromRate(o.SurvivalRatePerAct[1].GetRate()),
+		Act2Rate: FormatPercentageFromRate(o.SurvivalRatePerAct[2].GetRate()),
+		Act3Rate: FormatPercentageFromRate(o.SurvivalRatePerAct[3].GetRate()),
+		Act4Rate: FormatPercentageFromRate(o.SurvivalRatePerAct[4].GetRate()),
+		NobRate:  FormatPercentageFromRate(o.NobSurvivalRate.GetRate()),
 	}
 
 	// Create ScalingStats struct

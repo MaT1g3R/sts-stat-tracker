@@ -7,6 +7,7 @@ import (
 	"github.com/MaT1g3R/stats-tracker/components/pagination"
 	"github.com/MaT1g3R/stats-tracker/components/selectbox"
 	"github.com/MaT1g3R/stats-tracker/components/table"
+	"github.com/MaT1g3R/stats-tracker/internal/app/stats"
 	"github.com/MaT1g3R/stats-tracker/internal/model"
 	"github.com/MaT1g3R/stats-tracker/internal/ui/layout"
 	"net/url"
@@ -34,6 +35,7 @@ type LeaderboardProps struct {
 	CharacterOptions []*CharacterOption
 	CurrentPage      int
 	TotalPages       int
+	PageSize         int
 }
 
 func filterOnClick(myName, myValue string, additionalFilterIDs []string) string {
@@ -202,6 +204,19 @@ func generateLeaderboardCaption(p LeaderboardProps) string {
 	return base
 }
 
+func formatEntry(k model.LeaderboardKind, e model.LeaderboardEntry) string {
+	switch k.Value {
+	case "streak":
+		return strconv.Itoa(int(e.Score))
+	case "winrate-monthly":
+		return stats.FormatPercentage(e.Score)
+	case "speedrun":
+		return stats.FormatTime(int(e.Score))
+	default:
+		return strconv.Itoa(int(e.Score))
+	}
+}
+
 templ Table(props LeaderboardProps) {
 	<div class="mb-8 text-center">
 		<h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">
@@ -229,10 +244,10 @@ templ Table(props LeaderboardProps) {
 			}
 		}
 		@table.Body() {
-			for _, e := range props.Entries {
+			for i, e := range props.Entries {
 				@table.Row() {
 					@table.Cell() {
-						{ e.Rank }
+						{ (1+i) + props.PageSize * (props.CurrentPage-1) }
 					}
 					@table.Cell() {
 						<a class="transition-colors text-primary" href={ "/app/players/" + e.PlayerName }>
@@ -240,7 +255,7 @@ templ Table(props LeaderboardProps) {
 						</a>
 					}
 					@table.Cell() {
-						{ e.Score }
+						{ formatEntry(props.SelectedKind, e) }
 					}
 					@table.Cell() {
 						{ e.Character }

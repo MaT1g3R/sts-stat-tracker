@@ -1,5 +1,7 @@
 package model
 
+import "fmt"
+
 type BossRelic struct {
 	Name string `json:"name"`
 	Act  int    `json:"act"`
@@ -114,4 +116,20 @@ func (r *Run) GetAct(floor int) int {
 		return 3
 	}
 	return 4
+}
+
+// MapPlayerClassToCharacter maps the player class from the run data to database character names
+func MapPlayerClassToCharacter(playerClass string) (string, error) {
+	switch playerClass {
+	case "IRONCLAD":
+		return "ironclad", nil
+	case "THE_SILENT":
+		return "silent", nil
+	case "DEFECT":
+		return "defect", nil
+	case "WATCHER":
+		return "watcher", nil
+	default:
+		return "", fmt.Errorf("unknown player class: %s", playerClass)
+	}
 }

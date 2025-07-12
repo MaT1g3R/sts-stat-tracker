@@ -108,7 +108,7 @@ func TestFormatPercentage(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := FormatPercentage(tt.value)
+			result := FormatPercentageFromRate(tt.value)
 			if result != tt.expected {
 				t.Errorf("FormatPercentage(%f) = %q, want %q", tt.value, result, tt.expected)
 			}

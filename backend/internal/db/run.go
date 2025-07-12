@@ -343,7 +343,7 @@ func (db *DB) convertRunsToRows(user, profile, gameVersion string, schemaVersion
 		runTime := time.Unix(int64(run.Timestamp), 0).UTC()
 
 		// Determine character name from player class
-		characterName, err := mapPlayerClassToCharacter(run.PlayerClass)
+		characterName, err := model.MapPlayerClassToCharacter(run.PlayerClass)
 		if err != nil {
 			db.logger.Warn("failed to map player class to character", "error", err, "player_class", run.PlayerClass)
 			continue
