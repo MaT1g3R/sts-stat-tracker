@@ -40,7 +40,7 @@ func BaseLayout(currentPath ...string) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 
 		var path string
-		version := "4"
+		version := "5"
 		if len(currentPath) > 0 {
 			path = currentPath[0]
 		}
