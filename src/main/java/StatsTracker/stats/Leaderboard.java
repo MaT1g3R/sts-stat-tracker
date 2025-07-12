@@ -119,7 +119,11 @@ public class Leaderboard {
         List<Entry> entries = new ArrayList<>();
         streaks.forEach(s -> entries.add(s.toEntry()));
         speedrun.forEach((k, v) -> entries.add(v.toEntry()));
-        winrate.forEach((k, v) -> entries.add(v.toEntry()));
+        winrate.forEach((k, v) -> {
+            if (v.winRate.getSampleSize() >= 10) {
+                entries.add(v.toEntry());
+            }
+        });
         return entries;
     }
 }
