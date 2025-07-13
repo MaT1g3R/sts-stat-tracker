@@ -1,6 +1,7 @@
 package StatsTracker;
 
 import com.evacipated.cardcrawl.modthespire.lib.SpireConfig;
+import com.megacrit.cardcrawl.core.CardCrawlGame;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -65,5 +66,34 @@ public class Config {
     public void setLeaderboardProfile(String profile) throws IOException {
         config.setString(LEADERBOARD_PROFILE_SETTINGS, profile);
         config.save();
+    }
+
+    public boolean shouldUploadLeaderboard() {
+        String profile = CardCrawlGame.playerName;
+        String selectedProfile = getLeaderboardProfile();
+
+        if (selectedProfile == null || selectedProfile.isEmpty()) {
+            logger.info("No leaderboard profile selected");
+            return false;
+        }
+
+        if (selectedProfile.equals(Config.NONE_PROFILE)) {
+            logger.info("'NONE' leaderboard profile selected");
+            return false;
+        }
+
+        if (!selectedProfile.equals(profile) && !selectedProfile.equals(Config.ALL_PROFILE)) {
+            logger.info("Selected profile: {}, current profile: {}", selectedProfile, profile);
+            return false;
+        }
+        return true;
+    }
+
+    public boolean shouldUploadAutoSync() {
+        if (!getAutoSync()) {
+            StatsTracker.logger.info("AutoSync disabled");
+            return false;
+        }
+        return shouldUploadLeaderboard();
     }
 }

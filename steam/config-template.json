@@ -3,7 +3,7 @@
   "title": "StatsTracker",
   "description": "Additional stats tracking",
   "visibility": "public",
-  "changeNote": "v3.0.3 - Fix index out of bounds error",
+  "changeNote": "v3.0.4 - Update auto sync logic",
   "tags": [
     "Utility",
     "Qol"

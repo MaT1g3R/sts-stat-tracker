@@ -199,6 +199,10 @@ public class StatsTracker implements PostInitializeSubscriber {
     }
 
     public void uploadIncrementalRuns(int delaySeconds) {
+        if (!config.shouldUploadAutoSync()) {
+            logger.info("AutoSync disabled");
+            return;
+        }
         Thread uploadThread = new Thread(new IncrementalUploadTask(delaySeconds));
         uploadThread.start();
     }

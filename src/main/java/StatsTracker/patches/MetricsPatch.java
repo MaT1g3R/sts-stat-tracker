@@ -16,14 +16,11 @@ public class MetricsPatch {
                 StatsTracker.logger.error("StatsTracker instance is null");
                 return;
             }
-            if (instance.config == null) {
+            if (StatsTracker.config == null) {
                 StatsTracker.logger.error("StatsTracker config is null");
                 return;
             }
-            if (!instance.config.getAutoSync()) {
-                StatsTracker.logger.info("AutoSync disabled");
-                return;
-            }
+
             instance.uploadIncrementalRuns(5);
         }
     }

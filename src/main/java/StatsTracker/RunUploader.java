@@ -45,23 +45,10 @@ public class RunUploader {
     }
 
     public void uploadLeaderboard(List<Run> runs) throws IOException {
+        if (!StatsTracker.config.shouldUploadLeaderboard()) {
+            return;
+        }
         String profile = CardCrawlGame.playerName;
-        String selectedProfile = StatsTracker.config.getLeaderboardProfile();
-
-        if (selectedProfile == null || selectedProfile.isEmpty()) {
-            logger.info("No leaderboard profile selected");
-            return;
-        }
-
-        if (selectedProfile.equals(Config.NONE_PROFILE)) {
-            logger.info("'NONE' leaderboard profile selected");
-            return;
-        }
-
-        if (!selectedProfile.equals(profile) && !selectedProfile.equals(Config.ALL_PROFILE)) {
-            logger.info("Selected profile: {}, current profile: {}", selectedProfile, profile);
-            return;
-        }
         logger.info("Uploading leaderboard for {}", profile);
         List<Leaderboard.Entry> entries = new Leaderboard(runs).getEntries();
         httpClient.post("/api/v1/leaderboard", gson.toJson(entries));
