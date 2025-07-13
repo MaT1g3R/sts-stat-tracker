@@ -3,7 +3,7 @@
   "title": "StatsTracker",
   "description": "Additional stats tracking",
   "visibility": "public",
-  "changeNote": "v3.0.2 - Fix UI scaling",
+  "changeNote": "v3.0.3 - Fix index out of bounds error",
   "tags": [
     "Utility",
     "Qol"

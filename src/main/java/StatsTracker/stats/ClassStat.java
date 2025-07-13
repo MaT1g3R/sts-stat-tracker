@@ -376,12 +376,14 @@ public class ClassStat {
             if (streak != null) {
                 bestWinStreak = streak.streak;
             }
-        } else {
+        } else if (!runs.isEmpty()) {
             AbstractPlayer.PlayerClass playerClass = runs.get(0).playerClass;
             WinStreak streak = WinStreak.getWinStreak(runs, playerClass);
             if (streak != null) {
                 bestWinStreak = streak.streak;
             }
+        } else {
+            bestWinStreak = 0;
         }
 
         StatCollector collector = new StatCollector();
