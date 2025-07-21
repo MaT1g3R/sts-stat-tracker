@@ -179,7 +179,7 @@ func queryStreak(ctx context.Context, tx pgx.Tx, character string, page int) (in
 	const query = `
 SELECT username, character, date_achieved, score FROM leaderboard
 WHERE character = $1 AND kind = 'streak'
-ORDER BY score DESC LIMIT $2 OFFSET $3
+ORDER BY score DESC, date_achieved, username LIMIT $2 OFFSET $3
 `
 	rows, err := tx.Query(ctx, query, character, PageSize, (page-1)*PageSize)
 	defer rows.Close()
@@ -209,14 +209,15 @@ func querySpeedrun(ctx context.Context,
 		const query = `
 SELECT username, character, date_achieved, score FROM leaderboard
 WHERE kind = 'speedrun'
-ORDER BY score LIMIT $1 OFFSET $2
+ORDER BY score,	date_achieved, username
+LIMIT $1 OFFSET $2
 `
 		rows, err = tx.Query(ctx, query, PageSize, (page-1)*PageSize)
 	} else {
 		const query = `
 SELECT username, character, date_achieved, score FROM leaderboard
 WHERE character = $1 AND kind = 'speedrun'
-ORDER BY score LIMIT $2 OFFSET $3
+ORDER BY score, date_achieved, username LIMIT $2 OFFSET $3
 `
 		rows, err = tx.Query(ctx, query, character, PageSize, (page-1)*PageSize)
 	}
@@ -245,7 +246,7 @@ func queryMonthlyWinRate(ctx context.Context,
 	const query = `
 SELECT username, character, date_achieved, score FROM monthly_leaderboard
 WHERE character = $1 AND kind = 'winrate-monthly' AND month = $2
-ORDER BY score DESC LIMIT $3 OFFSET $4
+ORDER BY score DESC, date_achieved, username LIMIT $3 OFFSET $4
 `
 	rows, err := tx.Query(ctx, query, character, month, PageSize, (page-1)*PageSize)
 	defer rows.Close()
