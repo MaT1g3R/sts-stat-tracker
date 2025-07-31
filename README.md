@@ -40,8 +40,7 @@ the [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3177
 
 If you encounter any issues or have questions:
 
-- **Feature Requests
-  **: [GitHub Discussion](https://github.com/MaT1g3R/sts-stat-tracker/discussions)
+- **Feature Requests**: [GitHub Discussion](https://github.com/MaT1g3R/sts-stat-tracker/discussions)
 - **Bug Reports**: [GitHub Issues](https://github.com/MaT1g3R/sts-stat-tracker/issues)
 
 ## Contributing
