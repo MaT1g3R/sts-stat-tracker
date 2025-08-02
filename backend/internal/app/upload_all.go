@@ -15,6 +15,7 @@ type UploadAllRequest struct {
 	SchemaVersion int         `json:"schemaVersion"`
 }
 
+//nolint:funlen
 func (app *App) UploadAll(w http.ResponseWriter, r *http.Request) {
 	user, err := app.Authenticate(w, r)
 	if err != nil {
@@ -42,8 +43,21 @@ func (app *App) UploadAll(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "SchemaVersion is required", http.StatusBadRequest)
 		return
 	}
-	if len(req.Runs) == 0 {
-		http.Error(w, "No runs provided", http.StatusBadRequest)
+
+	validRuns := make([]model.Run, 0, len(req.Runs))
+	for _, run := range req.Runs {
+		if err := run.Validate(); err != nil {
+			app.logger.Warn("invalid run",
+				"user", user.Username,
+				"err", err,
+			)
+			continue
+		}
+		validRuns = append(validRuns, run)
+	}
+
+	if len(validRuns) == 0 {
+		http.Error(w, "No valid runs provided", http.StatusBadRequest)
 		return
 	}
 
@@ -55,7 +69,7 @@ func (app *App) UploadAll(w http.ResponseWriter, r *http.Request) {
 		insertRuns = app.db.ImportRuns
 	}
 
-	err = insertRuns(r.Context(), user.Username, encodedProfile, req.GameVersion, req.SchemaVersion, req.Runs)
+	err = insertRuns(r.Context(), user.Username, encodedProfile, req.GameVersion, req.SchemaVersion, validRuns)
 	if err != nil {
 		app.logger.Error("failed to insert runs", "error", err, "user", user.Username, "profile", req.Profile)
 		http.Error(w, "Failed to insert runs", http.StatusInternalServerError)
@@ -68,7 +82,7 @@ func (app *App) UploadAll(w http.ResponseWriter, r *http.Request) {
 	err = json.NewEncoder(w).Encode(map[string]interface{}{
 		"success": true,
 		"message": "Runs imported successfully",
-		"count":   len(req.Runs),
+		"count":   len(validRuns),
 	})
 	if err != nil {
 		app.logger.Error("failed to write response", "error", err)

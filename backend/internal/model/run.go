@@ -118,6 +118,16 @@ func (r *Run) GetAct(floor int) int {
 	return 4
 }
 
+func (r *Run) Validate() error {
+	if r.FloorsReached > 60 || r.FloorsReached < 0 {
+		return fmt.Errorf("invalid floor: %d", r.FloorsReached)
+	}
+	if r.PlayTimeMinutes < 0 {
+		return fmt.Errorf("invalid play time: %d", r.PlayTimeMinutes)
+	}
+	return nil
+}
+
 // MapPlayerClassToCharacter maps the player class from the run data to database character names
 func MapPlayerClassToCharacter(playerClass string) (string, error) {
 	switch playerClass {
