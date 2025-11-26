@@ -291,6 +291,9 @@ public class Run implements Comparable<Run> {
             if (b.picked != null && bannedBossRelics.contains(b.picked)) {
                 return false;
             }
+            if (b.not_picked == null) {
+                return false;
+            }
             for (String s : b.not_picked) {
                 if (s != null && s.contains(":")) {
                     return false;
@@ -320,6 +323,9 @@ public class Run implements Comparable<Run> {
         }
 
         for (EncounterStats e : encounterStats) {
+            if (e == null || e.enemies == null) {
+                return false;
+            }
             if (e.enemies.contains(":")) {
                 return false;
             }
