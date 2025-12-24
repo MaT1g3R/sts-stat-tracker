@@ -29,7 +29,7 @@ func processRequests(
 			return nil, nil, err
 		}
 		if req.Score < 0 {
-			return nil, nil, fmt.Errorf("invalid score value: %f", req.Score)
+			return nil, nil, fmt.Errorf("invalid %s score value: %f", kind.Value, req.Score)
 		}
 		kinds[i] = kind
 
@@ -68,6 +68,7 @@ func (app *App) handlePostLeaderboard(w http.ResponseWriter, r *http.Request) {
 	var request []postLeaderboardRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		app.logger.Warn("upload leaderboard: invalid JSON", "error", err, "username", user.Username)
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
@@ -75,12 +76,14 @@ func (app *App) handlePostLeaderboard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if len(request) > 10*len(model.LeaderboardKinds) {
+		app.logger.Warn("upload leaderboard: list too long", "username", user.Username)
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
 
 	entries, kinds, err := processRequests(user.Username, request)
 	if err != nil {
+		app.logger.Warn("upload leaderboard: bad request", "error", err, "username", user.Username)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
