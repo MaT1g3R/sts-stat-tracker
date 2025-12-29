@@ -3,7 +3,7 @@
   "title": "StatsTracker",
   "description": "Additional stats tracking",
   "visibility": "public",
-  "changeNote": "v3.0.5 - Fix NullPointerException",
+  "changeNote": "v3.0.6 - Fix NullPointerException",
   "tags": [
     "Utility",
     "Qol"

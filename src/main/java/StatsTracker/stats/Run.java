@@ -466,13 +466,17 @@ public class Run implements Comparable<Run> {
     }
 
     public static Optional<Run> fromFile(FileHandle file) {
+        if (file == null) {
+            return Optional.empty();
+        }
         RunData data;
         AbstractPlayer.PlayerClass playerClass;
+        String path = file.path() == null ? "" : file.path();
 
         try {
             data = gson.fromJson(file.readString(), RunData.class);
         } catch (JsonSyntaxException e) {
-            StatsTracker.logger.info("Failed to load RunData from JSON file: " + file.path());
+            StatsTracker.logger.info("Failed to load RunData from JSON file: " + path);
             return Optional.empty();
         }
 
@@ -480,7 +484,7 @@ public class Run implements Comparable<Run> {
             playerClass = AbstractPlayer.PlayerClass.valueOf(data.character_chosen);
         } catch (NullPointerException | IllegalArgumentException e) {
             StatsTracker.logger.info("Run file " +
-                    file.path() +
+                    path +
                     " does not use a real character: " +
                     data.character_chosen);
             return Optional.empty();
