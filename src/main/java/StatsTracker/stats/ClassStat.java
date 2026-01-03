@@ -187,7 +187,7 @@ public class ClassStat {
 
         private void encounterStats(Run run) {
             for (EncounterStats es : run.encounterStats) {
-                if (es.enemies.equals("Gremlin Nob")) {
+                if (StatsTracker.Utils.normalizeEncounterId(es.enemies).equals("Gremlin Nob")) {
                     nob.win++;
                 }
                 int act = run.getAct(es.floor);
@@ -212,7 +212,7 @@ public class ClassStat {
 
             if (run.killedBy != null && !run.killedBy.isEmpty()) {
                 String killedBy = run.killedBy;
-                if (killedBy.equals("Gremlin Nob")) {
+                if (StatsTracker.Utils.normalizeEncounterId(killedBy).equals("Gremlin Nob")) {
                     nob.win--;
                     nob.loss++;
                 }

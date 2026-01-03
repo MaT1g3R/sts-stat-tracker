@@ -12,7 +12,7 @@ public class BossRelic implements Comparable<BossRelic> {
 
     @Override
     public String toString() {
-        return name;
+        return StatsTracker.Utils.getLocalizedName(name);
     }
 
     @Override
