@@ -21,6 +21,9 @@ public class ClassStat {
     public int bestWinStreak = 0;
     public int highestScore = 0;
     public Mean averageWinningTime;
+    public Mean averageDeckSize;
+    public int minDeckSize = 0;
+    public int maxDeckSize = 0;
     public List<Rate<Card>> cardPicksAct1;
     public List<Rate<Card>> cardPicksAfterAct1;
     public List<Rate<Card>> cardWinRate;
@@ -46,6 +49,7 @@ public class ClassStat {
 
     private static class StatCollector {
         Mean averageWinningTime = new Mean("Average Time (wins)");
+        Mean averageDeckSize = new Mean("Average Deck Size");
         Map<Card, Rate<Card>> cardPicksAct1 = new HashMap<>();
         Map<Card, Rate<Card>> cardPicksAfterAct1 = new HashMap<>();
         Map<Card, Rate<Card>> cardWinRate = new HashMap<>();
@@ -94,6 +98,9 @@ public class ClassStat {
             put(2, new HashMap<>());
             put(3, new HashMap<>());
         }};
+        private void deckSizeStats(Run run) {
+            averageDeckSize.add(run.masterDeck.size());
+        }
 
         private void cardPickStats(Run run) {
             for (CardChoice c : run.cardChoices) {
@@ -315,6 +322,7 @@ public class ClassStat {
                 } else {
                     m.get(event).loss++;
                 }
+            deckSizeStats(run);
             });
         }
 
@@ -361,6 +369,7 @@ public class ClassStat {
             cs.relicWinRate = sortedMapValues(relicWinRate);
             cs.relicPurchasedWinRate = sortedMapValues(relicPurchasedWinRate);
 
+            cs.averageDeckSize = averageDeckSize;
             cs.averageWinningTime = averageWinningTime;
 
             cs.eventWinRateAct1 = sortedMapValues(eventWinRate.get(1));
@@ -385,7 +394,11 @@ public class ClassStat {
         } else {
             bestWinStreak = 0;
         }
+if (!runs.isEmpty()) {
+            minDeckSize = Integer.MAX_VALUE;
+        }
 
+        
         StatCollector collector = new StatCollector();
 
         for (Run run : runs) {
@@ -401,6 +414,9 @@ public class ClassStat {
             } else {
                 ++numDeath;
             }
+            int deckSize = run.masterDeck.size();
+            minDeckSize = Math.min(minDeckSize, deckSize);
+            maxDeckSize = Math.max(maxDeckSize, deckSize);
             totalFloorsClimbed += run.floorsReached;
             bossKilled += run.bossesKilled;
             enemyKilled += run.enemiesKilled;
