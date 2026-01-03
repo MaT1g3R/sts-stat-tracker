@@ -27,6 +27,10 @@ public class CharStatRenderer {
         }
 
         this.info = this.info + CharStat.TEXT[23] + cs.highestScore + " NL ";
+        if (cs.averageDeckSize.getSampleSize() > 0) {
+            this.info += "Avg Deck Size: #y" + String.format("%.1f", cs.averageDeckSize.mean()) + " NL ";
+            this.info += "Min/Max Deck Size: #y" + cs.minDeckSize + " / " + cs.maxDeckSize + " NL ";
+        }
         if (cs.bestWinStreak > 0) {
             if (cs.rotate) {
                 this.info = this.info + "Best Win Streak (rotate): #y" + cs.bestWinStreak + " NL ";

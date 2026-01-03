@@ -108,13 +108,13 @@ public class StatsScreenPatch {
         float renderY = getScrollY(s);
         renderHeader(sb, NAMES[0], screenX, renderY);
         new CharStatRenderer(moreStatsScreen.getClassStat()).render(sb, screenX, renderY);
-        renderY -= 400.0F * Settings.scale;
+        renderY -= 500.0F * Settings.scale;
 
         for (int i = 0; i < 4; i++) {
             String name = NAMES[i + 2];
             renderHeader(sb, name, screenX, renderY);
             new CharStatRenderer(moreStatsScreen.classStats[i]).render(sb, screenX, renderY);
-            renderY -= 400.0F * Settings.scale;
+            renderY -= 500.0F * Settings.scale;
         }
     }
 
