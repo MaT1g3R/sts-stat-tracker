@@ -1,6 +1,9 @@
 package StatsTracker;
 
 import com.megacrit.cardcrawl.cards.AbstractCard;
+import com.megacrit.cardcrawl.core.Settings;
+import com.megacrit.cardcrawl.helpers.RelicLibrary;
+import com.megacrit.cardcrawl.relics.AbstractRelic;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -11,6 +14,113 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Utils {
+
+    private static final Map<String, String> localizedCache = new HashMap<>();
+
+    public static String getLocalizedName(Object obj) {
+        if (obj == null) return "";
+        if (!(obj instanceof String)) return obj.toString();
+        String s = (String) obj;
+
+        if (localizedCache.containsKey(s)) {
+            return localizedCache.get(s);
+        }
+
+        String res = findCardName(s);
+        if (isValid(res)) return cache(s, res);
+
+        res = findRelicName(s);
+        if (isValid(res)) return cache(s, res);
+
+        res = findEventName(s);
+        if (isValid(res)) return cache(s, res);
+
+        res = findEncounterName(s);
+        if (isValid(res)) return cache(s, res);
+
+        res = findMonsterName(s);
+        if (isValid(res)) return cache(s, res);
+
+        return cache(s, s);
+    }
+
+    private static boolean isValid(String s) {
+        return s != null && !s.contains("MISSING_NAME");
+    }
+
+    private static String cache(String key, String value) {
+        localizedCache.put(key, value);
+        return value;
+    }
+
+    private static String findCardName(String id) {
+        try {
+            AbstractCard c = com.megacrit.cardcrawl.helpers.CardLibrary.getCard(id);
+            if (c != null) return c.name;
+        } catch (Exception e) {}
+        return null;
+    }
+
+    private static String findRelicName(String id) {
+        try {
+            AbstractRelic r = RelicLibrary.getRelic(id);
+            if (isValidRelic(r, id)) return r.name;
+
+            r = RelicLibrary.getRelic(id.replace(" ", ""));
+            if (isValidRelic(r, id)) return r.name;
+        } catch (Exception e) {}
+        return null;
+    }
+
+    private static boolean isValidRelic(AbstractRelic r, String id) {
+        return r != null && (!r.relicId.equals("Circlet") || id.equals("Circlet"));
+    }
+
+    private static String findEventName(String id) {
+        try {
+            com.megacrit.cardcrawl.localization.EventStrings es = com.megacrit.cardcrawl.core.CardCrawlGame.languagePack.getEventString(id);
+            if (es != null && es.NAME != null) return es.NAME;
+        } catch (Exception e) {}
+        return null;
+    }
+
+    private static String findEncounterName(String id) {
+        try {
+            // Normalize legacy IDs to standard Game IDs
+            String normalizedId = normalizeEncounterId(id);
+            String name = com.megacrit.cardcrawl.helpers.MonsterHelper.getEncounterName(normalizedId);
+            if (name != null && !name.equals("[MISSING_NAME]")) {
+                return name;
+            }
+        } catch (Exception e) {}
+        return null;
+    }
+
+    private static String findMonsterName(String id) {
+        try {
+            com.megacrit.cardcrawl.localization.MonsterStrings ms = com.megacrit.cardcrawl.core.CardCrawlGame.languagePack.getMonsterStrings(id);
+            if (ms != null && ms.NAME != null) return ms.NAME;
+        } catch (Exception e) {}
+        return null;
+    }
+
+    public static String normalizeEncounterId(String id) {
+        switch (id) {
+            case "BookOfStabbing": return "Book of Stabbing";
+            case "HealerTank": return "Centurion and Healer";
+            case "3_Byrds": return "3 Byrds";
+            case "GiantHead": return "Giant Head";
+            case "Darkling Encounter": return "3 Darklings";
+            case "Gremlin Leader Combat": return "Gremlin Leader";
+            case "SlimeBoss": return "Slime Boss";
+            case "Double Orb Walker": return "2 Orb Walkers";
+            case "JawWorm": return "Jaw Worm";
+            case "Shelled Parasite": return "Shell Parasite";
+            case "GremlinNob": return "Gremlin Nob";
+            case "Sentries": return "3 Sentries";
+            default: return id;
+        }
+    }
 
     public static void invoke(Object obj, Class<?> clz, String m, Object... args) {
         Method method = null;
@@ -71,36 +181,6 @@ public class Utils {
         BigDecimal bd = new BigDecimal(value);
         bd = bd.round(new MathContext(places));
         return bd.doubleValue();
-    }
-
-    public static String normalizeCardName(String s) {
-        Map<String, String> replacements = new HashMap<>();
-        replacements.put("Lockon", "Bullseye");
-        replacements.put("Steam", "Steam Barrier");
-        replacements.put("Steam Power", "Overclock");
-        replacements.put("Redo", "Recursion");
-        replacements.put("Undo", "Equilibrium");
-        replacements.put("Gash", "Claw");
-        replacements.put("Venomology", "Alchemize");
-        replacements.put("Night Terror", "Nightmare");
-        replacements.put("NightTerror", "Nightmare");
-        replacements.put("Crippling Poison", "Crippling Cloud");
-        replacements.put("CripplingPoison", "Crippling Cloud");
-        replacements.put("Underhanded Strike", "Sneaky Strike");
-        replacements.put("UnderhandedStrike", "Sneaky Strike");
-        replacements.put("Clear The Mind", "Tranquility");
-        replacements.put("ClearTheMind", "Tranquility");
-        replacements.put("Wireheading", "Foresight");
-        replacements.put("Vengeance", "Simmering Fury");
-        replacements.put("Adaptation", "Rushdown");
-        replacements.put("Path to Victory", "Pressure Points");
-        replacements.put("PathToVictory", "Pressure Points");
-        replacements.put("Ghostly", "Apparition");
-        replacements.put("Yang", "Duality");
-        replacements.put("Snake Skull", "Snecko Skull");
-
-        String normal = s.split("\\+")[0];
-        return replacements.getOrDefault(normal, normal);
     }
 
     public static void cardUpgradeName(AbstractCard card) {

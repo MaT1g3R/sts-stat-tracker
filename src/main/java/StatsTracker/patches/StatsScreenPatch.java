@@ -177,7 +177,7 @@ public class StatsScreenPatch {
                 renderY,
                 maxRows,
                 rates,
-                (Rate<A> c) -> c.what.toString() + " #y" + c.percent() + "% " + c.winLoss());
+                (Rate<A> c) -> Utils.getLocalizedName(c.what) + " #y" + c.percent() + "% " + c.winLoss());
     }
 
     public static <A> void renderRates1Col(SpriteBatch sb,
@@ -197,7 +197,7 @@ public class StatsScreenPatch {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < len; i++) {
             Rate<A> c = rates.get(i);
-            builder.append(c.what.toString())
+            builder.append(Utils.getLocalizedName(c.what))
                     .append(" #y")
                     .append(c.percent())
                     .append("% ")
@@ -292,22 +292,22 @@ public class StatsScreenPatch {
         List<Mean> act4 = cs.averageDamageTaken.getOrDefault(4, new ArrayList<>());
 
         renderHeader(sb, colorForClass("Average encounter HP loss (act 1)"), screenX, renderY);
-        renderT(sb, screenX, renderY, 0, act1, x -> x.what + " #y" + Utils.round(x.mean(), 3));
+        renderT(sb, screenX, renderY, 0, act1, x -> Utils.getLocalizedName(x.what) + " #y" + Utils.round(x.mean(), 3));
         renderY -= 22.0F * Settings.scale * act1.size();
         renderY -= 100 * Settings.scale;
 
         renderHeader(sb, colorForClass("Average encounter HP loss (act 2)"), screenX, renderY);
-        renderT(sb, screenX, renderY, 0, act2, x -> x.what + " #y" + Utils.round(x.mean(), 3));
+        renderT(sb, screenX, renderY, 0, act2, x -> Utils.getLocalizedName(x.what) + " #y" + Utils.round(x.mean(), 3));
         renderY -= 22.0F * Settings.scale * act2.size();
         renderY -= 100 * Settings.scale;
 
         renderHeader(sb, colorForClass("Average encounter HP loss (act 3)"), screenX, renderY);
-        renderT(sb, screenX, renderY, 0, act3, x -> x.what + " #y" + Utils.round(x.mean(), 3));
+        renderT(sb, screenX, renderY, 0, act3, x -> Utils.getLocalizedName(x.what) + " #y" + Utils.round(x.mean(), 3));
         renderY -= 22.0F * Settings.scale * act3.size();
         renderY -= 100 * Settings.scale;
 
         renderHeader(sb, colorForClass("Average encounter HP loss (act 4)"), screenX, renderY);
-        renderT(sb, screenX, renderY, 0, act4, x -> x.what + " #y" + Utils.round(x.mean(), 3));
+        renderT(sb, screenX, renderY, 0, act4, x -> Utils.getLocalizedName(x.what) + " #y" + Utils.round(x.mean(), 3));
     }
 
     private static void renderEncounterMortalityRate(StatsScreen s, SpriteBatch sb, float screenX) {
@@ -346,22 +346,22 @@ public class StatsScreenPatch {
         List<Mean> act4 = cs.averagePotionUse.getOrDefault(4, new ArrayList<>());
 
         renderHeader(sb, colorForClass("Average encounter potions used (act 1)"), screenX, renderY);
-        renderT(sb, screenX, renderY, 0, act1, x -> x.what + " #y" + Utils.round(x.mean(), 3));
+        renderT(sb, screenX, renderY, 0, act1, x -> Utils.getLocalizedName(x.what) + " #y" + Utils.round(x.mean(), 3));
         renderY -= 22.0F * Settings.scale * act1.size();
         renderY -= 100 * Settings.scale;
 
         renderHeader(sb, colorForClass("Average encounter potions used (act 2)"), screenX, renderY);
-        renderT(sb, screenX, renderY, 0, act2, x -> x.what + " #y" + Utils.round(x.mean(), 3));
+        renderT(sb, screenX, renderY, 0, act2, x -> Utils.getLocalizedName(x.what) + " #y" + Utils.round(x.mean(), 3));
         renderY -= 22.0F * Settings.scale * act2.size();
         renderY -= 100 * Settings.scale;
 
         renderHeader(sb, colorForClass("Average encounter potions used (act 3)"), screenX, renderY);
-        renderT(sb, screenX, renderY, 0, act3, x -> x.what + " #y" + Utils.round(x.mean(), 3));
+        renderT(sb, screenX, renderY, 0, act3, x -> Utils.getLocalizedName(x.what) + " #y" + Utils.round(x.mean(), 3));
         renderY -= 22.0F * Settings.scale * act3.size();
         renderY -= 100 * Settings.scale;
 
         renderHeader(sb, colorForClass("Average encounter potions used (act 4)"), screenX, renderY);
-        renderT(sb, screenX, renderY, 0, act4, x -> x.what + " #y" + Utils.round(x.mean(), 3));
+        renderT(sb, screenX, renderY, 0, act4, x -> Utils.getLocalizedName(x.what) + " #y" + Utils.round(x.mean(), 3));
     }
 
     private static void renderRelicWinRate(StatsScreen s, SpriteBatch sb, float screenX) {

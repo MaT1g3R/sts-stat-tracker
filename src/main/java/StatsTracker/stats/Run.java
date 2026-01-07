@@ -70,7 +70,7 @@ public class Run implements Comparable<Run> {
         this.abandoned = abandoned;
 
         masterDeck = runData.master_deck.stream().map(Card::fromString).collect(Collectors.toList());
-        killedBy = EncounterStats.getNameReplacementMap().getOrDefault(runData.killed_by, runData.killed_by);
+        killedBy = runData.killed_by;
         floorsReached = runData.floor_reached;
         relics = runData.relics;
         playtime = runData.playtime;

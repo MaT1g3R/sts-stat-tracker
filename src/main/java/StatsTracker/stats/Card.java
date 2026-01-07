@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Card implements Comparable<Card> {
-    private static final Map<String, String> nameReplacementMap = getNameReplacementMap();
 
     public final String name;
     public final int upgrades;
@@ -25,7 +24,7 @@ public class Card implements Comparable<Card> {
 
     public static Card fromString(String s) {
         String[] parts = s.split("\\+");
-        String name = nameReplacementMap.getOrDefault(parts[0], parts[0]);
+        String name = parts[0];
         int upgrades = 0;
         if (parts.length > 1) {
             upgrades = Integer.parseInt(parts[1]);
@@ -39,36 +38,6 @@ public class Card implements Comparable<Card> {
         return fromString(s.split("\\+")[0]);
     }
 
-    private static Map<String, String> getNameReplacementMap() {
-        Map<String, String> replacements = new HashMap<>();
-        replacements.put("Lockon", "Bullseye");
-        replacements.put("Steam", "Steam Barrier");
-        replacements.put("Steam Power", "Overclock");
-        replacements.put("Redo", "Recursion");
-        replacements.put("Undo", "Equilibrium");
-        replacements.put("Gash", "Claw");
-        replacements.put("Venomology", "Alchemize");
-        replacements.put("Night Terror", "Nightmare");
-        replacements.put("NightTerror", "Nightmare");
-        replacements.put("Crippling Poison", "Crippling Cloud");
-        replacements.put("CripplingPoison", "Crippling Cloud");
-        replacements.put("Underhanded Strike", "Sneaky Strike");
-        replacements.put("UnderhandedStrike", "Sneaky Strike");
-        replacements.put("Clear The Mind", "Tranquility");
-        replacements.put("ClearTheMind", "Tranquility");
-        replacements.put("Wireheading", "Foresight");
-        replacements.put("Vengeance", "Simmering Fury");
-        replacements.put("Adaptation", "Rushdown");
-        replacements.put("Path to Victory", "Pressure Points");
-        replacements.put("PathToVictory", "Pressure Points");
-        replacements.put("Ghostly", "Apparition");
-        replacements.put("Wraith Form v2", "Wraith Form");
-        replacements.put("Fasting2", "Fasting");
-        replacements.put("Conserve Battery", "Charge Battery");
-
-        return replacements;
-    }
-
     @Override
     public int compareTo(Card card) {
         if (this.name.equals(card.name)) {
@@ -79,13 +48,14 @@ public class Card implements Comparable<Card> {
 
     @Override
     public String toString() {
+        String localizedName = StatsTracker.Utils.getLocalizedName(this.name);
         switch (this.upgrades) {
             case 0:
-                return this.name;
+                return localizedName;
             case 1:
-                return this.name + "+";
+                return localizedName + "+";
             default:
-                return this.name + "+" + this.upgrades;
+                return localizedName + "+" + this.upgrades;
         }
     }
 
